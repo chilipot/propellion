@@ -138,14 +138,11 @@ The player is playing the game as part of a training simulation for an organizat
     - **Take damage on contact**
 
 ## Game Rules
-#### Bringing everything together, what are some game rules for winning, losing, beating levels, health, and damage?
-
 To win, the player must get from the starting point of the level, through the asteroid field, to the exit portal. They must grapple into the portal, at which point the player loses control and the grapple hook retracts, pulling the player into the portal and ending the level. This means the player has passed this lesson in the agility course. To beat the game, the player must complete all lessons (followed by the non-simulated finale level after the Fungos destroy the S.N.A.K.E. facility).
 
 When the player takes too much damage to their space suit, they lose. This damage can occur from hitting asteroids and/or getting shot by aliens. The player also loses if they don’t progress fast enough and get too close to the black hole, and it sucks them in. If the player runs out of capacity on their pneumatic thruster and is too far away from any asteroid to grapple, this is most likely a losing scenario, so they will have to restart (which will either happen manually or automatically depending on time).
 
 ## Target Audience
-#### Who is this game for?
 This game is for coordinated gamers who like a good adrenaline rush and enjoy games with fast, open-ended, dynamic game play. Fans of parkour mechanics like those found in Mirror’s Edge should find this game entertaining. The ability to beat personal best times on a level will attract people who like to improve upon their scores, especially if we add an endless mode. Sci-fi fans will also be intrigued.
 Artwork
 What artwork do you need? Have you searched online? Are you planning to use any of the assets provided? 
