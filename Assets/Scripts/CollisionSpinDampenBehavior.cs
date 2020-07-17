@@ -10,10 +10,12 @@ public class CollisionSpinDampenBehavior : MonoBehaviour
     public Rigidbody rb;
 
     private float? madeImpact = null;
+    private float camDrag;
     
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        camDrag = rb.angularDrag;
     }
     
     private void FixedUpdate()
@@ -23,6 +25,7 @@ public class CollisionSpinDampenBehavior : MonoBehaviour
         var impactOffset = Time.fixedTime - madeImpact.Value;
         if (rb.angularVelocity.Equals(Vector3.zero))
         {
+            rb.angularDrag = camDrag;
             madeImpact = null;
             CameraController.FreeCam = true;
         }
@@ -36,6 +39,7 @@ public class CollisionSpinDampenBehavior : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         CameraController.FreeCam = false;
+        rb.angularDrag = 0f;
     }
 
     private void OnCollisionExit(Collision other)
