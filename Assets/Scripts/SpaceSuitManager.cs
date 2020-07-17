@@ -13,8 +13,7 @@ public class SpaceSuitManager : MonoBehaviour
     private void SetHealth(float newHealth)
     {
         health = Mathf.Clamp(newHealth, 0, maxHealth);
-        UI.healthBar.text = health.ToString();
-        UI.healthBar.color = Color.Lerp(Color.red, Color.green, health / maxHealth);
+        UI.SetHealthBar(health, maxHealth);
     }
     
     private void Heal(int heal)

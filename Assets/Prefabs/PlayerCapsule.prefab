@@ -45,10 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f249a3dec71698e4383dc39475573c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 1000
+  power: 2000
   maxCapacity: 20
   thrusterEngineSfx: {fileID: 382713843}
   thrusterEmptySfx: {fileID: 2590792329407462706}
+  UI: {fileID: 0}
 --- !u!82 &382713843
 AudioSource:
   m_ObjectHideFlags: 0
@@ -257,7 +258,7 @@ GameObject:
   - component: {fileID: 4443904973018483978}
   - component: {fileID: 563407122}
   - component: {fileID: 563407116}
-  - component: {fileID: 563407117}
+  - component: {fileID: 1147982149}
   m_Layer: 0
   m_Name: PlayerCapsule
   m_TagString: Untagged
@@ -401,7 +402,7 @@ MonoBehaviour:
   healthEffectInteractionDelay: 1
   maxHealth: 100
   UI: {fileID: 0}
---- !u!114 &563407117
+--- !u!114 &1147982149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -410,10 +411,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4443904973018483981}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6efa96e8f20476e4bbbcbff9a154f1cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 97b3a82dc912e914bb1bc4fb2d438c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 50
 --- !u!1 &4443904973295190064
 GameObject:
   m_ObjectHideFlags: 0
