@@ -45,10 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f249a3dec71698e4383dc39475573c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 1000
+  power: 2000
   maxCapacity: 20
   thrusterEngineSfx: {fileID: 382713843}
   thrusterEmptySfx: {fileID: 2590792329407462706}
+  UI: {fileID: 0}
 --- !u!82 &382713843
 AudioSource:
   m_ObjectHideFlags: 0
@@ -255,7 +256,9 @@ GameObject:
   - component: {fileID: 4443904973018483976}
   - component: {fileID: 4443904973018483979}
   - component: {fileID: 4443904973018483978}
-  - component: {fileID: 7326287468924761701}
+  - component: {fileID: 563407122}
+  - component: {fileID: 563407116}
+  - component: {fileID: 1147982149}
   m_Layer: 0
   m_Name: PlayerCapsule
   m_TagString: Untagged
@@ -334,9 +337,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4443904973018483981}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -349,7 +352,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4443904973018483981}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: b4fd2520e7097214181b13ccba175ee8, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -368,8 +371,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87d58f52591843c4ea6978d3355abba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 200
---- !u!114 &7326287468924761701
+  mouseSensitivity: 300
+--- !u!114 &563407122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4443904973018483981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f7c5b8c7a7f5ce4fb22569fc9408637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dampenDuration: 1
+  dampenOffset: 1
+  rb: {fileID: 0}
+--- !u!114 &563407116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4443904973018483981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72114fb529d85ab42a4283d4724e4c0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthEffectInteractionDelay: 1
+  maxHealth: 100
+  UI: {fileID: 0}
+--- !u!114 &1147982149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -407,7 +440,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4443904973295190064}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0.46}
+  m_LocalPosition: {x: 0, y: 0.527, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4443904973018484023}

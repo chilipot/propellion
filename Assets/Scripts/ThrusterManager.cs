@@ -9,29 +9,36 @@ public class ThrusterManager : MonoBehaviour
     public float power = 1000;
     public float maxCapacity = 30; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
+    public UIManager UI;
     
     private float _capacity; // in seconds
     private bool _engaged;
 
+    private void EngageThruster()
+    {
+        if (_capacity > 0)
+        {
+            _engaged = true;
+            thrusterEngineSfx.Play();
+        }
+        else
+        {
+            thrusterEmptySfx.Play();
+        }
+    }
+    
     private void Start()
     {
         _engaged = false;
         _capacity = maxCapacity;
+        UI.SetThrustCapacityBar(_capacity, maxCapacity);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(EngageKey))
         {
-            if (_capacity > 0)
-            {
-                _engaged = true;
-                thrusterEngineSfx.Play();
-            }
-            else
-            {
-                thrusterEmptySfx.Play();
-            }
+            EngageThruster();
         }
         
         if (_engaged)
@@ -39,7 +46,6 @@ public class ThrusterManager : MonoBehaviour
             if (_capacity > 0)
             {
                 _capacity -= 1 * Time.deltaTime;
-                // TODO: update capacity UI
             }
             else
             {
@@ -47,17 +53,14 @@ public class ThrusterManager : MonoBehaviour
                 _engaged = false;
                 thrusterEngineSfx.Pause();
                 thrusterEmptySfx.Play();
-                // TODO: highlight on UI that you're out of fuel
             }
+            UI.SetThrustCapacityBar(_capacity, maxCapacity);
         }
 
-        if (Input.GetKeyUp(EngageKey))
+        if (Input.GetKeyUp(EngageKey) && _engaged)
         {
-            if (_engaged)
-            {
-                thrusterEngineSfx.Pause();
-                _engaged = false;
-            }
+            thrusterEngineSfx.Pause();
+            _engaged = false;
         }
     }
 
