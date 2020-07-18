@@ -9,30 +9,12 @@ public class SpaceSuitManager : MonoBehaviour
 
     private float health = 0f;
     private float lastHealthEffect = -1f;
+    private LevelManager _levelManager;
 
-    private void SetHealth(float newHealth)
-    {
-        health = Mathf.Clamp(newHealth, 0, maxHealth);
-        UI.SetHealthBar(health, maxHealth);
-    }
-    
-    private void Heal(int heal)
-    {
-        SetHealth(health + heal);
-    }
-    
-    private void Damage(int dmg)
-    {
-        SetHealth(health - dmg);
-    }
     private void Start()
     {
+        _levelManager = FindObjectOfType<LevelManager>();
         SetHealth(maxHealth);
-    }
-
-    private void Update()
-    {
-        
     }
 
     private void OnCollisionEnter(Collision other)
@@ -54,4 +36,25 @@ public class SpaceSuitManager : MonoBehaviour
                 break;
         }
     }
+    
+    private void SetHealth(float newHealth)
+    {
+        health = Mathf.Clamp(newHealth, 0, maxHealth);
+        UI.SetHealthBar(health, maxHealth);
+    }
+    
+    private void Heal(int heal)
+    {
+        SetHealth(health + heal);
+    }
+    
+    private void Damage(int dmg)
+    {
+        SetHealth(health - dmg);
+        if (health <= 0)
+        {
+            _levelManager.Lose();
+        }
+    }
+    
 }

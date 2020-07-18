@@ -4,21 +4,20 @@ using UnityEngine;
 
 public class ThrustBehavior : MonoBehaviour
 {
-    private Rigidbody _rigidbody;
-    private ThrusterManager _thruster;
+    private Rigidbody rb;
+    private ThrusterManager thruster;
     
     private void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _thruster = FindObjectOfType<ThrusterManager>();
+        rb = GetComponent<Rigidbody>();
+        thruster = GetComponentInChildren<ThrusterManager>();
     }
 
     private void FixedUpdate()
     {
-        if (_thruster.IsEngaged())
+        if (thruster.IsEngaged())
         {
-            _rigidbody.AddForce(Time.fixedDeltaTime * _thruster.power * transform.forward);
+            rb.AddForce(Time.fixedDeltaTime * thruster.power * transform.forward);
         }
-        
     }
 }

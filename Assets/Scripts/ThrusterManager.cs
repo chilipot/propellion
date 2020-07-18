@@ -13,9 +13,48 @@ public class ThrusterManager : MonoBehaviour
     
     private float _capacity; // in seconds
     private bool _engaged;
+    private LevelManager _levelManager;
 
-    private void EngageThruster()
+    private void Start()
     {
+        _engaged = false;
+        _capacity = maxCapacity;
+        _levelManager = FindObjectOfType<LevelManager>();
+        UI.SetThrustCapacityBar(_capacity, maxCapacity);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(EngageKey))
+        {
+            Engage();
+        }
+        
+        if (_engaged)
+        {
+            if (_levelManager.LevelIsOver())
+            {
+                Disengage();
+            }
+            else if (_capacity > 0)
+            {
+                _capacity -= 1 * Time.deltaTime;
+            }
+            else
+            {
+                Disengage();
+                _capacity = 0;
+                thrusterEmptySfx.Play();
+            }
+            UI.SetThrustCapacityBar(_capacity, maxCapacity);
+        }
+
+        if (Input.GetKeyUp(EngageKey) && _engaged) Disengage();
+    }
+    
+    private void Engage()
+    {
+        if (_levelManager.LevelIsOver()) return;
         if (_capacity > 0)
         {
             _engaged = true;
@@ -26,42 +65,11 @@ public class ThrusterManager : MonoBehaviour
             thrusterEmptySfx.Play();
         }
     }
-    
-    private void Start()
+
+    public void Disengage()
     {
         _engaged = false;
-        _capacity = maxCapacity;
-        UI.SetThrustCapacityBar(_capacity, maxCapacity);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(EngageKey))
-        {
-            EngageThruster();
-        }
-        
-        if (_engaged)
-        {
-            if (_capacity > 0)
-            {
-                _capacity -= 1 * Time.deltaTime;
-            }
-            else
-            {
-                _capacity = 0;
-                _engaged = false;
-                thrusterEngineSfx.Pause();
-                thrusterEmptySfx.Play();
-            }
-            UI.SetThrustCapacityBar(_capacity, maxCapacity);
-        }
-
-        if (Input.GetKeyUp(EngageKey) && _engaged)
-        {
-            thrusterEngineSfx.Pause();
-            _engaged = false;
-        }
+        thrusterEngineSfx.Pause();
     }
 
     public bool IsEngaged()

@@ -256,9 +256,9 @@ GameObject:
   - component: {fileID: 4443904973018483976}
   - component: {fileID: 4443904973018483979}
   - component: {fileID: 4443904973018483978}
-  - component: {fileID: 563407122}
   - component: {fileID: 563407116}
   - component: {fileID: 1147982149}
+  - component: {fileID: 3334602128151194560}
   m_Layer: 0
   m_Name: PlayerCapsule
   m_TagString: Untagged
@@ -372,21 +372,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 300
---- !u!114 &563407122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4443904973018483981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f7c5b8c7a7f5ce4fb22569fc9408637, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dampenDuration: 1
-  dampenOffset: 1
-  rb: {fileID: 0}
 --- !u!114 &563407116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,6 +399,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b3a82dc912e914bb1bc4fb2d438c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3334602128151194560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4443904973018483981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d29b0265dcf024341a47c34c5d502edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spinDampenDelay: 1
+  spinDampenDuration: 1
 --- !u!1 &4443904973295190064
 GameObject:
   m_ObjectHideFlags: 0
