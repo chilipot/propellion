@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AsteroidSoundManager : MonoBehaviour
 {
@@ -11,17 +8,9 @@ public class AsteroidSoundManager : MonoBehaviour
         collisionSfx = GetComponent<AudioSource>();
     }
 
-    private void Update()
-    {
-        
-    }
-
     private void OnCollisionEnter(Collision other)
     {
         // TODO: Check who this asteroid is colliding with
-        if (!collisionSfx.isPlaying)
-        {
-            collisionSfx.Play();
-        }
+        if (!collisionSfx.isPlaying) collisionSfx.Play();
     }
 }

@@ -1,17 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AsteroidMovement : MonoBehaviour
 {
 
-    private float _speed;
+    private float speed;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         transform.Rotate(RandomAngle(), RandomAngle(), RandomAngle());
-        _speed = Random.Range(0.2f, 2f);
+        speed = Random.Range(0.2f, 2f);
     }
     
     private float RandomAngle()
@@ -19,10 +16,10 @@ public class AsteroidMovement : MonoBehaviour
         return Random.Range(0f, 360f);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        transform.Translate(Time.deltaTime * _speed * Vector3.forward);
+        // TODO: make this physics-based instead?
+        transform.Translate(Time.deltaTime * speed * Vector3.forward);
     }
 
 }

@@ -2,28 +2,26 @@
 
 public class SpaceSuitManager : MonoBehaviour
 {
-    public float healthEffectInteractionDelay = 2f;
+    public float healthEffectInteractionDelay = 0.5f;
     public float maxHealth = 100f;
+    public UIManager ui;
 
-    public UIManager UI;
-
-    private float health = 0f;
-    private float lastHealthEffect = -1f;
-    private LevelManager _levelManager;
+    private float health;
+    private float lastHealthEffect;
+    private LevelManager levelManager;
 
     private void Start()
     {
-        _levelManager = FindObjectOfType<LevelManager>();
+        health = 0f;
+        lastHealthEffect = -healthEffectInteractionDelay;
+        levelManager = FindObjectOfType<LevelManager>();
         SetHealth(maxHealth);
     }
 
     private void OnCollisionEnter(Collision other)
     {
         // TODO: Check what the player is colliding with
-        if (Time.fixedTime - lastHealthEffect <= healthEffectInteractionDelay)
-        {
-            return;
-        }
+        if (Time.fixedTime - lastHealthEffect <= healthEffectInteractionDelay) return;
         var healthEffectBehavior = other.gameObject.GetComponent<HealthEffectBehavior>();
         var healthEffectStrength = healthEffectBehavior.Strength;
         switch (healthEffectBehavior.Effect)
@@ -35,12 +33,13 @@ public class SpaceSuitManager : MonoBehaviour
                 Damage(healthEffectStrength);
                 break;
         }
+        lastHealthEffect = Time.fixedTime;
     }
     
     private void SetHealth(float newHealth)
     {
         health = Mathf.Clamp(newHealth, 0, maxHealth);
-        UI.SetHealthBar(health, maxHealth);
+        ui.SetHealthBar(health, maxHealth);
     }
     
     private void Heal(int heal)
@@ -53,7 +52,7 @@ public class SpaceSuitManager : MonoBehaviour
         SetHealth(health - dmg);
         if (health <= 0)
         {
-            _levelManager.Lose();
+            levelManager.Lose();
         }
     }
     

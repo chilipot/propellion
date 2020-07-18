@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     
     public UIManager ui;
     
-    private bool levelOver = false;
+    private bool levelOver;
     private Rigidbody playerBody;
     
     private void Start()
@@ -37,7 +37,10 @@ public class LevelManager : MonoBehaviour
         if (levelOver) return;
         ui.SetLevelStatus("Game over!");
         levelOver = true;
+        
+        // TODO: here and everywhere else both FreeCams are changed, use a more general method instead
         CameraController.FreeCam = false;
+        PhysicsCameraController.FreeCam = false;
     }
 
     public bool LevelIsOver()
