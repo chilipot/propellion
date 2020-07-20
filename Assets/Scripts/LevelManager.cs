@@ -6,12 +6,14 @@ public class LevelManager : MonoBehaviour
 {
     
     private UIManager ui;
+    private GrappleGunBehavior grappleGun;
     private bool levelOver;
     private Rigidbody playerBody;
     
     private void Start()
     {
         ui = FindObjectOfType<UIManager>();
+        grappleGun = FindObjectOfType<GrappleGunBehavior>();
         levelOver = false;
         playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
     }
@@ -27,20 +29,25 @@ public class LevelManager : MonoBehaviour
     public void Win()
     {
         if (levelOver) return;
-        ui.SetLevelStatus(true);
-        levelOver = true;
+        EndLevel(true);
         playerBody.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     public void Lose()
     {
         if (levelOver) return;
-        ui.SetLevelStatus(false);
-        levelOver = true;
+        EndLevel(false);
         
         // TODO: here and everywhere else both FreeCams are changed, use a more general method instead
         CameraController.FreeCam = false;
         PhysicsCameraController.FreeCam = false;
+    }
+
+    private void EndLevel(bool won)
+    {
+        ui.SetLevelStatus(won);
+        levelOver = true;
+        grappleGun.StopGrapple();
     }
 
     public bool LevelIsOver()

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
@@ -48,7 +47,7 @@ public class GrappleGunBehavior : MonoBehaviour
         }
     }
     
-    private void StopGrapple()
+    public void StopGrapple()
     {
         grappling = false;
         grapplePoint = null;
