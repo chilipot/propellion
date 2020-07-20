@@ -1,32 +1,30 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
-using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
+﻿using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 public class PhysicsCameraController : MonoBehaviour
 {
     public float mouseSensitivity = 200;
 
-    public static bool FreeCam = true;
+    public static bool FreeCam = true; // TODO: make this an instance variable (see TODO below)
 
     private Vector3 rotationForce;
     private Rigidbody rb;
+    private LevelManager levelManager;
     
     private void Start()
     {
+        FreeCam = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
         rb = GetComponent<Rigidbody>();
+        levelManager = FindObjectOfType<LevelManager>();
     }
 
     private void Update()
     {
-        if (!FreeCam) return;
-        
+        // TODO: instead of checking LevelIsOver here, encapsulate that logic into FreeCam by making it a
+        // a private instance variable w/ public setter, which refuses to set it to true if LevelIsOver
+        if (!FreeCam || levelManager.LevelIsOver()) return;
         var moveX = Input.GetAxis("Mouse X") * mouseSensitivity;
         var moveY = Input.GetAxis("Mouse Y") * mouseSensitivity * -1;
         rotationForce = new Vector3(moveY, moveX, 0);

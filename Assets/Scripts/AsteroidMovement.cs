@@ -1,28 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class AsteroidMovement : MonoBehaviour
 {
 
-    private float _speed;
+    public float minSpeed = 200f;
+    public float maxSpeed = 800f;
     
-    // Start is called before the first frame update
-    void Start()
+    private float speed;
+    private bool appliedInitialForce;
+    private Rigidbody rb;
+
+    private void Start()
     {
+        speed = Random.Range(minSpeed, maxSpeed);
+        appliedInitialForce = false;
+        rb = GetComponent<Rigidbody>();
         transform.Rotate(RandomAngle(), RandomAngle(), RandomAngle());
-        _speed = Random.Range(0.2f, 2f);
     }
     
-    private float RandomAngle()
+    private static float RandomAngle()
     {
         return Random.Range(0f, 360f);
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    private void FixedUpdate()
     {
-        transform.Translate(Time.deltaTime * _speed * Vector3.forward);
+        if (appliedInitialForce) return;
+        rb.AddForce(transform.forward * speed, ForceMode.Impulse);
+        appliedInitialForce = true;
     }
 
 }

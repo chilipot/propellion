@@ -1,11 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public Text healthBar;
     public Text thrustCapacityBar;
+    public Text levelStatus;
 
     public void SetHealthBar(float currHealth, float maxHealth)
     {
@@ -29,8 +29,10 @@ public class UIManager : MonoBehaviour
             thrustCapacityBar.color = (capcityLeft < 0.5f) ? Color.yellow : Color.blue;
         }
     }
-    
-    private void Start()
+
+    public void SetLevelStatus(bool won)
     {
+        levelStatus.text = won ? "You win!" : "Game over!";
+        levelStatus.gameObject.SetActive(true);
     }
 }

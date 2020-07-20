@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrappleGunBehavior : MonoBehaviour
@@ -8,14 +6,81 @@ public class GrappleGunBehavior : MonoBehaviour
     public float maxRetractionForce = 150f;
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
-    public Transform _gunTip;
+    public Transform gunTip;
 
-    private LineRenderer _lineRenderer;
-    private Transform _grapplePoint;
-    private bool grappling = false;
-    private Transform _camera;
-    private GameObject _player;
-    private Rigidbody _player_rb;
+    private LineRenderer lineRenderer;
+    private Transform grapplePoint; // TODO: make this explicitly nullable
+    private Transform mainCamera;
+    private GameObject player;
+    private Rigidbody playerRb;
+    private bool grappling;
+
+    private void Start()
+    {
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = 0;
+        grapplePoint = null;
+        mainCamera = Camera.main.transform;
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerRb = player.GetComponent<Rigidbody>();
+        grappling = false;
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) StartGrapple();
+        else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
+    }
+
+    private bool GrappleTargetDestroyed()
+    {
+        return grappling && !grapplePoint;
+    }
+    
+    private void StartGrapple()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(mainCamera.position, mainCamera.forward, out hit, maxGrappleLength, grappleableStuff))
+        {
+            grappling = true;
+            grapplePoint = hit.transform;
+            lineRenderer.positionCount = 2;
+        }
+    }
+    
+    private void StopGrapple()
+    {
+        grappling = false;
+        grapplePoint = null;
+        lineRenderer.positionCount = 0;
+    }
+
+    private void LateUpdate()
+    {
+        DrawGrappleRope();
+    }
+    
+    private void DrawGrappleRope()
+    {
+        if (!grappling) return;
+        Vector3[] renderPositions = {gunTip.position, grapplePoint.position};
+        lineRenderer.SetPositions(renderPositions);
+    }
+    
+    private void FixedUpdate()
+    {
+        if (!grappling) return;
+        var tugForce = ComputeTugForce();
+        playerRb.AddForce(tugForce, ForceMode.Force);
+    }
+
+    private Vector3 ComputeTugForce()
+    {
+        var grappleDirection = grapplePoint.position - player.transform.position;
+        var tugStrength = grappleDirection.magnitude / maxGrappleLength * maxRetractionForce;
+        var tugForce = grappleDirection.normalized * tugStrength;
+        return tugForce;
+    }
 
     public bool IsGrappling()
     {
@@ -24,70 +89,6 @@ public class GrappleGunBehavior : MonoBehaviour
 
     public Vector3 GrapplePoint()
     {
-        return _grapplePoint.position;
-    }
-    
-    private void Start()
-    {
-        _player = GameObject.FindGameObjectWithTag("Player");
-        _player_rb = _player.GetComponent<Rigidbody>();
-        _lineRenderer = GetComponent<LineRenderer>();
-        _lineRenderer.positionCount = 0;
-        _camera = Camera.main.transform;
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            StartGrapple();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            StopGrapple();
-        }
-    }
-
-    private void LateUpdate()
-    {
-        DrawGrappleRope();
-    }
-
-    private Vector3 ComputeTugForce()
-    {
-        var towardsGrapplePoint = _grapplePoint.position - _player.transform.position;
-        var tugStrength = (towardsGrapplePoint.magnitude / maxGrappleLength) * maxRetractionForce;
-        var tugForce = towardsGrapplePoint.normalized * tugStrength;
-        return tugForce;
-    }
-    private void FixedUpdate()
-    {
-        if (!grappling) return;
-        var tugForce = ComputeTugForce();
-        _player_rb.AddForce(tugForce, ForceMode.Force);
-    }
-
-    private void DrawGrappleRope()
-    {
-        if (!grappling) return;
-        Vector3[] renderPositions = {_gunTip.position, _grapplePoint.position};
-        _lineRenderer.SetPositions(renderPositions);
-    }
-    
-    private void StartGrapple()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(_camera.position, _camera.forward, out hit, maxGrappleLength, grappleableStuff))
-        {
-            grappling = true;
-            _grapplePoint = hit.transform;
-            _lineRenderer.positionCount = 2;
-        }
-    }
-
-    private void StopGrapple()
-    {
-        _lineRenderer.positionCount = 0;
-        grappling = false;
+        return grapplePoint.position;
     }
 }
