@@ -7,17 +7,18 @@ public class ThrusterManager : MonoBehaviour
     public float power = 1000;
     public float maxCapacity = 30; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
-    public UIManager ui;
     
     private bool engaged;
     private float capacity; // in seconds
     private LevelManager levelManager;
+    private UIManager ui;
 
     private void Start()
     {
         engaged = false;
         capacity = maxCapacity;
         levelManager = FindObjectOfType<LevelManager>();
+        ui = FindObjectOfType<UIManager>();
         ui.SetThrustCapacityBar(capacity, maxCapacity);
     }
 
