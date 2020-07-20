@@ -4,17 +4,18 @@ public class SpaceSuitManager : MonoBehaviour
 {
     public float healthEffectInteractionDelay = 0.5f;
     public float maxHealth = 100f;
-    public UIManager ui;
-
+    
     private float health;
     private float lastHealthEffect;
     private LevelManager levelManager;
+    private UIManager ui;
 
     private void Start()
     {
         health = 0f;
         lastHealthEffect = -healthEffectInteractionDelay;
         levelManager = FindObjectOfType<LevelManager>();
+        ui = FindObjectOfType<UIManager>();
         SetHealth(maxHealth);
     }
 

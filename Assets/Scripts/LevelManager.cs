@@ -5,13 +5,13 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     
-    public UIManager ui;
-    
+    private UIManager ui;
     private bool levelOver;
     private Rigidbody playerBody;
     
     private void Start()
     {
+        ui = FindObjectOfType<UIManager>();
         levelOver = false;
         playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
     }
