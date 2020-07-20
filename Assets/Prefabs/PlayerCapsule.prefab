@@ -49,7 +49,7 @@ MonoBehaviour:
   maxCapacity: 20
   thrusterEngineSfx: {fileID: 382713843}
   thrusterEmptySfx: {fileID: 2590792329407462706}
-  UI: {fileID: 0}
+  ui: {fileID: 0}
 --- !u!82 &382713843
 AudioSource:
   m_ObjectHideFlags: 0
@@ -62,7 +62,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: cc9e12abb5db39645a2201d5cb63b243, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.374
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0

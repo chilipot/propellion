@@ -30,9 +30,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetLevelStatus(string text)
+    public void SetLevelStatus(bool won)
     {
-        levelStatus.text = text;
+        levelStatus.text = won ? "You win!" : "Game over!";
         levelStatus.gameObject.SetActive(true);
     }
 }

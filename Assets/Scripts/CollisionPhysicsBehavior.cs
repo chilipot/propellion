@@ -2,14 +2,14 @@
 
 public class CollisionPhysicsBehavior : MonoBehaviour
 {
-    public float spinDampenDelay = 0.5f;
-    public float spinDampenDuration = 0.5f;
+    public float stabilizationDelay = 0.5f;
+    public float stabilizationDuration = 0.5f;
 
     private Rigidbody rb;
     private LevelManager levelManager;
     private ThrusterManager thruster;
     private float? impactTime;
-    private Vector3? spinDampenStartVelocity;
+    private Vector3? stabilizationStartVelocity;
     private float camDrag;
 
     private void Start()
@@ -18,7 +18,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
         levelManager = FindObjectOfType<LevelManager>();
         thruster = GetComponentInChildren<ThrusterManager>();
         impactTime = null;
-        spinDampenStartVelocity = null;
+        stabilizationStartVelocity = null;
         camDrag = rb.angularDrag;
     }
     
@@ -26,20 +26,24 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     {
         if (!impactTime.HasValue || levelManager.LevelIsOver()) return; // if level is over, continue spinning indefinitely for dramatic effect
         var timeSinceImpact = Time.fixedTime - impactTime.Value;
-        if (timeSinceImpact > spinDampenDelay)
-        {
-            if (!spinDampenStartVelocity.HasValue) spinDampenStartVelocity = rb.angularVelocity;
-            var spinDampenOffset = Mathf.Clamp((timeSinceImpact - spinDampenDelay) / spinDampenDuration, 0f, 1f);
-            rb.angularVelocity = Vector3.Lerp(spinDampenStartVelocity.Value, Vector3.zero, spinDampenOffset);
-        }
-        if (rb.angularVelocity == Vector3.zero)
-        {
-            rb.angularDrag = camDrag;
-            impactTime = null;
-            spinDampenStartVelocity = null;
-            CameraController.FreeCam = true;
-            PhysicsCameraController.FreeCam = true;
-        }
+        if (timeSinceImpact > stabilizationDelay) Stabilize(timeSinceImpact);
+        if (rb.angularVelocity == Vector3.zero) FinishStabilizing();
+    }
+
+    private void Stabilize(float timeSinceImpact)
+    {
+        if (!stabilizationStartVelocity.HasValue) stabilizationStartVelocity = rb.angularVelocity;
+        var spinDampenOffset = Mathf.Clamp((timeSinceImpact - stabilizationDelay) / stabilizationDuration, 0f, 1f);
+        rb.angularVelocity = Vector3.Lerp(stabilizationStartVelocity.Value, Vector3.zero, spinDampenOffset);
+    }
+
+    private void FinishStabilizing()
+    {
+        rb.angularDrag = camDrag;
+        impactTime = null;
+        stabilizationStartVelocity = null;
+        CameraController.FreeCam = true;
+        PhysicsCameraController.FreeCam = true;
     }
 
     private void OnCollisionEnter(Collision other)

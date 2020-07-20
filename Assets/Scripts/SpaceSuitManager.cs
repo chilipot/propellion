@@ -40,6 +40,7 @@ public class SpaceSuitManager : MonoBehaviour
     {
         health = Mathf.Clamp(newHealth, 0, maxHealth);
         ui.SetHealthBar(health, maxHealth);
+        if (health <= 0) levelManager.Lose();
     }
     
     private void Heal(int heal)
@@ -50,10 +51,6 @@ public class SpaceSuitManager : MonoBehaviour
     private void Damage(int dmg)
     {
         SetHealth(health - dmg);
-        if (health <= 0)
-        {
-            levelManager.Lose();
-        }
     }
     
 }

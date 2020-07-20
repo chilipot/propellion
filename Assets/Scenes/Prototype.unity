@@ -203,6 +203,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!1001 &56064047
@@ -286,6 +291,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 7 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -376,6 +386,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -539,6 +554,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 4 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &310588033 stripped
@@ -635,6 +655,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &412004107 stripped
@@ -725,6 +750,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 12 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &424135029 stripped
@@ -743,17 +773,17 @@ PrefabInstance:
     - target: {fileID: 2060055504992266403, guid: 01662818540e9e34f81f5ebdd14cab1d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.875082
+      value: -17.2
       objectReference: {fileID: 0}
     - target: {fileID: 2060055504992266403, guid: 01662818540e9e34f81f5ebdd14cab1d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.405221
+      value: -9.8
       objectReference: {fileID: 0}
     - target: {fileID: 2060055504992266403, guid: 01662818540e9e34f81f5ebdd14cab1d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -21.633192
+      value: -0.9
       objectReference: {fileID: 0}
     - target: {fileID: 2060055504992266403, guid: 01662818540e9e34f81f5ebdd14cab1d,
         type: 3}
@@ -814,6 +844,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -898,6 +933,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -1001,6 +1041,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 4 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &695850885 stripped
@@ -1090,6 +1135,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -1181,6 +1231,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &876303894 stripped
@@ -1270,6 +1325,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 13 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -1361,6 +1421,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 11
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1020739023 stripped
@@ -1450,6 +1515,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 9 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -1546,6 +1616,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 5 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1034747230 stripped
@@ -1635,6 +1710,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 3 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -1726,6 +1806,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 8 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1092569499 stripped
@@ -1816,6 +1901,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!1001 &1123103908
@@ -1900,6 +1990,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!1001 &1363387517
@@ -1983,6 +2078,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 11 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -2074,6 +2174,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 5 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1415644119 stripped
@@ -2097,17 +2202,17 @@ PrefabInstance:
     - target: {fileID: 6428652879073948623, guid: b16ded1d402f76643a528009b7f468ac,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.39999962
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6428652879073948623, guid: b16ded1d402f76643a528009b7f468ac,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.6100006
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6428652879073948623, guid: b16ded1d402f76643a528009b7f468ac,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11.413227
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6428652879073948623, guid: b16ded1d402f76643a528009b7f468ac,
         type: 3}
@@ -2224,6 +2329,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1468213921 stripped
@@ -2313,6 +2423,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 12 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -2404,6 +2519,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 11 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1533452183 stripped
@@ -2493,6 +2613,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -2584,6 +2709,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 3 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1699122587 stripped
@@ -2673,6 +2803,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 6 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -2769,6 +2904,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 5 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!1001 &1769959739
@@ -2852,6 +2992,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 10 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -2943,6 +3088,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1900899997 stripped
@@ -3032,6 +3182,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 13 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -3127,6 +3282,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 5 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -3224,6 +3384,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 12 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &1977404077 stripped
@@ -3298,6 +3463,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -3457,6 +3627,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 12
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &2060231900 stripped
@@ -3546,6 +3721,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 10 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
@@ -3637,6 +3817,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid 2 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}
 --- !u!4 &2142987992 stripped
@@ -3711,6 +3896,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Asteroid 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01662818540e9e34f81f5ebdd14cab1d, type: 3}

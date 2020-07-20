@@ -27,7 +27,7 @@ public class LevelManager : MonoBehaviour
     public void Win()
     {
         if (levelOver) return;
-        ui.SetLevelStatus("You win!");
+        ui.SetLevelStatus(true);
         levelOver = true;
         playerBody.constraints = RigidbodyConstraints.FreezeAll;
     }
@@ -35,7 +35,7 @@ public class LevelManager : MonoBehaviour
     public void Lose()
     {
         if (levelOver) return;
-        ui.SetLevelStatus("Game over!");
+        ui.SetLevelStatus(false);
         levelOver = true;
         
         // TODO: here and everywhere else both FreeCams are changed, use a more general method instead

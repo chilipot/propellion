@@ -9339,7 +9339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f62f00dfd133d640b6c9bc5436b4ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravitationalForce: 10
+  gravitationalForce: 1000
 --- !u!114 &4341819933204537809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9352,7 +9352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef6010dda018d8418882b9ee08e09d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expansionRate: 0.5
+  expansionRate: 10
 --- !u!1 &8172737614635059501
 GameObject:
   m_ObjectHideFlags: 0

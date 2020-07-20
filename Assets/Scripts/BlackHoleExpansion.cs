@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class BlackHoleExpansion : MonoBehaviour
 {
-    
-    public float expansionRate = 0.5f; // the fraction of current size to increase by per second
+
+    public float expansionRate = 10f;
 
     private void Update()
     {
-        transform.localScale *= expansionRate * Time.deltaTime + 1;
+        transform.localScale += Time.deltaTime * expansionRate * Vector3.one;
     }
 }

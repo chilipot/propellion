@@ -4,7 +4,7 @@ using UnityEngine;
 public class BlackHolePull : MonoBehaviour
 {
     
-    public float gravitationalForce = 10;
+    public float gravitationalForce = 1000f;
     
     private List<Rigidbody> pulledBodies;
     private SphereCollider pullCollider;
@@ -18,10 +18,7 @@ public class BlackHolePull : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var pulledBody = other.gameObject.GetComponent<Rigidbody>();
-        if (pulledBody != null)
-        {
-            pulledBodies.Add(pulledBody);
-        }
+        if (pulledBody) pulledBodies.Add(pulledBody);
     }
 
     private void OnTriggerExit(Collider other)
@@ -36,20 +33,15 @@ public class BlackHolePull : MonoBehaviour
         {
             var singularityPosition = transform.position;
             var pulledBodyPosition = pulledBody.transform.position;
-            var direction = (singularityPosition - pulledBodyPosition).normalized;
-            
-            // TODO: fix this gravity force equation to make it more realistic to a black hole, and a greater force the closer to the singularity the object is
-            // var proximityMultiplier = pullCollider.radius - Vector3.Distance(singularityPosition, pulledBodyPosition);
-            pulledBody.AddForce(Time.fixedDeltaTime * gravitationalForce /* * proximityMultiplier */ * direction);
+            var pullDirection = (singularityPosition - pulledBodyPosition).normalized;
+            // TODO: optimize the pull force equation
+            pulledBody.AddForce(Time.fixedDeltaTime * gravitationalForce * pullDirection, ForceMode.Acceleration);
         }
     }
 
     public void RemovePulledBody(Rigidbody pulledBody)
     {
-        if (pulledBody != null && pulledBodies.Contains(pulledBody))
-        {
-            pulledBodies.Remove(pulledBody);
-        } 
+        if (pulledBody && pulledBodies.Contains(pulledBody)) pulledBodies.Remove(pulledBody);
     }
     
 }
