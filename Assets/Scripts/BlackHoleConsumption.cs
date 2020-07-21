@@ -3,13 +3,13 @@
 public class BlackHoleConsumption : MonoBehaviour
 {
 
+    public BlackHolePull blackHolePull;
+    
     private LevelManager levelManager;
-    private BlackHolePull blackHolePull;
 
     private void Start()
     {
         levelManager = FindObjectOfType<LevelManager>();
-        blackHolePull = GetComponentInParent<BlackHolePull>();
     }
 
     private void OnTriggerEnter(Collider other)
