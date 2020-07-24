@@ -53,6 +53,7 @@ public class ProceduralGeneration : MonoBehaviour
     private GameObject GenerateChunk(GameObject asteroidField, Vector3 indexInAsteroidField)
     {
         var chunk = Instantiate(chunkPrefab, indexInAsteroidField * chunkSize, Quaternion.identity, asteroidField.transform);
+        chunk.transform.localScale *= chunkSize;
         for (var x = 0; x < numUnitCubesInChunk; x++)
         {
             for (var y = 0; y < numUnitCubesInChunk; y++)
@@ -118,7 +119,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     private bool PointLiesInRegion(Vector3Int point, Vector3Int region)
     {
-        return point.x >= 0f && point.y >= 0f && point.z >= 0f &&
+        return point.x >= 0 && point.y >= 0 && point.z >= 0 &&
                point.x < region.x && point.y < region.y && point.z < region.z;
     }
 }
