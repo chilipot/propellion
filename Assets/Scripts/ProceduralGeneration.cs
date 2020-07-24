@@ -20,8 +20,8 @@ public class ProceduralGeneration : MonoBehaviour
     private GameObject[,,] levelChunks;
     private int numChunksInLevel;
     private int numUnitCubesInChunk;
-    
-    private int occupiedChunkId;
+
+    private int? occupiedChunkId = null;
     
     private void Start()
     {
@@ -78,7 +78,8 @@ public class ProceduralGeneration : MonoBehaviour
     {
         var newOccupiedChunkId = occupiedChunk.GetInstanceID();
 
-        var oldActiveChunkIndices = AdjacentChunkIndices(chunkLookup[occupiedChunkId]);
+        var oldActiveChunkIndices = occupiedChunkId.HasValue ? AdjacentChunkIndices(chunkLookup[occupiedChunkId.Value]) : new List<Vector3Int>();
+        
         var newActiveChunkIndices = AdjacentChunkIndices(chunkLookup[newOccupiedChunkId]);
 
         var chunkIndicesToDisable = oldActiveChunkIndices.FindAll(v => !newActiveChunkIndices.Contains(v));
