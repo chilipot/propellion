@@ -14,7 +14,6 @@ public class BlackHoleConsumption : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // TODO: only consume when the colliding object is FULLY within the collider
         var consumedBody = other.gameObject.GetComponent<Rigidbody>();
         if (!consumedBody) return;
         blackHolePull.RemovePulledBody(consumedBody);
@@ -26,7 +25,7 @@ public class BlackHoleConsumption : MonoBehaviour
         }
         else
         {
-            Destroy(other.gameObject);
+            Destroy(other.gameObject, 1);
         }
     }
 }
