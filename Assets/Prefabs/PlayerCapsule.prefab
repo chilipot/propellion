@@ -436,7 +436,7 @@ MonoBehaviour:
   maxGrappleLength: 100
   grappleableStuff:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   gunTip: {fileID: 902185155239834749}
 --- !u!1 &4443904973018483981
 GameObject:

@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef6010dda018d8418882b9ee08e09d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expansionRate: 20
-  pullDistance: 200
+  expansionRate: 50
+  pullDistance: 650
   pullField: {fileID: 2461788212963136104}
   consumptionField: {fileID: 2462236740820826226}
 --- !u!1 &2459110064351190028
@@ -9453,7 +9453,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f62f00dfd133d640b6c9bc5436b4ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravitationalForce: 500
+  gravitationalForce: 30
+  blackHoleCenter: {fileID: 5908779547830739832}
 --- !u!1 &2459492898654893876
 GameObject:
   m_ObjectHideFlags: 0
