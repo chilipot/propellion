@@ -16,14 +16,8 @@ public class AsteroidMovement : MonoBehaviour
         speed = Random.Range(minSpeed, maxSpeed);
         appliedInitialForce = false;
         rb = GetComponent<Rigidbody>();
-        transform.Rotate(RandomAngle(), RandomAngle(), RandomAngle());
     }
-    
-    private static float RandomAngle()
-    {
-        return Random.Range(0f, 360f);
-    }
-    
+
     private void FixedUpdate()
     {
         if (appliedInitialForce) return;
