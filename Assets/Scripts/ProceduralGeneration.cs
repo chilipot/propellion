@@ -1,126 +1,192 @@
-﻿using UnityEngine;
-
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 using Quaternion = UnityEngine.Quaternion;
+using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
+
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    public int levelSize = 1024;
-    public int chunkSize = 256;
-    public int unitCubeSize = 64;
-
-    public GameObject chunkPrefab;
-    public GameObject blackHolePrefab;
-    public GameObject exitPortalPrefab;
+    // Unit cubes should evenly subdivide chunk, and chunks should evenly subdivide level.
+    public Vector3Int levelDimensions;
+    public int chunkSize;
+    public int unitCubeSize;
+    public float asteroidDensity = 0.5f;
+    public Vector2 asteroidSizeRange;
+    public float viewDistance = 500f;
+    
+    // public GameObject blackHolePrefab;
+    // public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
 
-    private Dictionary<int, Vector3Int> chunkLookup;
-    private GameObject[,,] levelChunks;
-    private int numChunksInLevel;
-    private int numUnitCubesInChunk;
-
-    private int? occupiedChunkId = null;
+    private GameObject asteroidsCollection;
     
-    private void Start()
+    private Vector3Int numChunksInLevel;
+    private Vector3Int numUnitCubesInChunk;
+
+    private CullingGroup cullGroup;
+    private BoundingSphere[] bounds;
+    private Dictionary<int, GameObject> entityLookup;
+    private int EntityCount => entityLookup.Count;
+
+    private Dictionary<int, Transform> entityTransforms;
+    
+    private Dictionary<int, int> entityIdToIndex;
+    private Dictionary<int, int> entityIndexToId;
+    
+    public static bool FinishedGenerating = false;
+    private int maxEntities;
+
+    private void Awake()
     {
-        var asteroidField = GameObject.FindGameObjectWithTag("AsteroidField");
-        numChunksInLevel = levelSize / chunkSize;
-        numUnitCubesInChunk = unitCubeSize / chunkSize;
-        chunkLookup = new Dictionary<int, Vector3Int>();
-        levelChunks = new GameObject[numChunksInLevel, numChunksInLevel, numChunksInLevel];
-        GenerateAsteroidField(asteroidField);
+        asteroidsCollection = GameObject.FindGameObjectWithTag("Asteroids");
+
+        numChunksInLevel = levelDimensions / chunkSize;
+        numUnitCubesInChunk = Vector3Int.one * (chunkSize / unitCubeSize);
+
+        // var asteroidsPerChunk = 1; TODO: Make this more extendable
+        maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 asteroid per unit cube right now
+        Debug.Log($"Max Entities: {maxEntities}");
+        // Culling Setup
+        var mainCam = Camera.main;
+        cullGroup = new CullingGroup {targetCamera = mainCam};
+        cullGroup.SetDistanceReferencePoint(mainCam.transform);
+        cullGroup.SetBoundingDistances(new[] {viewDistance, float.PositiveInfinity});
+        bounds = new BoundingSphere[maxEntities];
+        cullGroup.SetBoundingSpheres(bounds);
+        cullGroup.SetBoundingSphereCount(0);
+        cullGroup.onStateChanged += CullingStateChanged;
+        entityLookup = new Dictionary<int, GameObject>();
+        entityTransforms = new Dictionary<int, Transform>();
+        entityIdToIndex = new Dictionary<int, int>();
+        entityIndexToId = new Dictionary<int, int>();
+
+        StartCoroutine(nameof(GenerateAsteroidField));
+        StartCoroutine(nameof(UpdateCulledObjectBounds));
     }
 
-    private void GenerateAsteroidField(GameObject asteroidField)
+    public void AddEntity(GameObject obj)
     {
-        for (var x = 0; x < numChunksInLevel; x++)
-        {
-            for (var y = 0; y < numChunksInLevel; y++)
-            {
-                for (var z = 0; z < numChunksInLevel; z++)
-                {
-                    var chunkIndex = new Vector3Int(x, y, z);
-                    var chunk = GenerateChunk(asteroidField, chunkIndex);
-                    levelChunks[x, y, z] = chunk;
-                    chunkLookup[chunk.GetInstanceID()] = chunkIndex;
-                }
-            }
-        }
+        var id = obj.GetInstanceID();
+        var tf = obj.transform;
+        var radius = obj.GetComponent<Renderer>().bounds.size.x;
+        entityLookup.Add(id, obj);
+        var index = EntityCount - 1;
+        bounds[index] = new BoundingSphere {position = tf.position, radius = radius};
+        entityTransforms.Add(id, tf);
+        entityIndexToId.Add(index, id);
+        entityIdToIndex.Add(id, index);
+        cullGroup.SetBoundingSphereCount(EntityCount);
     }
 
-    private GameObject GenerateChunk(GameObject asteroidField, Vector3 indexInAsteroidField)
+    public void RemoveEntity(GameObject obj)
     {
-        var chunk = Instantiate(chunkPrefab, indexInAsteroidField * chunkSize, Quaternion.identity, asteroidField.transform);
-        chunk.transform.localScale *= chunkSize;
-        for (var x = 0; x < numUnitCubesInChunk; x++)
-        {
-            for (var y = 0; y < numUnitCubesInChunk; y++)
-            {
-                for (var z = 0; z < numUnitCubesInChunk; z++)
-                {
-                    GenerateUnitCube(chunk, new Vector3(x, y, z));
-                }
-            }
-        }
-
-        return chunk;
-    }
-
-    private void GenerateUnitCube(GameObject chunk, Vector3 indexInChunk)
-    {
-        var unitCube = Instantiate(new GameObject(), indexInChunk * unitCubeSize, Quaternion.identity, chunk.transform);
-        Instantiate(asteroidPrefab, unitCube.transform);
-    }
-
-    public void SetOccupiedChunk(GameObject occupiedChunk)
-    {
-        var newOccupiedChunkId = occupiedChunk.GetInstanceID();
-
-        var oldActiveChunkIndices = occupiedChunkId.HasValue ? AdjacentChunkIndices(chunkLookup[occupiedChunkId.Value]) : new List<Vector3Int>();
+        var id = obj.GetInstanceID();
+        var index = entityIdToIndex[id];
+        entityIdToIndex.Remove(id);
+        entityIndexToId.Remove(index);
+        entityTransforms.Remove(id);
         
-        var newActiveChunkIndices = AdjacentChunkIndices(chunkLookup[newOccupiedChunkId]);
-
-        var chunkIndicesToDisable = oldActiveChunkIndices.FindAll(v => !newActiveChunkIndices.Contains(v));
-        foreach (var chunkIndex in chunkIndicesToDisable)
+        var moveIndex = EntityCount - 1;
+        if (index != moveIndex)
         {
-            levelChunks[chunkIndex.x, chunkIndex.y, chunkIndex.z].SetActive(false);
+            bounds[index] = bounds[moveIndex];
+            var moveId = entityIndexToId[moveIndex];
+            entityIdToIndex[moveId] = index;
+            entityIndexToId.Remove(moveIndex);
+            entityIndexToId.Add(index, moveId);
         }
-        
-        var chunkIndicesToEnable = newActiveChunkIndices.FindAll(v => !oldActiveChunkIndices.Contains(v));
-        foreach (var chunkIndex in chunkIndicesToEnable)
-        {
-            levelChunks[chunkIndex.x, chunkIndex.y, chunkIndex.z].SetActive(true);
-        }
-
-        occupiedChunkId = newOccupiedChunkId;
+        entityLookup.Remove(id);
+        cullGroup.SetBoundingSphereCount(EntityCount);
     }
 
-    private List<Vector3Int> AdjacentChunkIndices(Vector3Int startIndex)
+    private IEnumerator GenerateAsteroidField()
     {
-        var adjacentChunkIndices = new List<Vector3Int>();
-        for (var xDelta = -1; xDelta < 2; xDelta++)
+        for (var x = 0; x < numChunksInLevel.x; x++)
         {
-            for (var yDelta = -1; yDelta < 2; yDelta++)
+            for (var y = 0; y < numChunksInLevel.y; y++)
             {
-                for (var zDelta = -1; zDelta < 2; zDelta++)
+                for (var z = 0; z < numChunksInLevel.z; z++)
                 {
-                    var index = startIndex + new Vector3Int(xDelta, yDelta, zDelta);
-                    if (!adjacentChunkIndices.Contains(index) && PointLiesInRegion(index, Vector3Int.one * numChunksInLevel))
-                    {
-                        adjacentChunkIndices.Add(index);
-                    }
+                    var chunkStart = new Vector3Int(x, y, z) * chunkSize;
+                    GenerateChunk(chunkStart);
+                    yield return null;
                 }
             }
         }
-
-        return adjacentChunkIndices;
+        FinishedGenerating = true;
+        Debug.Log("Finished Generating!!!");
     }
 
-    private bool PointLiesInRegion(Vector3Int point, Vector3Int region)
+    private void GenerateChunk(Vector3Int chunkStart)
     {
-        return point.x >= 0 && point.y >= 0 && point.z >= 0 &&
-               point.x < region.x && point.y < region.y && point.z < region.z;
+        for (var x = 0; x < numUnitCubesInChunk.x; x++)
+        {
+            for (var y = 0; y < numUnitCubesInChunk.y; y++)
+            {
+                for (var z = 0; z < numUnitCubesInChunk.z; z++)
+                {
+                    var unitCubeOffset = chunkStart - Vector3.one * (chunkSize / 2 - unitCubeSize / 2);
+                    var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
+                    GenerateChunkAsteroids(unitCubeCenter);
+                }
+            }
+        }
+    }
+    
+    private void GenerateChunkAsteroids(Vector3 unitCubeCenter)
+    {
+        if (!(Random.value < asteroidDensity)) return;
+        
+        var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
+        var placementVariationRange = (unitCubeSize - asteroidSize) / 2f;
+        var placementVariation = new Vector3(
+            Random.Range(-placementVariationRange, placementVariationRange),
+            Random.Range(-placementVariationRange, placementVariationRange),
+            Random.Range(-placementVariationRange, placementVariationRange)
+        );
+
+        var asteroidPosition = unitCubeCenter + placementVariation;
+        var asteroid = Instantiate(asteroidPrefab, asteroidPosition, Quaternion.identity, asteroidsCollection.transform);
+        asteroid.transform.localScale *= asteroidSize;
+        asteroid.SetActive(false);
+        AddEntity(asteroid);
+    }
+
+    private void CullingStateChanged(CullingGroupEvent evt)
+    {
+        var entity = entityLookup[entityIndexToId[evt.index]];
+        if (evt.currentDistance <= 0 && !entity.activeInHierarchy)
+        {
+            entity.SetActive(true);
+        }
+        else if (evt.currentDistance > 0 && entity.activeInHierarchy)
+        {
+            entity.SetActive(false);
+        }
+    }
+
+    private IEnumerator UpdateCulledObjectBounds()
+    {
+        while (true)
+        {
+            for (var i = 0; i < EntityCount; i++)
+            {
+                bounds[i].position = entityTransforms[entityIndexToId[i]].position;
+                if (i % 25 == 0)
+                {
+                    yield return null;
+                }
+            }
+            yield return new WaitForSecondsRealtime(2);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (cullGroup == null) return;
+        cullGroup.Dispose();
+        cullGroup = null;
     }
 }

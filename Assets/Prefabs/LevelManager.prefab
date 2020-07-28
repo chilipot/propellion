@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2864992902463327194}
   - component: {fileID: 2864992902463327189}
+  - component: {fileID: 1975723795}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -43,14 +44,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd412330bd6c4dcdb6843c7637c65c2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelSize: 1024
+  levelSize: 2048
   chunkSize: 256
   unitCubeSize: 64
   chunkPrefab: {fileID: 102213441465642106, guid: 9c60b28a3e3f9e04fb4d061f567bdc3c,
     type: 3}
+  unitCubePrefab: {fileID: 0}
   blackHolePrefab: {fileID: 8172636153620419013, guid: 87b2e49bba821764dbe28e3bbf77c9ee,
     type: 3}
   exitPortalPrefab: {fileID: 16365317901134949, guid: 90271e3b5e9a1b1438ff8bdce61062c3,
     type: 3}
   asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
     type: 3}
+--- !u!114 &1975723795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2864992902463327188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3f3df91c7d49a682e488848d6b3b50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelSize: 4096
+  chunkSize: 256
+  unitCubeSize: 64
+  chunkPrefab: {fileID: 102213441465642106, guid: 9c60b28a3e3f9e04fb4d061f567bdc3c,
+    type: 3}
+  unitCubePrefab: {fileID: 0}
+  blackHolePrefab: {fileID: 8172636153620419013, guid: 87b2e49bba821764dbe28e3bbf77c9ee,
+    type: 3}
+  exitPortalPrefab: {fileID: 16365317901134949, guid: 90271e3b5e9a1b1438ff8bdce61062c3,
+    type: 3}
+  asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+    type: 3}
+  FinishedGenerating: 0
+  viewDistance: 500

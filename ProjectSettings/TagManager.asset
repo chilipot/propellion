@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - AsteroidField
+  - Chunks
+  - Asteroids
   layers:
   - Default
   - TransparentFX
