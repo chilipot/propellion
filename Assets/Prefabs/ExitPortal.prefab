@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4110438012224546}
   - component: {fileID: 198445596079103024}
   - component: {fileID: 199885305273811226}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Center glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4826,7 +4826,7 @@ GameObject:
   - component: {fileID: 108504411327657124}
   - component: {fileID: 834488345}
   - component: {fileID: 834488344}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ExitPortal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9726,7 +9726,7 @@ GameObject:
   - component: {fileID: 4689215574672892}
   - component: {fileID: 198852287614980362}
   - component: {fileID: 199896987923778344}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -2111090493773922744}
   - component: {fileID: 1100560678485804663}
   - component: {fileID: -8796682528967601615}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MedicalCanister
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,6 +196,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthIcon6
       objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.002
@@ -263,6 +267,10 @@ PrefabInstance:
     - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_Name
       value: HealthIcon1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -332,6 +340,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthIcon2
       objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.657
@@ -399,6 +411,10 @@ PrefabInstance:
     - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_Name
       value: HealthIcon5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -468,6 +484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthIcon3
       objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.001
@@ -535,6 +555,10 @@ PrefabInstance:
     - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_Name
       value: HealthIcon4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582282660195126, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4266015208867638, guid: 6924b6055d3b89c49be5c9d309e8e14c, type: 3}
       propertyPath: m_LocalPosition.x

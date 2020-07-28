@@ -98,7 +98,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         var grappleStart = lineRenderer.GetPosition(0);
         var grappleEnd = lineRenderer.GetPosition(1);
-        if (Physics.Raycast(grappleStart, grappleEnd - grappleStart, out var hit, Mathf.Infinity))
+        if (Physics.Raycast(grappleStart, grappleEnd - grappleStart, out var hit, Mathf.Infinity, grappleableStuff))
         {
             return Vector3.Distance(hit.point, GrapplePoint()) > 0.1f;
         }

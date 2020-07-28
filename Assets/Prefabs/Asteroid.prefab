@@ -12,13 +12,13 @@ GameObject:
   - component: {fileID: 2060055504992266400}
   - component: {fileID: 2060055504992266401}
   - component: {fileID: 2060055504992266406}
-  - component: {fileID: -1472820929387030565}
   - component: {fileID: 1901655175339444458}
   - component: {fileID: 4132757302760041752}
+  - component: {fileID: -1472820929387030565}
   - component: {fileID: -7601398947705805428}
   - component: {fileID: -3175038907984685755}
   - component: {fileID: 5520854538315218863}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,20 +99,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-1472820929387030565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2060055504992266407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bd31fda8f690cf4799dd5cfe69ee00b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minSpeed: 200
-  maxSpeed: 800
 --- !u!54 &1901655175339444458
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -225,6 +211,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-1472820929387030565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060055504992266407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd31fda8f690cf4799dd5cfe69ee00b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minSpeed: 200
+  maxSpeed: 800
 --- !u!114 &-7601398947705805428
 MonoBehaviour:
   m_ObjectHideFlags: 0
