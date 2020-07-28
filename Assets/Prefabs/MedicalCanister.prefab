@@ -13,11 +13,10 @@ GameObject:
   - component: {fileID: 23830825126593548}
   - component: {fileID: 7200437452387467931}
   - component: {fileID: 7746130913465955573}
-  - component: {fileID: 284972706980542286}
   - component: {fileID: -152249421002954195}
   - component: {fileID: -2111090493773922744}
   - component: {fileID: 1100560678485804663}
-  - component: {fileID: -8796682528967601615}
+  - component: {fileID: -2544294533107186543}
   m_Layer: 8
   m_Name: MedicalCanister
   m_TagString: Untagged
@@ -121,19 +120,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &284972706980542286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475980397980410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69f92a3964e777e4bb6ba0d7822ff46f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  degreesPerSecond: 90
 --- !u!114 &-152249421002954195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,18 +159,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAura: {fileID: 1284778659018410, guid: a42e6bc3c18e15f459169f682145e910, type: 3}
---- !u!114 &-8796682528967601615
-MonoBehaviour:
+--- !u!95 &-2544294533107186543
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475980397980410}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1080a72352b7949b65b2ace316e163, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 023ad651e07fca241a6c37c3e00f2e65, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &198068070021190333
 PrefabInstance:
   m_ObjectHideFlags: 0

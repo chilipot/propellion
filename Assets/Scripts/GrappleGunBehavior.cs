@@ -86,7 +86,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private void FixedUpdate()
     {
         if (!grappling) return;
-        if (!grappledRetractable && GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
+        if (GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
         {
             var tugForce = ComputeTugForce();
@@ -98,11 +98,13 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         var grappleStart = lineRenderer.GetPosition(0);
         var grappleEnd = lineRenderer.GetPosition(1);
-        if (Physics.Raycast(grappleStart, grappleEnd - grappleStart, out var hit, Mathf.Infinity, grappleableStuff))
+        var grappleDirection = grappleEnd - grappleStart;
+        if (Physics.Raycast(grappleStart, grappleDirection, out var hit, grappleDirection.magnitude, grappleableStuff))
         {
+            if (grappledRetractable && hit.collider.transform == grappledObj) return false;
             return Vector3.Distance(hit.point, GrapplePoint()) > 0.1f;
         }
-        return true;
+        return false;
     }
 
     private Vector3 ComputeTugForce()

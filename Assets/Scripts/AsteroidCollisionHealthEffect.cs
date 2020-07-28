@@ -8,6 +8,6 @@ public class AsteroidCollisionHealthEffect : HealthEffectBehavior
     private float size = 0f;
     private void Start()
     {
-        size = GetComponent<Renderer>().bounds.size.magnitude / 2;
+        size = GetComponent<Renderer>().bounds.size.x / 2;
     }
 }
