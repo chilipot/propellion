@@ -109,7 +109,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 1664060977256445550}
-  - {fileID: 2519978535254689732}
+  - {fileID: 6334691347288404868}
   m_Father: {fileID: 4167225888614382656}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -175.82901, z: 0}
@@ -427,7 +427,7 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2474695778044249723}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &5728207448159808922
+--- !u!1001 &4210642746092116442
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -494,21 +494,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExhaustTrail
       objectReference: {fileID: 0}
-    - target: {fileID: 8022091396975555510, guid: 1fcaa161d74bfe444bae330acde9aee3,
-        type: 3}
-      propertyPath: InitialModule.startSize.minScalar
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8022091396975555510, guid: 1fcaa161d74bfe444bae330acde9aee3,
-        type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1fcaa161d74bfe444bae330acde9aee3, type: 3}
---- !u!4 &2519978535254689732 stripped
+--- !u!4 &6334691347288404868 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7892115739719035486, guid: 1fcaa161d74bfe444bae330acde9aee3,
     type: 3}
-  m_PrefabInstance: {fileID: 5728207448159808922}
+  m_PrefabInstance: {fileID: 4210642746092116442}
   m_PrefabAsset: {fileID: 0}
