@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 214624313596597935}
   - component: {fileID: 1558404704188536174}
   - component: {fileID: 6236426265256162093}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ExitPortal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -8,6 +8,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     private Rigidbody rb;
     private LevelManager levelManager;
     private ThrusterManager thruster;
+    private GrappleGunBehavior grapple;
     private float? impactTime;
     private Vector3? stabilizationStartVelocity;
     private float camDrag;
@@ -17,6 +18,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         levelManager = FindObjectOfType<LevelManager>();
         thruster = GetComponentInChildren<ThrusterManager>();
+        grapple = FindObjectOfType<GrappleGunBehavior>();
         impactTime = null;
         stabilizationStartVelocity = null;
         camDrag = rb.angularDrag;
@@ -52,6 +54,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
         PhysicsCameraController.FreeCam = false;
         rb.angularDrag = 0;
         thruster.Disengage();
+        grapple.StopGrapple();
     }
 
     private void OnCollisionExit(Collision other)

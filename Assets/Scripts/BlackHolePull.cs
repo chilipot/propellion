@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BlackHolePull : MonoBehaviour
 {
     
-    public float gravitationalForce = 1000f;
-    
+    public float gravitationalForce = 20f;
+    public Collider blackHoleCenter;
+
+    private const float GravForceMultiplier = 100_000f;
     private Dictionary<int, Rigidbody> pulledBodies; // key is the ID of rigidbody's gameobject
-    
+
     private void Start()
     {
         pulledBodies = new Dictionary<int, Rigidbody>();
@@ -32,8 +35,9 @@ public class BlackHolePull : MonoBehaviour
             var singularityPosition = transform.position;
             var pulledBodyPosition = pulledBody.transform.position;
             var pullDirection = (singularityPosition - pulledBodyPosition).normalized;
-            // TODO: optimize the pull force equation
-            pulledBody.AddForce(Time.fixedDeltaTime * gravitationalForce * pullDirection, ForceMode.Acceleration);
+            var pullDistance = Vector3.Distance(pulledBodyPosition, blackHoleCenter.ClosestPoint(pulledBodyPosition));
+            var pullForce = Time.fixedDeltaTime * gravitationalForce * GravForceMultiplier / Mathf.Pow(pullDistance, 2);
+            if (!float.IsNaN(pullForce) && !float.IsInfinity(pullForce)) pulledBody.AddForce(pullForce * pullDirection, ForceMode.Acceleration);
         }
     }
 
