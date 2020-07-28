@@ -124,7 +124,7 @@ public class GrappleGunBehavior : MonoBehaviour
     // TODO: make this private if nothing outside the class uses it
     public Vector3 GrapplePoint()
     {
-        if (grappledObjOffset == null) throw new InvalidOperationException("There is no active grapple point.");
+        if (!grappledObjOffset.HasValue) throw new InvalidOperationException("There is no active grapple point.");
         return grappledObj.position + grappledObjOffset.Value;
     }
 }
