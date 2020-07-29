@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IGrappleResponder
 {
     private enum State
     {
@@ -18,6 +18,7 @@ public class EnemyAI : MonoBehaviour
     private Vector3 currentDestination;
     private Transform player;
     private float distanceToPlayer;
+    private bool isGrappled;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class EnemyAI : MonoBehaviour
         currentDestination = transform.position;
         player = GameObject.FindWithTag("Player").transform;
         distanceToPlayer = Mathf.Infinity;
+        isGrappled = false;
     }
 
     private void Update()
@@ -76,6 +78,7 @@ public class EnemyAI : MonoBehaviour
     
     private void FireWeapon()
     {
+        if (isGrappled) return;
         // TODO: play animation
     }
     
@@ -93,7 +96,10 @@ public class EnemyAI : MonoBehaviour
     private void ApproachDestination()
     {
         LookTowardsDestination();
-        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * Time.deltaTime); // TODO: use navmesh instead
+        if (!isGrappled)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * Time.deltaTime); // TODO: use navmesh instead
+        }
     }
 
     private void LookTowardsDestination()
@@ -112,4 +118,13 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(position, attackDistance);
     }
     
+    public void OnGrappleStart()
+    {
+        isGrappled = true;
+    }
+
+    public void OnGrappleStop()
+    {
+        isGrappled = false;
+    }
 }

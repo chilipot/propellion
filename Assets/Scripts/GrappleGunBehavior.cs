@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class GrappleGunBehavior : MonoBehaviour
@@ -9,25 +10,19 @@ public class GrappleGunBehavior : MonoBehaviour
     public Transform gunTip;
 
     private LineRenderer lineRenderer;
-    private Transform grappledObj; // TODO: make this explicitly nullable (maybe by abstracting grappledObj, grappledObjOffset, grappledRetractable, and grappling out into an optional struct)
-    private Vector3? grappledObjOffset;
-    private Retractable grappledRetractable; // TODO: make this explicitly nullable (maybe by abstracting grappledObj, grappledObjOffset, grappledRetractable, and grappling out into an optional struct)
+    [CanBeNull] private GrappleTarget currentTarget;
     private Transform mainCamera;
-    private GameObject player;
+    private Transform player;
     private Rigidbody playerRb;
-    private bool grappling;
 
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
-        grappledObj = null;
-        grappledObjOffset = null;
-        grappledRetractable = null;
+        currentTarget = null;
         mainCamera = Camera.main.transform;
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         playerRb = player.GetComponent<Rigidbody>();
-        grappling = false;
     }
 
     private void Update()
@@ -36,39 +31,26 @@ public class GrappleGunBehavior : MonoBehaviour
         else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
     }
 
-    private bool GrappleTargetDestroyed()
-    {
-        return grappling && !grappledObj;
-    }
-
     private void StartGrapple()
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
-            grappledObj = hit.transform;
-            grappledObjOffset = hit.point - grappledObj.position;
-            grappling = true;
+            currentTarget = new GrappleTarget(hit.transform, hit.point, player);
             lineRenderer.positionCount = 2;
-            var retractable = hit.collider.GetComponent<Retractable>();
-            if (retractable)
-            {
-                grappledRetractable = retractable; 
-                grappledRetractable.Retract(player.transform);
-            }
         }
     }
 
     public void StopGrapple()
     {
-        grappledObj = null;
-        grappledObjOffset = null;
-        if (grappledRetractable)
-        {
-            grappledRetractable.CancelRetraction();
-            grappledRetractable = null;
-        }
-        grappling = false;
+        if (currentTarget == null) return;
+        currentTarget.Release();
+        currentTarget = null;
         lineRenderer.positionCount = 0;
+    }
+    
+    private bool GrappleTargetDestroyed()
+    {
+        return currentTarget != null && !currentTarget.Transform;
     }
 
     private void LateUpdate()
@@ -78,14 +60,14 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void DrawGrappleRope()
     {
-        if (!grappling) return;
-        Vector3[] renderPositions = {gunTip.position, GrapplePoint()};
+        if (currentTarget == null) return;
+        Vector3[] renderPositions = {gunTip.position, currentTarget.GetGrapplePoint()};
         lineRenderer.SetPositions(renderPositions);
     }
 
     private void FixedUpdate()
     {
-        if (!grappling) return;
+        if (currentTarget == null) return;
         if (GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
         {
@@ -96,35 +78,62 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private bool GrappleBroken()
     {
+        if (currentTarget == null) throw new InvalidOperationException("Not currently grappling.");
         var grappleStart = lineRenderer.GetPosition(0);
         var grappleEnd = lineRenderer.GetPosition(1);
         var grappleDirection = grappleEnd - grappleStart;
         if (Physics.Raycast(grappleStart, grappleDirection, out var hit, grappleDirection.magnitude, grappleableStuff))
         {
-            if (grappledRetractable && hit.collider.transform == grappledObj) return false;
-            return Vector3.Distance(hit.point, GrapplePoint()) > 0.1f;
+            if (currentTarget.Retractable && hit.collider.transform == currentTarget.Transform) return false;
+            return Vector3.Distance(hit.point, currentTarget.GetGrapplePoint()) > 0.1f;
         }
         return false;
     }
 
     private Vector3 ComputeTugForce()
     {
-        var grappleDirection = GrapplePoint() - player.transform.position;
+        if (currentTarget == null) throw new InvalidOperationException("Not currently grappling.");
+        var grappleDirection = currentTarget.GetGrapplePoint() - player.position;
         var tugStrength = grappleDirection.magnitude / maxGrappleLength * maxRetractionForce;
         var tugForce = grappleDirection.normalized * tugStrength;
         return tugForce;
     }
 
-    // TODO: delete this if nothing uses it
-    public bool IsGrappling()
+    private class GrappleTarget
     {
-        return grappling;
-    }
+        public Transform Transform { get; }
+        public Retractable Retractable { get; }
+        
+        private Vector3 Offset { get; }
+        private IGrappleResponder Responder { get; }
 
-    // TODO: make this private if nothing outside the class uses it
-    public Vector3 GrapplePoint()
-    {
-        if (!grappledObjOffset.HasValue) throw new InvalidOperationException("There is no active grapple point.");
-        return grappledObj.position + grappledObjOffset.Value;
+        public GrappleTarget(Transform target, Vector3 grapplePoint, Transform player)
+        {
+            Transform = target;
+            Offset = grapplePoint - Transform.position;
+            var targetResponder = Transform.GetComponent<IGrappleResponder>();
+            if (targetResponder != null)
+            {
+                Responder = targetResponder;
+                Responder.OnGrappleStart();
+            }
+            var targetRetractable = Transform.GetComponent<Retractable>();
+            if (targetRetractable)
+            {
+                Retractable = targetRetractable; 
+                Retractable.Retract(player);
+            }
+        }
+
+        public Vector3 GetGrapplePoint()
+        {
+            return Transform.position + Offset;
+        }
+        
+        public void Release()
+        {
+            if (Responder != null) Responder.OnGrappleStop();
+            if (Retractable) Retractable.CancelRetraction();
+        }
     }
 }
