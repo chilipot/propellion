@@ -50,11 +50,12 @@ public class CollisionPhysicsBehavior : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        grapple.StopGrapple();
+        if (!other.gameObject.CompareTag("Heavy")) return;
         CameraController.FreeCam = false;
         PhysicsCameraController.FreeCam = false;
         rb.angularDrag = 0;
         thruster.Disengage();
-        grapple.StopGrapple();
     }
 
     private void OnCollisionExit(Collision other)

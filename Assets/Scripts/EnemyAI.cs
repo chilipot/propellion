@@ -13,12 +13,15 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
     public float speed = 5f;
     public float chaseDistance = 100f;
     public float attackDistance = 50f;
+    public GameObject projectile, gunTip;
+    public float fireRate = 1f;
     
     private State currentState;
     private Vector3 currentDestination;
     private Transform player;
     private float distanceToPlayer;
     private bool isGrappled;
+    private float lastFireTime;
 
     private void Start()
     {
@@ -27,6 +30,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         player = GameObject.FindWithTag("Player").transform;
         distanceToPlayer = Mathf.Infinity;
         isGrappled = false;
+        lastFireTime = -fireRate;
     }
 
     private void Update()
@@ -78,7 +82,9 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
     
     private void FireWeapon()
     {
-        if (isGrappled) return;
+        if (isGrappled || Time.time < lastFireTime + fireRate) return;
+        Instantiate(projectile, gunTip.transform);
+        lastFireTime = Time.time;
         // TODO: play animation
     }
     
