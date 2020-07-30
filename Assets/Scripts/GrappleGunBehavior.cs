@@ -15,6 +15,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private Transform mainCamera;
     private GameObject player;
     private Rigidbody playerRb;
+    private AudioSource shootGrappleSfx;
     private bool grappling;
 
     private void Start()
@@ -27,6 +28,7 @@ public class GrappleGunBehavior : MonoBehaviour
         mainCamera = Camera.main.transform;
         player = GameObject.FindGameObjectWithTag("Player");
         playerRb = player.GetComponent<Rigidbody>();
+        shootGrappleSfx = GetComponent<AudioSource>();
         grappling = false;
     }
 
@@ -45,6 +47,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
+            shootGrappleSfx.Play();
             grappledObj = hit.transform;
             grappledObjOffset = hit.point - grappledObj.position;
             grappling = true;
