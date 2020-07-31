@@ -16,7 +16,6 @@ public class AsteroidMovement : MonoBehaviour
         speed = Random.Range(minSpeed, maxSpeed);
         rb = GetComponent<Rigidbody>();
         var tf = transform;
-        tf.rotation = Random.rotation;
         rb.AddForce(tf.forward * speed, ForceMode.Impulse);
     }
 }

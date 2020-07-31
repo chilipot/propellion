@@ -139,6 +139,8 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
         FinishedGenerating = true;
+        // TODO: Remove when there's a load screen
+        Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
     private void GenerateChunk(Vector3Int chunkStart)
@@ -183,17 +185,8 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void GenerateChunkMedicalCanisters(Vector3 unitCubeCenter)
     {
-        var placementVariationRange = (unitCubeSize - canisterRadius) / 2f;
-        var placementVariation = new Vector3(
-            Random.Range(-placementVariationRange, placementVariationRange),
-            Random.Range(-placementVariationRange, placementVariationRange),
-            Random.Range(-placementVariationRange, placementVariationRange)
-        );
-
-        var canisterPosition = unitCubeCenter + placementVariation;
-        var canister = Instantiate(medicalCanisterPrefab, canisterPosition, Quaternion.identity, medicalCanisterCollection.transform);
-        canister.SetActive(false);
-        AddEntity(canister);
+        var canisterPosition = RandomEntityPosition(unitCubeCenter, canisterRadius);
+        PlaceEntity(canisterPosition, medicalCanisterPrefab, medicalCanisterCollection.transform);
     }
     
     private void GenerateChunkAsteroids(Vector3 unitCubeCenter)
@@ -201,18 +194,29 @@ public class ProceduralGeneration : MonoBehaviour
         if (Random.value > asteroidDensity) return;
         
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
-        var placementVariationRange = (unitCubeSize - asteroidSize) / 2f;
+        var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize);
+        var asteroid = PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform);
+        asteroid.transform.localScale *= asteroidSize;
+    }
+
+    private GameObject PlaceEntity(Vector3 position, GameObject prefab, Transform parent)
+    {
+        var obj = Instantiate(prefab, position, Random.rotation, parent);
+        obj.SetActive(false);
+        AddEntity(obj);
+        return obj;
+    }
+
+    private Vector3 RandomEntityPosition(Vector3 unitCubeCenter, float size)
+    {
+        var placementVariationRange = (unitCubeSize - size) / 2f;
         var placementVariation = new Vector3(
             Random.Range(-placementVariationRange, placementVariationRange),
             Random.Range(-placementVariationRange, placementVariationRange),
             Random.Range(-placementVariationRange, placementVariationRange)
         );
-
-        var asteroidPosition = unitCubeCenter + placementVariation;
-        var asteroid = Instantiate(asteroidPrefab, asteroidPosition, Quaternion.identity, asteroidsCollection.transform);
-        asteroid.transform.localScale *= asteroidSize;
-        asteroid.SetActive(false);
-        AddEntity(asteroid);
+        var position = unitCubeCenter + placementVariation;
+        return position;
     }
 
     private void CullingStateChanged(CullingGroupEvent evt)
