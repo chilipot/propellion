@@ -23,6 +23,10 @@ public class GaugeBehavior : MonoBehaviour
         {
             BlinkRed();
         }
+        else
+        {
+            animator.ResetTrigger("Low");
+        }
     }
 
     public void BlinkRed()
