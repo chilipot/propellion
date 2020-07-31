@@ -95,7 +95,6 @@ public class ProceduralGeneration : MonoBehaviour
         entityIdToIndex = new Dictionary<int, int>();
         entityIndexToId = new Dictionary<int, int>();
 
-        
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
     }
@@ -165,6 +164,8 @@ public class ProceduralGeneration : MonoBehaviour
     
     private IEnumerator GenerateEntities()
     {
+        SetupBaseObjects();
+        yield return null;
         for (var x = 0; x < numChunksInLevel.x; x++)
         {
             for (var y = 0; y < numChunksInLevel.y; y++)
@@ -176,7 +177,6 @@ public class ProceduralGeneration : MonoBehaviour
                 }
             }
         }
-        SetupBaseObjects();
         FinishedGenerating = true;
         ui.SetLevelStatus(UIManager.LevelStatus.Playing);
         // TODO: Remove when there's a load screen
