@@ -66,6 +66,8 @@ public class ProceduralGeneration : MonoBehaviour
     private float canisterRadius;
     private float asteroidBaseRadius;
 
+    private UIManager ui;
+
     private void Awake()
     {
         asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
@@ -79,6 +81,9 @@ public class ProceduralGeneration : MonoBehaviour
 
         // var entitiesPerChunk = 1; TODO: Make this more extendable
         maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 entity per unit cube right now
+
+        ui = FindObjectOfType<UIManager>();
+        // ui.SetLevelStatus(UIManager.LevelStatus.Loading);
         
         // Culling Setup
         var mainCam = Camera.main;
@@ -170,6 +175,7 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
         FinishedGenerating = true;
+        // ui.SetLevelStatus(UIManager.LevelStatus.Playing);
         // TODO: Remove when there's a load screen
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }

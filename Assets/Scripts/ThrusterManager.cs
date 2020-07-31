@@ -17,7 +17,7 @@ public class ThrusterManager : MonoBehaviour
         engaged = false;
         capacity = maxCapacity;
         ui = FindObjectOfType<UIManager>();
-        ui.SetThrustCapacityBar(capacity, maxCapacity);
+        ui.fuelGauge.SetVal(maxCapacity, maxCapacity);
     }
 
     private void Update()
@@ -34,7 +34,7 @@ public class ThrusterManager : MonoBehaviour
                 capacity = 0;
                 thrusterEmptySfx.Play();
             }
-            ui.SetThrustCapacityBar(capacity, maxCapacity);
+            ui.fuelGauge.SetVal(capacity, maxCapacity);
         }
 
         if (Input.GetKeyUp(EngageKey) && engaged) Disengage();

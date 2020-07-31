@@ -1,38 +1,52 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public Text healthBar;
-    public Text thrustCapacityBar;
-    public Text levelStatus;
+    public GaugeBehavior healthGauge;
+    public GaugeBehavior fuelGauge;
 
-    public void SetHealthBar(float currHealth, float maxHealth)
+    public GameObject levelStatus, reticle;
+    public Sprite missionSuccess, missionFailed, loadingSimulation;
+
+    private Image levelStatusImage;
+
+    public enum LevelStatus
     {
-        healthBar.text = Mathf.RoundToInt(currHealth).ToString();
-        healthBar.color = Color.Lerp(Color.red, Color.green, currHealth / maxHealth);
+        Playing,
+        Loading,
+        Win,
+        Lose
     }
 
-    public void SetThrustCapacityBar(float currCapacity, float maxCapacity)
+    private void Start()
     {
-        float capcityLeft = currCapacity / maxCapacity;
-        if (Mathf.Approximately(capcityLeft, 0f))
-        {
-            thrustCapacityBar.text = "EMPTY";
-            thrustCapacityBar.color = Color.red;
-            thrustCapacityBar.fontStyle = FontStyle.Bold;
-
-        }
-        else
-        {
-            thrustCapacityBar.text = Mathf.RoundToInt(currCapacity).ToString();
-            thrustCapacityBar.color = (capcityLeft < 0.5f) ? Color.yellow : Color.blue;
-        }
+        levelStatusImage = levelStatus.GetComponent<Image>();
     }
 
-    public void SetLevelStatus(bool won)
-    {
-        levelStatus.text = won ? "You win!" : "Game over!";
-        levelStatus.gameObject.SetActive(true);
+    public void SetLevelStatus(LevelStatus status) {
+        Sprite statusSprite;
+        switch (status)
+        {
+            case LevelStatus.Playing:
+                levelStatus.SetActive(false);
+                reticle.SetActive(true); // TODO: find a way to only enable it here and disable it everywhere else, without losing references because it's disabled
+                return;
+            case LevelStatus.Loading:
+                statusSprite = loadingSimulation;
+                reticle.SetActive(true);
+                break;
+            case LevelStatus.Win:
+                statusSprite = missionSuccess;
+                reticle.SetActive(false);
+                break;
+            default:
+                statusSprite = missionFailed;
+                reticle.SetActive(false);
+                break;
+        }
+        levelStatusImage.sprite = statusSprite;
+        levelStatus.SetActive(true);
     }
 }

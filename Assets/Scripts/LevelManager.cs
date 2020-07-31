@@ -58,7 +58,7 @@ public class LevelManager : MonoBehaviour
 
     private void EndLevel(bool won)
     {
-        ui.SetLevelStatus(won);
+        ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
         LevelInactive = true;
         grappleGun.StopGrapple();
     }
