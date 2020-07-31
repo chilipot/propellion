@@ -3996,6 +3996,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2060231899}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2069448496 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1315403619, guid: 2ad41a0e25faa754bb3d880c970eacb8,
+    type: 3}
+  m_PrefabInstance: {fileID: 2666854223476726926}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2092916882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4607,7 +4619,12 @@ PrefabInstance:
     - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
         type: 3}
       propertyPath: asteroidSizeRange.x
-      value: 64
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: asteroidSizeRange.y
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a1a6f451fb644741945b61152678ead, type: 3}
@@ -4707,5 +4724,10 @@ PrefabInstance:
       propertyPath: maxGrappleLength
       value: 200
       objectReference: {fileID: 0}
+    - target: {fileID: 5137968221627764987, guid: b7090e6fd2ed55e42887e7fd4b2aab0c,
+        type: 3}
+      propertyPath: reticleImage
+      value: 
+      objectReference: {fileID: 2069448496}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7090e6fd2ed55e42887e7fd4b2aab0c, type: 3}
