@@ -29,7 +29,7 @@ public class GaugeBehavior : MonoBehaviour
         }
     }
 
-    public void BlinkRed()
+    private void BlinkRed()
     {
         animator.SetTrigger("Low");
     }
