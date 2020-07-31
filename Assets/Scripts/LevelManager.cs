@@ -9,6 +9,7 @@ public class LevelManager : MonoBehaviour
     private GrappleGunBehavior grappleGun;
     private bool levelOver;
     private Rigidbody playerBody;
+    private AudioSource winSfx, loseSfx;
     
     private void Start()
     {
@@ -16,6 +17,9 @@ public class LevelManager : MonoBehaviour
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
         levelOver = false;
         playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
+        var audioSources = GetComponents<AudioSource>();
+        winSfx = audioSources[1];
+        loseSfx = audioSources[2];
     }
 
     private void Update()
@@ -30,6 +34,7 @@ public class LevelManager : MonoBehaviour
     {
         if (levelOver) return;
         EndLevel(true);
+        winSfx.Play();
         playerBody.constraints = RigidbodyConstraints.FreezeAll;
     }
 
@@ -37,6 +42,7 @@ public class LevelManager : MonoBehaviour
     {
         if (levelOver) return;
         EndLevel(false);
+        loseSfx.Play();
         
         // TODO: here and everywhere else both FreeCams are changed, use a more general method instead
         CameraController.FreeCam = false;

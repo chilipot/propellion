@@ -14,6 +14,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private Transform mainCamera;
     private Transform player;
     private Rigidbody playerRb;
+    private AudioSource shootGrappleSfx;
 
     private void Start()
     {
@@ -23,6 +24,7 @@ public class GrappleGunBehavior : MonoBehaviour
         mainCamera = Camera.main.transform;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         playerRb = player.GetComponent<Rigidbody>();
+        shootGrappleSfx = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -37,6 +39,7 @@ public class GrappleGunBehavior : MonoBehaviour
         {
             currentTarget = new GrappleTarget(hit.transform, hit.point, player);
             lineRenderer.positionCount = 2;
+            shootGrappleSfx.Play();
         }
     }
 
