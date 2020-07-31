@@ -2,8 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Experimental.GraphView;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
@@ -97,7 +95,7 @@ public class ProceduralGeneration : MonoBehaviour
         entityIdToIndex = new Dictionary<int, int>();
         entityIndexToId = new Dictionary<int, int>();
 
-        SetupBaseObjects();
+        
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
     }
@@ -178,6 +176,7 @@ public class ProceduralGeneration : MonoBehaviour
                 }
             }
         }
+        SetupBaseObjects();
         FinishedGenerating = true;
         ui.SetLevelStatus(UIManager.LevelStatus.Playing);
         // TODO: Remove when there's a load screen
@@ -202,32 +201,32 @@ public class ProceduralGeneration : MonoBehaviour
                     var unitCubeOffset = chunkStart + Vector3.one * (unitCubeSize / 2f);
                     var unitCubeCenter = unitCubeIndex * unitCubeSize + unitCubeOffset;
 
-                    // TODO: Clean this up
-                    var rands = new float[spawnProbability.Length];
-                    for (var i = 0; i < spawnProbability.Length; i++)
-                    {
-                        rands[i] = Random.value;
-                    }
-
-                    var actionMap = new Dictionary<EntityType, Action>()
-                    {
-                        [EntityType.None] = () => {}, // Nothing
-                        [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
-                        [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter)
-                    };
-                    for (var i = 0; i < rands.Length; i++)
-                    {
-                        var probability = spawnProbability[i];
-                        var rand = rands[i];
-                        var action = actionMap[(EntityType)i];
-                        if (rand <= probability)
-                        {
-                            action();
-                        }
-                    }
+                    RandomlyGenerateUnitCubeEntity(unitCubeCenter);
                 }
             }
         }
+    }
+
+    private void RandomlyGenerateUnitCubeEntity(Vector3 unitCubeCenter)
+    {
+        // TODO: Clean this up
+        var actionMap = new Dictionary<EntityType, Action>
+        {
+            [EntityType.None] = () => {}, // Nothing
+            [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
+            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter)
+        };
+
+        var choices = new WeightedRandomBag<EntityType>();
+        for (var i = 0; i < actionMap.Count; i++)
+        {
+            var entity = (EntityType)i;
+            var weight = spawnProbability[i];
+            choices.AddEntry(entity, weight);
+        }
+
+        var action = actionMap[choices.GetRandom()];
+        action();
     }
 
     private void GenerateChunkMedicalCanisters(Vector3 unitCubeCenter)
