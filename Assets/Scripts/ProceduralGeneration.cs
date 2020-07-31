@@ -26,13 +26,18 @@ public class ProceduralGeneration : MonoBehaviour
     public int chunkSize;
     public int unitCubeSize;
 
+    [Tooltip("Number of unit cubes between black hole and player start")]
+    public int blackHoleBufferLength = 5;
+    [Tooltip("Number of unit cubes that exist past the exit portal")]
+    public int exitBufferLength = 5;
+
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
-    
-    // public GameObject blackHolePrefab;
-    // public GameObject exitPortalPrefab;
+
+    public GameObject blackHolePrefab;
+    public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
     public GameObject medicalCanisterPrefab;
 
@@ -41,6 +46,9 @@ public class ProceduralGeneration : MonoBehaviour
     
     private Vector3Int numChunksInLevel;
     private Vector3Int numUnitCubesInChunk;
+
+    // index of the unit cube containing the player's start position
+    private Vector3Int playerStartUnitCube;
 
     private CullingGroup cullGroup;
     private BoundingSphere[] bounds;
@@ -86,6 +94,7 @@ public class ProceduralGeneration : MonoBehaviour
         entityIdToIndex = new Dictionary<int, int>();
         entityIndexToId = new Dictionary<int, int>();
 
+        SetupBaseObjects();
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
     }
@@ -128,6 +137,25 @@ public class ProceduralGeneration : MonoBehaviour
         cullGroup.SetBoundingSphereCount(EntityCount);
     }
 
+    private void SetupBaseObjects()
+    {
+        var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
+        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
+
+        var player = GameObject.FindWithTag("Player");
+        var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
+        player.transform.position = playerStartPosition;
+        var playerStartUnitCubeAsFloat = playerStartPosition / unitCubeSize;
+        playerStartUnitCube = new Vector3Int(
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.x), 
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.y), 
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.z)
+        );
+        
+        var exitPortalPosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, levelDimensions.z - exitBufferLength * unitCubeSize - unitCubeSize / 2f);
+        Instantiate(exitPortalPrefab, exitPortalPosition, Quaternion.identity);
+    }
+    
     private IEnumerator GenerateEntities()
     {
         for (var x = 0; x < numChunksInLevel.x; x++)
@@ -136,8 +164,7 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 for (var z = 0; z < numChunksInLevel.z; z++)
                 {
-                    var chunkStart = new Vector3Int(x, y, z) * chunkSize;
-                    GenerateChunk(chunkStart);
+                    GenerateChunk(new Vector3Int(x, y, z));
                     yield return null;
                 }
             }
@@ -147,18 +174,23 @@ public class ProceduralGeneration : MonoBehaviour
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
-    private void GenerateChunk(Vector3Int chunkStart)
+    private void GenerateChunk(Vector3Int chunkIndex)
     {
+        var unitCubeIndexOffset = chunkIndex * numUnitCubesInChunk;
+        var chunkStart = chunkIndex * chunkSize;
         for (var x = 0; x < numUnitCubesInChunk.x; x++)
         {
             for (var y = 0; y < numUnitCubesInChunk.y; y++)
             {
                 for (var z = 0; z < numUnitCubesInChunk.z; z++)
                 {
+                    var unitCubeIndex = new Vector3Int(x, y, z);
+                    if (unitCubeIndex + unitCubeIndexOffset == playerStartUnitCube) continue;
+                    
                     // The offset to the top-left of the chunk and to the center of the first unit cube,
                     // in the top left corner of the chunk
                     var unitCubeOffset = chunkStart + Vector3.one * (unitCubeSize / 2f);
-                    var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
+                    var unitCubeCenter = unitCubeIndex * unitCubeSize + unitCubeOffset;
 
                     // TODO: Clean this up
                     var rands = new float[spawnProbability.Length];

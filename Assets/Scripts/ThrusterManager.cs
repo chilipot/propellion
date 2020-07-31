@@ -10,14 +10,12 @@ public class ThrusterManager : MonoBehaviour
     
     private bool engaged;
     private float capacity; // in seconds
-    private LevelManager levelManager;
     private UIManager ui;
 
     private void Start()
     {
         engaged = false;
         capacity = maxCapacity;
-        levelManager = FindObjectOfType<LevelManager>();
         ui = FindObjectOfType<UIManager>();
         ui.SetThrustCapacityBar(capacity, maxCapacity);
     }
@@ -28,7 +26,7 @@ public class ThrusterManager : MonoBehaviour
         
         if (engaged)
         {
-            if (levelManager.LevelIsOver()) Disengage();
+            if (LevelManager.LevelInactive) Disengage();
             else if (capacity > 0) capacity -= 1 * Time.deltaTime;
             else
             {
@@ -44,7 +42,7 @@ public class ThrusterManager : MonoBehaviour
     
     private void Engage()
     {
-        if (levelManager.LevelIsOver()) return;
+        if (LevelManager.LevelInactive) return;
         if (capacity > 0)
         {
             engaged = true;

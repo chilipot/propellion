@@ -44,15 +44,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawGizmos: 0
-  levelDimensions: {x: 2048, y: 2048, z: 2048}
+  levelDimensions: {x: 1024, y: 1024, z: 5128}
   chunkSize: 256
   unitCubeSize: 64
+  blackHoleBufferLength: 17
+  exitBufferLength: 5
   spawnProbability:
-  - 0.735
-  - 0.255
+  - 0.6
+  - 0.39
   - 0.01
-  asteroidSizeRange: {x: 8, y: 64}
+  asteroidSizeRange: {x: 5, y: 60}
   viewDistance: 500
+  blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
+    type: 3}
+  exitPortalPrefab: {fileID: 1235273854538230, guid: 775fb5da80fc0a04a9f86c8fcb5c3eec,
+    type: 3}
   asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
     type: 3}
   medicalCanisterPrefab: {fileID: 1475980397980410, guid: b889568899bb6c84d9847637a2a4a293,

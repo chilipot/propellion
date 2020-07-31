@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f249a3dec71698e4383dc39475573c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 8000
-  maxCapacity: 20
+  power: 5000
+  maxCapacity: 6
   thrusterEngineSfx: {fileID: 382713843}
   thrusterEmptySfx: {fileID: 2590792329407462706}
 --- !u!82 &382713843
@@ -532,8 +532,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed70c007aec06344b62456ba54f6722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRetractionForce: 500
-  maxGrappleLength: 100
+  maxRetractionForce: 600
+  maxGrappleLength: 200
   grappleableStuff:
     serializedVersion: 2
     m_Bits: 256

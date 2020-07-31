@@ -4,27 +4,34 @@ using UnityEngine.SceneManagement;
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
+    public static bool LevelInactive { get; private set; }
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
-    private bool levelOver;
     private Rigidbody playerBody;
     private AudioSource winSfx, loseSfx;
+    private bool levelStarted;
     
     private void Start()
     {
+        LevelInactive = true;
         ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
-        levelOver = false;
         playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
         var audioSources = GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
+        levelStarted = false;
     }
 
     private void Update()
     {
-        if (levelOver && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
+        if (!levelStarted && ProceduralGeneration.FinishedGenerating)
+        {
+            LevelInactive = false;
+            levelStarted = true;
+        }
+        if (LevelInactive && levelStarted && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -32,7 +39,7 @@ public class LevelManager : MonoBehaviour
 
     public void Win()
     {
-        if (levelOver) return;
+        if (LevelInactive) return;
         EndLevel(true);
         winSfx.Play();
         playerBody.constraints = RigidbodyConstraints.FreezeAll;
@@ -40,7 +47,7 @@ public class LevelManager : MonoBehaviour
 
     public void Lose()
     {
-        if (levelOver) return;
+        if (LevelInactive) return;
         EndLevel(false);
         loseSfx.Play();
         
@@ -52,12 +59,7 @@ public class LevelManager : MonoBehaviour
     private void EndLevel(bool won)
     {
         ui.SetLevelStatus(won);
-        levelOver = true;
+        LevelInactive = true;
         grappleGun.StopGrapple();
-    }
-
-    public bool LevelIsOver()
-    {
-        return levelOver;
     }
 }

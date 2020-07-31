@@ -12,21 +12,18 @@ public class CameraController : MonoBehaviour
 
     public static bool FreeCam = true; // TODO: make this an instance variable (see TODO below)
 
-    private LevelManager levelManager;
-
     private void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         FreeCam = true;
-        levelManager = FindObjectOfType<LevelManager>();
     }
 
     private void Update()
     {
         // TODO: instead of checking LevelIsOver here, encapsulate that logic into FreeCam by making it a
         // a private instance variable w/ public setter, which refuses to set it to true if LevelIsOver
-        if (!FreeCam || levelManager.LevelIsOver()) return;
+        if (!FreeCam || LevelManager.LevelInactive) return;
         
         var moveX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         var moveY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime * -1;

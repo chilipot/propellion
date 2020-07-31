@@ -3,5 +3,5 @@
     public override int Strength => healAmount;
     public override HealthEffect Effect => HealthEffect.Heal;
 
-    public int healAmount = 20;
+    public int healAmount = 40;
 }
