@@ -48,9 +48,9 @@ MonoBehaviour:
   chunkSize: 256
   unitCubeSize: 64
   spawnProbability:
-  - 0.735
-  - 0.255
-  - 0.01
+  - 0.8
+  - 1
+  - 0.1
   asteroidSizeRange: {x: 8, y: 64}
   viewDistance: 500
   asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
