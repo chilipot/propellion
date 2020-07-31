@@ -136,8 +136,8 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 for (var z = 0; z < numChunksInLevel.z; z++)
                 {
-                    var chunkCenter = new Vector3Int(x, y, z) * chunkSize;
-                    GenerateChunk(chunkCenter);
+                    var chunkStart = new Vector3Int(x, y, z) * chunkSize;
+                    GenerateChunk(chunkStart);
                     yield return null;
                 }
             }
@@ -147,7 +147,7 @@ public class ProceduralGeneration : MonoBehaviour
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
-    private void GenerateChunk(Vector3Int chunkCenter)
+    private void GenerateChunk(Vector3Int chunkStart)
     {
         for (var x = 0; x < numUnitCubesInChunk.x; x++)
         {
@@ -155,9 +155,9 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 for (var z = 0; z < numUnitCubesInChunk.z; z++)
                 {
-                    // The offset from the center of the chunk to the center of the first unit cube,
+                    // The offset to the top-left of the chunk and to the center of the first unit cube,
                     // in the top left corner of the chunk
-                    var unitCubeOffset = chunkCenter - Vector3.one * (chunkSize / 2 - unitCubeSize / 2);
+                    var unitCubeOffset = chunkStart + Vector3.one * (unitCubeSize / 2f);
                     var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
 
                     // TODO: Clean this up
