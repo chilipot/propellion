@@ -70,6 +70,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void Awake()
     {
+        FinishedGenerating = false;
         asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
         
