@@ -56,6 +56,7 @@ public class ProceduralGeneration : MonoBehaviour
     private int maxEntities;
 
     private float canisterRadius;
+    private float asteroidBaseRadius;
 
     private void Awake()
     {
@@ -63,6 +64,7 @@ public class ProceduralGeneration : MonoBehaviour
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
         
         canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x / 2;
+        asteroidBaseRadius = asteroidPrefab.GetComponent<Renderer>().bounds.size.x / 2;
 
         numChunksInLevel = levelDimensions / chunkSize;
         numUnitCubesInChunk = Vector3Int.one * (chunkSize / unitCubeSize);
@@ -134,8 +136,8 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 for (var z = 0; z < numChunksInLevel.z; z++)
                 {
-                    var chunkStart = new Vector3Int(x, y, z) * chunkSize;
-                    GenerateChunk(chunkStart);
+                    var chunkCenter = new Vector3Int(x, y, z) * chunkSize;
+                    GenerateChunk(chunkCenter);
                     yield return null;
                 }
             }
@@ -145,7 +147,7 @@ public class ProceduralGeneration : MonoBehaviour
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
-    private void GenerateChunk(Vector3Int chunkStart)
+    private void GenerateChunk(Vector3Int chunkCenter)
     {
         for (var x = 0; x < numUnitCubesInChunk.x; x++)
         {
@@ -155,7 +157,7 @@ public class ProceduralGeneration : MonoBehaviour
                 {
                     // The offset from the center of the chunk to the center of the first unit cube,
                     // in the top left corner of the chunk
-                    var unitCubeOffset = chunkStart - Vector3.one * (chunkSize / 2 - unitCubeSize / 2);
+                    var unitCubeOffset = chunkCenter - Vector3.one * (chunkSize / 2 - unitCubeSize / 2);
                     var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
 
                     // TODO: Clean this up
@@ -195,7 +197,7 @@ public class ProceduralGeneration : MonoBehaviour
     private void GenerateChunkAsteroids(Vector3 unitCubeCenter)
     {
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
-        var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize);
+        var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize * asteroidBaseRadius);
         PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform, asteroidSize);
     }
 
@@ -208,9 +210,9 @@ public class ProceduralGeneration : MonoBehaviour
         return obj;
     }
 
-    private Vector3 RandomEntityPosition(Vector3 unitCubeCenter, float size)
+    private Vector3 RandomEntityPosition(Vector3 unitCubeCenter, float radius)
     {
-        var placementVariationRange = (unitCubeSize - size) / 2f;
+        var placementVariationRange = (unitCubeSize / 2f)  - radius;
         var placementVariation = new Vector3(
             Random.Range(-placementVariationRange, placementVariationRange),
             Random.Range(-placementVariationRange, placementVariationRange),
