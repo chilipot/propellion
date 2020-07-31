@@ -2541,10 +2541,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3f3df91c7d49a682e488848d6b3b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawGizmos: 0
   levelDimensions: {x: 2048, y: 2048, z: 2048}
   chunkSize: 256
   unitCubeSize: 64
-  asteroidDensity: 0.5
   spawnProbability:
   - 0.735
   - 0.255

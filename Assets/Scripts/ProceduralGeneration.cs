@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEditor.Experimental.GraphView;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
@@ -18,14 +19,13 @@ public enum EntityType
 
 public class ProceduralGeneration : MonoBehaviour
 {
+    public bool drawGizmos = false; // DEBUG ONLY
+    
     // Unit cubes should evenly subdivide chunk, and chunks should evenly subdivide level.
     public Vector3Int levelDimensions;
     public int chunkSize;
     public int unitCubeSize;
-    
-    // The probability that given a unit cube will have an asteroid on whether the asteroid is actually placed
-    public float asteroidDensity = 0.5f; 
-    
+
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
     public Vector2 asteroidSizeRange;
@@ -62,7 +62,7 @@ public class ProceduralGeneration : MonoBehaviour
         asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
         
-        canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x;
+        canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x / 2;
 
         numChunksInLevel = levelDimensions / chunkSize;
         numUnitCubesInChunk = Vector3Int.one * (chunkSize / unitCubeSize);
@@ -92,7 +92,7 @@ public class ProceduralGeneration : MonoBehaviour
     {
         var id = obj.GetInstanceID();
         var tf = obj.transform;
-        var radius = obj.GetComponent<Renderer>().bounds.size.x;
+        var radius = obj.GetComponent<Renderer>().bounds.size.x / 2;
         entityLookup.Add(id, obj);
         var index = EntityCount - 1;
         bounds[index] = new BoundingSphere {position = tf.position, radius = radius};
@@ -196,13 +196,13 @@ public class ProceduralGeneration : MonoBehaviour
     {
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
         var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize);
-        var asteroid = PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform);
-        asteroid.transform.localScale *= asteroidSize;
+        PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform, asteroidSize);
     }
 
-    private GameObject PlaceEntity(Vector3 position, GameObject prefab, Transform parent)
+    private GameObject PlaceEntity(Vector3 position, GameObject prefab, Transform parent, float size = 1f)
     {
         var obj = Instantiate(prefab, position, Random.rotation, parent);
+        obj.transform.localScale *= size;
         obj.SetActive(false);
         AddEntity(obj);
         return obj;
@@ -246,6 +246,18 @@ public class ProceduralGeneration : MonoBehaviour
                 }
             }
             yield return new WaitForSecondsRealtime(2);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!drawGizmos) return;
+        
+        Gizmos.color = Color.red;
+        for (var i = 0; i < EntityCount; i++)
+        {
+            var boundingSphere = bounds[i];
+            Gizmos.DrawWireSphere(boundingSphere.position, boundingSphere.radius);
         }
     }
 
