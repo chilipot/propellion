@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using Quaternion = UnityEngine.Quaternion;
@@ -6,21 +7,35 @@ using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
 
+public enum EntityType
+{
+    Asteroid = 0,
+    MedicalCanister = 1,
+    Alien = 2
+}
+
 public class ProceduralGeneration : MonoBehaviour
 {
     // Unit cubes should evenly subdivide chunk, and chunks should evenly subdivide level.
     public Vector3Int levelDimensions;
     public int chunkSize;
     public int unitCubeSize;
-    public float asteroidDensity = 0.5f;
+    
+    // The probability that given a unit cube will have an asteroid on whether the asteroid is actually placed
+    public float asteroidDensity = 0.5f; 
+    
+    // Indices match up to values of EntityType enum
+    public float[] spawnProbability;
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
     
     // public GameObject blackHolePrefab;
     // public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
+    public GameObject medicalCanisterPrefab;
 
     private GameObject asteroidsCollection;
+    private GameObject medicalCanisterCollection;
     
     private Vector3Int numChunksInLevel;
     private Vector3Int numUnitCubesInChunk;
@@ -38,16 +53,21 @@ public class ProceduralGeneration : MonoBehaviour
     public static bool FinishedGenerating = false;
     private int maxEntities;
 
+    private float canisterRadius;
+
     private void Awake()
     {
-        asteroidsCollection = GameObject.FindGameObjectWithTag("Asteroids");
+        asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
+        medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
+        
+        canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x;
 
         numChunksInLevel = levelDimensions / chunkSize;
         numUnitCubesInChunk = Vector3Int.one * (chunkSize / unitCubeSize);
 
-        // var asteroidsPerChunk = 1; TODO: Make this more extendable
-        maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 asteroid per unit cube right now
-        Debug.Log($"Max Entities: {maxEntities}");
+        // var entitiesPerChunk = 1; TODO: Make this more extendable
+        maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 entity per unit cube right now
+        
         // Culling Setup
         var mainCam = Camera.main;
         cullGroup = new CullingGroup {targetCamera = mainCam};
@@ -62,11 +82,11 @@ public class ProceduralGeneration : MonoBehaviour
         entityIdToIndex = new Dictionary<int, int>();
         entityIndexToId = new Dictionary<int, int>();
 
-        StartCoroutine(nameof(GenerateAsteroidField));
+        StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
     }
 
-    public void AddEntity(GameObject obj)
+    private void AddEntity(GameObject obj)
     {
         var id = obj.GetInstanceID();
         var tf = obj.transform;
@@ -89,6 +109,9 @@ public class ProceduralGeneration : MonoBehaviour
         entityTransforms.Remove(id);
         
         var moveIndex = EntityCount - 1;
+        
+        // If the index isn't the last one in the array,
+        // move the last element into the index of the deleted entity
         if (index != moveIndex)
         {
             bounds[index] = bounds[moveIndex];
@@ -101,7 +124,7 @@ public class ProceduralGeneration : MonoBehaviour
         cullGroup.SetBoundingSphereCount(EntityCount);
     }
 
-    private IEnumerator GenerateAsteroidField()
+    private IEnumerator GenerateEntities()
     {
         for (var x = 0; x < numChunksInLevel.x; x++)
         {
@@ -116,7 +139,6 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
         FinishedGenerating = true;
-        Debug.Log("Finished Generating!!!");
     }
 
     private void GenerateChunk(Vector3Int chunkStart)
@@ -127,17 +149,56 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 for (var z = 0; z < numUnitCubesInChunk.z; z++)
                 {
+                    // The offset from the center of the chunk to the center of the first unit cube,
+                    // in the top left corner of the chunk
                     var unitCubeOffset = chunkStart - Vector3.one * (chunkSize / 2 - unitCubeSize / 2);
                     var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
-                    GenerateChunkAsteroids(unitCubeCenter);
+
+                    // TODO: Clean this up
+                    var rands = new float[spawnProbability.Length];
+                    for (var i = 0; i < spawnProbability.Length; i++)
+                    {
+                        rands[i] = Random.value;
+                    }
+
+                    var actions = new List<Action>()
+                    {
+                        () => GenerateChunkAsteroids(unitCubeCenter),
+                        () => GenerateChunkMedicalCanisters(unitCubeCenter)
+                    };
+                    for (var i = 0; i < spawnProbability.Length; i++)
+                    {
+                        var probability = spawnProbability[i];
+                        var rand = rands[i];
+                        var action = actions[i];
+                        if (rand <= probability)
+                        {
+                            action();
+                        }
+                    }
                 }
             }
         }
     }
+
+    private void GenerateChunkMedicalCanisters(Vector3 unitCubeCenter)
+    {
+        var placementVariationRange = (unitCubeSize - canisterRadius) / 2f;
+        var placementVariation = new Vector3(
+            Random.Range(-placementVariationRange, placementVariationRange),
+            Random.Range(-placementVariationRange, placementVariationRange),
+            Random.Range(-placementVariationRange, placementVariationRange)
+        );
+
+        var canisterPosition = unitCubeCenter + placementVariation;
+        var canister = Instantiate(medicalCanisterPrefab, canisterPosition, Quaternion.identity, medicalCanisterCollection.transform);
+        canister.SetActive(false);
+        AddEntity(canister);
+    }
     
     private void GenerateChunkAsteroids(Vector3 unitCubeCenter)
     {
-        if (!(Random.value < asteroidDensity)) return;
+        if (Random.value > asteroidDensity) return;
         
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
         var placementVariationRange = (unitCubeSize - asteroidSize) / 2f;
@@ -185,6 +246,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void OnDestroy()
     {
+        StopAllCoroutines();
         if (cullGroup == null) return;
         cullGroup.Dispose();
         cullGroup = null;
