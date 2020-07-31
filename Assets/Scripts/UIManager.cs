@@ -8,8 +8,10 @@ public class UIManager : MonoBehaviour
 
     public GameObject levelStatus, reticle;
     public Sprite missionSuccess, missionFailed, loadingSimulation;
-
+    public Color reticleImageHitColor = new Color(255, 92, 94);
+    
     private Image levelStatusImage;
+    private Image reticleImage;
 
     public enum LevelStatus
     {
@@ -18,10 +20,27 @@ public class UIManager : MonoBehaviour
         Win,
         Lose
     }
-
+    
     private void Awake()
     {
         levelStatusImage = levelStatus.GetComponent<Image>();
+        reticleImage = reticle.GetComponent<Image>();
+    }
+
+    public void SetReticleFocus(bool focused)
+    {
+        if (focused)
+        {
+            reticleImage.color = reticleImageHitColor;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(0.5f, 0.5f, 0.5f), Time.deltaTime * 4);
+        }
+        else
+        {
+            reticleImage.color = Color.white;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(1f, 1f, 1f), Time.deltaTime * 4);
+        }
     }
 
     public void SetLevelStatus(LevelStatus status) {
@@ -30,19 +49,19 @@ public class UIManager : MonoBehaviour
         {
             case LevelStatus.Playing:
                 levelStatus.SetActive(false);
-                reticle.SetActive(true); // TODO: find a way to only enable it here and disable it everywhere else, without losing references because it's disabled
+                reticleImage.enabled = true;
                 return;
             case LevelStatus.Loading:
                 statusSprite = loadingSimulation;
-                reticle.SetActive(true);
+                reticleImage.enabled = false;
                 break;
             case LevelStatus.Win:
                 statusSprite = missionSuccess;
-                reticle.SetActive(false);
+                reticleImage.enabled = false;
                 break;
             default:
                 statusSprite = missionFailed;
-                reticle.SetActive(false);
+                reticleImage.enabled = false;
                 break;
         }
         levelStatusImage.sprite = statusSprite;
