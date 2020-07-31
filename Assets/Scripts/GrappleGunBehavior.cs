@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class GrappleGunBehavior : MonoBehaviour
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
     public Transform gunTip;
+    public Image reticleImage;
+    public Color reticleImageHitColor = new Color(255, 92, 94);
 
     private LineRenderer lineRenderer;
     private Transform grappleObj; // TODO: make this explicitly nullable
@@ -50,6 +53,22 @@ public class GrappleGunBehavior : MonoBehaviour
         }
     }
 
+    private void ReticleEffect()
+    {
+        if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
+        {
+            reticleImage.color = reticleImageHitColor;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(0.5f, 0.5f, 0.5f), Time.deltaTime * 4);
+        }
+        else
+        {
+            reticleImage.color = Color.white;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(1f, 1f, 1f), Time.deltaTime * 4);
+        }
+    }
+
     public void StopGrapple()
     {
         grappling = false;
@@ -72,6 +91,7 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ReticleEffect();
         if (!grappling) return;
         if (GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
