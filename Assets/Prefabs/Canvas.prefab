@@ -438,7 +438,7 @@ PrefabInstance:
     - target: {fileID: 2028944453663036488, guid: a2a06d02b6ddd6242b5c3326a8b14f82,
         type: 3}
       propertyPath: m_TagString
-      value: FuelGauge
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 2028944453663036495, guid: a2a06d02b6ddd6242b5c3326a8b14f82,
         type: 3}
@@ -580,7 +580,7 @@ PrefabInstance:
     - target: {fileID: 2028944453663036488, guid: a2a06d02b6ddd6242b5c3326a8b14f82,
         type: 3}
       propertyPath: m_TagString
-      value: HealthGauge
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 2028944453663036495, guid: a2a06d02b6ddd6242b5c3326a8b14f82,
         type: 3}

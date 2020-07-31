@@ -21,22 +21,31 @@ public class SpaceSuitManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        // TODO: Check what the player is colliding with
+        ProcessHealthEffect(other.gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        ProcessHealthEffect(other.gameObject);
+    }
+
+    private void ProcessHealthEffect(GameObject healthEffectObj)
+    {
         if (Time.fixedTime - lastHealthEffect <= healthEffectInteractionDelay) return;
-        var healthEffectBehavior = other.gameObject.GetComponent<HealthEffectBehavior>();
-        var healthEffectStrength = healthEffectBehavior.Strength;
+        var healthEffectBehavior = healthEffectObj.GetComponent<HealthEffectBehavior>();
+        if (!healthEffectBehavior) return;
         switch (healthEffectBehavior.Effect)
         {
             case HealthEffect.Heal:
-                Heal(healthEffectStrength);
+                Heal(healthEffectBehavior.Strength);
                 break;
             case HealthEffect.Damage:
-                Damage(healthEffectStrength);
+                Damage(healthEffectBehavior.Strength);
                 break;
         }
         lastHealthEffect = Time.fixedTime;
     }
-    
+
     private void SetHealth(float newHealth)
     {
         health = Mathf.Clamp(newHealth, 0, maxHealth);

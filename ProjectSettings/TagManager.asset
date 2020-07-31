@@ -4,8 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - FuelGauge
-  - HealthGauge
+  - Chunks
+  - MedicalCanisterCollection
+  - AsteroidCollection
   layers:
   - Default
   - TransparentFX

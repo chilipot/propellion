@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BlackHolePull : MonoBehaviour
@@ -19,7 +19,8 @@ public class BlackHolePull : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var pulledBody = other.gameObject.GetComponent<Rigidbody>();
-        if (pulledBody) pulledBodies.Add(other.gameObject.GetInstanceID(), pulledBody);
+        var pulledBodyId = other.gameObject.GetInstanceID();
+        if (pulledBody && !pulledBodies.ContainsKey(pulledBodyId)) pulledBodies.Add(pulledBodyId, pulledBody);
     }
 
     private void OnTriggerExit(Collider other)
@@ -30,6 +31,9 @@ public class BlackHolePull : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // first filter out any pulled bodies that may have been destroyed since the last update
+        pulledBodies = pulledBodies.Where(pb => pb.Value).ToDictionary(pb => pb.Key, pb => pb.Value);
+        // then pull each remaining pulled body
         foreach (var pulledBody in pulledBodies.Values)
         {
             var singularityPosition = transform.position;

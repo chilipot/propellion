@@ -8,27 +8,32 @@ public class GrappleGunBehavior : MonoBehaviour
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
     public Transform gunTip;
-    public Image reticleImage;
     public Color reticleImageHitColor = new Color(255, 92, 94);
-
+    
     private LineRenderer lineRenderer;
-    private Transform grappleObj; // TODO: make this explicitly nullable
-    private Vector3? grappleObjOffset;
+    private Transform grappledObj; // TODO: make this explicitly nullable (maybe by abstracting grappledObj, grappledObjOffset, grappledRetractable, and grappling out into an optional struct)
+    private Vector3? grappledObjOffset;
+    private Retractable grappledRetractable; // TODO: make this explicitly nullable (maybe by abstracting grappledObj, grappledObjOffset, grappledRetractable, and grappling out into an optional struct)
     private Transform mainCamera;
     private GameObject player;
     private Rigidbody playerRb;
+    private AudioSource shootGrappleSfx;
     private bool grappling;
+    private Image reticleImage;
 
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
-        grappleObj = null;
-        grappleObjOffset = null;
+        grappledObj = null;
+        grappledObjOffset = null;
+        grappledRetractable = null;
         mainCamera = Camera.main.transform;
         player = GameObject.FindGameObjectWithTag("Player");
         playerRb = player.GetComponent<Rigidbody>();
+        shootGrappleSfx = GetComponent<AudioSource>();
         grappling = false;
+        reticleImage = GameObject.FindWithTag("Reticle").GetComponent<Image>();
     }
 
     private void Update()
@@ -39,17 +44,24 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private bool GrappleTargetDestroyed()
     {
-        return grappling && !grappleObj;
+        return grappling && !grappledObj;
     }
 
     private void StartGrapple()
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
+            shootGrappleSfx.Play();
+            grappledObj = hit.transform;
+            grappledObjOffset = hit.point - grappledObj.position;
             grappling = true;
-            grappleObj = hit.transform;
-            grappleObjOffset = hit.point - grappleObj.position;
             lineRenderer.positionCount = 2;
+            var retractable = hit.collider.GetComponent<Retractable>();
+            if (retractable)
+            {
+                grappledRetractable = retractable; 
+                grappledRetractable.Retract(player.transform);
+            }
         }
     }
 
@@ -71,9 +83,14 @@ public class GrappleGunBehavior : MonoBehaviour
 
     public void StopGrapple()
     {
+        grappledObj = null;
+        grappledObjOffset = null;
+        if (grappledRetractable)
+        {
+            grappledRetractable.CancelRetraction();
+            grappledRetractable = null;
+        }
         grappling = false;
-        grappleObj = null;
-        grappleObjOffset = null;
         lineRenderer.positionCount = 0;
     }
 
@@ -105,11 +122,13 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         var grappleStart = lineRenderer.GetPosition(0);
         var grappleEnd = lineRenderer.GetPosition(1);
-        if (Physics.Raycast(grappleStart, grappleEnd - grappleStart, out var hit, Mathf.Infinity, grappleableStuff))
+        var grappleDirection = grappleEnd - grappleStart;
+        if (Physics.Raycast(grappleStart, grappleDirection, out var hit, grappleDirection.magnitude, grappleableStuff))
         {
+            if (grappledRetractable && hit.collider.transform == grappledObj) return false;
             return Vector3.Distance(hit.point, GrapplePoint()) > 0.1f;
         }
-        return true;
+        return false;
     }
 
     private Vector3 ComputeTugForce()
@@ -129,7 +148,7 @@ public class GrappleGunBehavior : MonoBehaviour
     // TODO: make this private if nothing outside the class uses it
     public Vector3 GrapplePoint()
     {
-        if (grappleObjOffset == null) throw new InvalidOperationException("There is no active grapple point.");
-        return grappleObj.position + grappleObjOffset.Value;
+        if (!grappledObjOffset.HasValue) throw new InvalidOperationException("There is no active grapple point.");
+        return grappledObj.position + grappledObjOffset.Value;
     }
 }
