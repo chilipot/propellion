@@ -1216,8 +1216,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1653747325}
-  m_Father: {fileID: 2050070205}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &765391144
 PrefabInstance:
@@ -1588,13 +1588,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 997618499}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1323128528}
-  m_Father: {fileID: 2050070205}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1020739022
 PrefabInstance:
@@ -2546,7 +2546,8 @@ MonoBehaviour:
   unitCubeSize: 64
   asteroidDensity: 0.5
   spawnProbability:
-  - 0.99
+  - 0.735
+  - 0.255
   - 0.01
   asteroidSizeRange: {x: 8, y: 64}
   viewDistance: 500
@@ -2566,7 +2567,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1451366452 stripped
 Transform:
@@ -3957,38 +3958,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1988111911}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2050070204
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2050070205}
-  m_Layer: 0
-  m_Name: Level Entities
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2050070205
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050070204}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 997618500}
-  - {fileID: 755166742}
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2060231899
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4695,6 +4664,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5137968221627764987, guid: b7090e6fd2ed55e42887e7fd4b2aab0c,
+        type: 3}
+      propertyPath: maxRetractionForce
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 5137968221627764987, guid: b7090e6fd2ed55e42887e7fd4b2aab0c,
+        type: 3}
+      propertyPath: maxGrappleLength
+      value: 200
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7090e6fd2ed55e42887e7fd4b2aab0c, type: 3}

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
@@ -9,9 +10,10 @@ using Vector3 = UnityEngine.Vector3;
 
 public enum EntityType
 {
-    Asteroid = 0,
-    MedicalCanister = 1,
-    Alien = 2
+    None = 0,
+    Asteroid = 1,
+    MedicalCanister = 2,
+    Alien = 3
 }
 
 public class ProceduralGeneration : MonoBehaviour
@@ -163,16 +165,17 @@ public class ProceduralGeneration : MonoBehaviour
                         rands[i] = Random.value;
                     }
 
-                    var actions = new List<Action>()
+                    var actionMap = new Dictionary<EntityType, Action>()
                     {
-                        () => GenerateChunkAsteroids(unitCubeCenter),
-                        () => GenerateChunkMedicalCanisters(unitCubeCenter)
+                        [EntityType.None] = () => {}, // Nothing
+                        [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
+                        [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter)
                     };
-                    for (var i = 0; i < spawnProbability.Length; i++)
+                    for (var i = 0; i < rands.Length; i++)
                     {
                         var probability = spawnProbability[i];
                         var rand = rands[i];
-                        var action = actions[i];
+                        var action = actionMap[(EntityType)i];
                         if (rand <= probability)
                         {
                             action();
@@ -191,8 +194,6 @@ public class ProceduralGeneration : MonoBehaviour
     
     private void GenerateChunkAsteroids(Vector3 unitCubeCenter)
     {
-        if (Random.value > asteroidDensity) return;
-        
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
         var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize);
         var asteroid = PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform);

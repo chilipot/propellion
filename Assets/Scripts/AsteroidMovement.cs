@@ -5,15 +5,14 @@ using Random = UnityEngine.Random;
 public class AsteroidMovement : MonoBehaviour
 {
 
-    public float minSpeed = 200f;
-    public float maxSpeed = 800f;
+    public Vector2 speedRange;
     
     private float speed;
     private Rigidbody rb;
     
     private void Start()
     {
-        speed = Random.Range(minSpeed, maxSpeed);
+        speed = Random.Range(speedRange[0], speedRange[1]);
         rb = GetComponent<Rigidbody>();
         var tf = transform;
         rb.AddForce(tf.forward * speed, ForceMode.Impulse);
