@@ -82,9 +82,6 @@ public class ProceduralGeneration : MonoBehaviour
         // var entitiesPerChunk = 1; TODO: Make this more extendable
         maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 entity per unit cube right now
 
-        ui = FindObjectOfType<UIManager>();
-        // ui.SetLevelStatus(UIManager.LevelStatus.Loading);
-        
         // Culling Setup
         var mainCam = Camera.main;
         cullGroup = new CullingGroup {targetCamera = mainCam};
@@ -102,6 +99,12 @@ public class ProceduralGeneration : MonoBehaviour
         SetupBaseObjects();
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
+    }
+
+    private void Start()
+    {
+        ui = FindObjectOfType<UIManager>();
+        ui.SetLevelStatus(UIManager.LevelStatus.Loading);
     }
 
     private void AddEntity(GameObject obj)
@@ -175,7 +178,7 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
         FinishedGenerating = true;
-        // ui.SetLevelStatus(UIManager.LevelStatus.Playing);
+        ui.SetLevelStatus(UIManager.LevelStatus.Playing);
         // TODO: Remove when there's a load screen
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }

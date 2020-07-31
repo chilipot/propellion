@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -20,7 +19,7 @@ public class UIManager : MonoBehaviour
         Lose
     }
 
-    private void Start()
+    private void Awake()
     {
         levelStatusImage = levelStatus.GetComponent<Image>();
     }

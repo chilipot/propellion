@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
-    public static bool LevelInactive { get; private set; }
+    public static bool LevelInactive { get; private set; } // TODO: fix this not being true when player restarts level
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
