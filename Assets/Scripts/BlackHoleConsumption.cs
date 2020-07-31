@@ -6,9 +6,10 @@ public class BlackHoleConsumption : MonoBehaviour
     public BlackHolePull blackHolePull;
     
     private LevelManager levelManager;
-
+    private ProceduralGeneration entityManager;
     private void Start()
     {
+        entityManager = FindObjectOfType<ProceduralGeneration>();
         levelManager = FindObjectOfType<LevelManager>();
     }
 
@@ -25,6 +26,7 @@ public class BlackHoleConsumption : MonoBehaviour
         }
         else
         {
+            entityManager.RemoveEntity(other.gameObject);
             Destroy(other.gameObject, 1);
         }
     }
