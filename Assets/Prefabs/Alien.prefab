@@ -17647,9 +17647,11 @@ MonoBehaviour:
   speed: 5
   chaseDistance: 60
   attackDistance: 30
-  projectile: {fileID: 1500370264893162, guid: 395049b61b27de946b4112771ec38bc2, type: 3}
-  gunTip: {fileID: 9207201752885807145}
+  projectile: {fileID: 9018411449781333520, guid: eb7cc70ea76c8c24b8fe0ceeefca2329,
+    type: 3}
+  gunTip: {fileID: 1351008105804437600}
   fireRate: 1
+  fireSfx: {fileID: 8300000, guid: 87986e393e4de0244bdae54f12fcf3d0, type: 3}
 --- !u!114 &8421363574963126011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27536,9 +27538,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069f7f6d2f5b29745b2e10789754777c, type: 3}
---- !u!1 &9207201752885807145 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6889815935128070854, guid: 069f7f6d2f5b29745b2e10789754777c,
+--- !u!4 &1351008105804437600 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
     type: 3}
   m_PrefabInstance: {fileID: 2331463969643864815}
   m_PrefabAsset: {fileID: 0}
