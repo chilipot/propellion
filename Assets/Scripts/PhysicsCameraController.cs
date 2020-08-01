@@ -12,6 +12,8 @@ public class PhysicsCameraController : MonoBehaviour
     
     private void Start()
     {
+        // WebGL is way too sensitive :-(
+        if (Application.platform == RuntimePlatform.WebGLPlayer) mouseSensitivity /= 3;
         FreeCam = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
