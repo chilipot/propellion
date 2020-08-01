@@ -61,5 +61,11 @@ public class ThrusterManager : MonoBehaviour
     {
         return engaged;
     }
+
+    public void Burst(float burstStrength)
+    {
+        if (LevelManager.LevelInactive) return;
+        capacity -= 0.5f * burstStrength;
+    }
     
 }
