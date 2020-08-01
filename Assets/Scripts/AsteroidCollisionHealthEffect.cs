@@ -2,12 +2,9 @@
 
 public class AsteroidCollisionHealthEffect : HealthEffectBehavior
 {
-    public override int Strength => Mathf.RoundToInt(size);
+    public override int Strength => damage;
     public override HealthEffect Effect => HealthEffect.Damage;
-    
-    private float size = 0f;
-    private void Start()
-    {
-        size = GetComponent<Renderer>().bounds.size.x / 2;
-    }
+
+    public int damage = 30;
+
 }
