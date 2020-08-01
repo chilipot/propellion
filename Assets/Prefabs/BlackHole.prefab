@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef6010dda018d8418882b9ee08e09d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expansionRate: 500
+  expansionRate: 200
   pullDistance: 3000
   pullField: {fileID: 2461788212963136104}
   consumptionField: {fileID: 2462236740820826226}
