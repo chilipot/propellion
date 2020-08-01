@@ -1,36 +1,30 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class GaugeBehavior : MonoBehaviour
 {
     public Image gauge;
-    public float lowPercentage = 0.2f;
+    public float lowPercentage = 0.33f;
     private Animator animator;
 
-    private void Start()
+    private void Awake()
     {
         animator = gameObject.GetComponent<Animator>();
     }
-
+    
     public void SetVal(float capacity, float maxCapacity)
     {
-        float percentageOfMax = capacity / maxCapacity;
+        var percentageOfMax = capacity / maxCapacity;
         gauge.fillAmount = (percentageOfMax) * (180.0f / 360);
         if (percentageOfMax <= lowPercentage)
         {
-            BlinkRed();
+            animator.ResetTrigger("NotLow");
+            animator.SetTrigger("Low");
         }
         else
         {
             animator.ResetTrigger("Low");
+            animator.SetTrigger("NotLow");
         }
-    }
-
-    private void BlinkRed()
-    {
-        animator.SetTrigger("Low");
     }
 }

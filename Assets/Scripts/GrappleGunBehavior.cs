@@ -8,8 +8,7 @@ public class GrappleGunBehavior : MonoBehaviour
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
     public Transform gunTip;
-    public Color reticleImageHitColor = new Color(255, 92, 94);
-    
+
     private LineRenderer lineRenderer;
     private Transform grappledObj; // TODO: make this explicitly nullable (maybe by abstracting grappledObj, grappledObjOffset, grappledRetractable, and grappling out into an optional struct)
     private Vector3? grappledObjOffset;
@@ -19,7 +18,8 @@ public class GrappleGunBehavior : MonoBehaviour
     private Rigidbody playerRb;
     private AudioSource shootGrappleSfx;
     private bool grappling;
-    private Image reticleImage;
+
+    private UIManager ui;
 
     private void Start()
     {
@@ -33,12 +33,12 @@ public class GrappleGunBehavior : MonoBehaviour
         playerRb = player.GetComponent<Rigidbody>();
         shootGrappleSfx = GetComponent<AudioSource>();
         grappling = false;
-        reticleImage = GameObject.FindWithTag("Reticle").GetComponent<Image>();
+        ui = FindObjectOfType<UIManager>();
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)) StartGrapple();
+        if (Input.GetMouseButtonDown(0) && !LevelManager.LevelInactive) StartGrapple();
         else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
     }
 
@@ -67,18 +67,9 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void ReticleEffect()
     {
-        if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
-        {
-            reticleImage.color = reticleImageHitColor;
-            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
-                new Vector3(0.5f, 0.5f, 0.5f), Time.deltaTime * 4);
-        }
-        else
-        {
-            reticleImage.color = Color.white;
-            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
-                new Vector3(1f, 1f, 1f), Time.deltaTime * 4);
-        }
+        var focusedReticle = Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength,
+            grappleableStuff);
+        ui.SetReticleFocus(focusedReticle);
     }
 
     public void StopGrapple()
@@ -137,12 +128,6 @@ public class GrappleGunBehavior : MonoBehaviour
         var tugStrength = grappleDirection.magnitude / maxGrappleLength * maxRetractionForce;
         var tugForce = grappleDirection.normalized * tugStrength;
         return tugForce;
-    }
-
-    // TODO: delete this if nothing uses it
-    public bool IsGrappling()
-    {
-        return grappling;
     }
 
     // TODO: make this private if nothing outside the class uses it
