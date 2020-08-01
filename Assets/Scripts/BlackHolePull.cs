@@ -31,6 +31,7 @@ public class BlackHolePull : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!ProceduralGeneration.FinishedGenerating) return;
         // first filter out any pulled bodies that may have been destroyed since the last update
         pulledBodies = pulledBodies.Where(pb => pb.Value).ToDictionary(pb => pb.Key, pb => pb.Value);
         // then pull each remaining pulled body
