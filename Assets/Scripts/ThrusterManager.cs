@@ -4,8 +4,8 @@ public class ThrusterManager : MonoBehaviour
 {
     private const KeyCode EngageKey = KeyCode.Space;
     
-    public float power = 1000;
-    public float maxCapacity = 30; // in seconds
+    public float power = 10f;
+    public float maxCapacity = 10f; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
     
     private bool engaged;

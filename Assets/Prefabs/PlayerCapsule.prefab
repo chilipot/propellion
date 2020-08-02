@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f249a3dec71698e4383dc39475573c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 5000
-  maxCapacity: 6
+  power: 10
+  maxCapacity: 10
   thrusterEngineSfx: {fileID: 382713843}
   thrusterEmptySfx: {fileID: 2590792329407462706}
 --- !u!82 &382713843
