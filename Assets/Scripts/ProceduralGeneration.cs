@@ -16,7 +16,10 @@ public enum EntityType
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    public bool drawGizmos = false; // DEBUG ONLY
+    
+    // DEBUG ONLY
+    public bool drawGizmos = false;
+    public bool disableBlackHole = false;
     
     // Unit cubes should evenly subdivide chunk, and chunks should evenly subdivide level.
     public Vector3Int levelDimensions;
@@ -150,11 +153,11 @@ public class ProceduralGeneration : MonoBehaviour
     private void SetupBaseObjects()
     {
         var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
-        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
+        if (!disableBlackHole) Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
 
-        var player = GameObject.FindWithTag("Player");
+        var player = GameObject.FindWithTag("Player").transform;
         var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
-        player.transform.position = playerStartPosition;
+        player.position = playerStartPosition;
         var playerStartUnitCubeAsFloat = playerStartPosition / unitCubeSize;
         playerStartUnitCube = new Vector3Int(
             Mathf.FloorToInt(playerStartUnitCubeAsFloat.x), 

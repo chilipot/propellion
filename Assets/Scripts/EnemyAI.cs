@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyAI : MonoBehaviour, IGrappleResponder
 {
@@ -10,33 +11,46 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         Dead
     }
     
-    public float speed = 5f;
+    public float speed = 15f;
     public float chaseDistance = 100f;
     public float attackDistance = 50f;
+    public float chaseSpeedMultiplier = 3f;
     public GameObject projectile;
     public Transform gunTip;
     public float fireRate = 1f;
+    public AudioClip fireSfx;
     
     private State currentState;
     private Vector3 currentDestination;
+    private bool destinationIsPatrolPoint;
     private Transform player;
     private float distanceToPlayer;
     private bool isGrappled;
     private float lastFireTime;
+    private AudioSource fireAudioSource;
+    private Transform mainCamera;
+    private ThrusterParticleManager thrusterParticleManager;
 
     private void Start()
     {
         currentState = State.Patrol;
         currentDestination = transform.position;
-        player = GameObject.FindWithTag("Player").transform;
+        destinationIsPatrolPoint = false;
+        player = LevelManager.Player;
         distanceToPlayer = Mathf.Infinity;
         isGrappled = false;
         lastFireTime = -fireRate;
+        fireAudioSource = gunTip.GetComponent<AudioSource>();
+        mainCamera = LevelManager.MainCamera.transform;
+        thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
     }
 
     private void Update()
     {
+        if (LevelManager.LevelInactive) return;
+        if (LevelManager.DebugMode) ListenForDebugClicks();
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        // TODO: switch to patrol state if player is dead (but first we should add a PlayerIsDead variable to LevelManager, and rework LevelInactive to be a method LevelIsActive() = FinishedGenerating && !PlayerIsDead)
         switch (currentState)
         {
             case State.Patrol:
@@ -54,20 +68,28 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         }
     }
 
+    private void ListenForDebugClicks()
+    {
+        if (!Input.GetMouseButtonDown(0) ||
+            !Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit) ||
+            hit.transform != transform) return; 
+        Debug.Log($"Current enemy AI state: {currentState}");
+    }
+
     private void UpdatePatrolState()
     {
+        if (!destinationIsPatrolPoint) SetRandomDestination();
         // TODO: update animation
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
         else if (distanceToPlayer <= chaseDistance) currentState = State.Chase;
-        
     }
     
     private void UpdateChaseState()
     {
         // TODO: update animation
-        currentDestination = player.transform.position;
-        ApproachDestination();
+        SetPlayerDestination();
+        ApproachDestination(chaseSpeedMultiplier);
         if (distanceToPlayer <= attackDistance) currentState = State.Attack;
         else if (distanceToPlayer > chaseDistance) currentState = State.Patrol;
     }
@@ -75,38 +97,37 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
     private void UpdateAttackState()
     {
         // TODO: update animation
-        currentDestination = player.transform.position;
+        if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
+        SetPlayerDestination();
         LookTowardsDestination();  // TODO: ApproachDestination() with a minimum distance to keep from it
         FireWeapon();
         if (distanceToPlayer > attackDistance) currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
     }
     
-    private void FireWeapon()
-    {
-        if (isGrappled || Time.time < lastFireTime + fireRate) return;
-        lastFireTime = Time.time;
-        Instantiate(projectile, gunTip);
-        // TODO: play animation
-    }
-    
     private void UpdateDeadState()
     {
-        // TODO (or delete if not necessary)
+        // TODO (or remove this state if not necessary)
     }
-
+    
     private void SetRandomDestination()
     {
-        // TODO: more intelligently choose a patrol point as to not stupidly run into asteroids
+        // TODO: more intelligently choose a patrol point so that a point is not within an asteroid
         currentDestination = transform.position + Random.onUnitSphere * Random.Range(10, 30); // TODO: make the range min/max inspector variables, if a similar methodology is maintained
+        destinationIsPatrolPoint = true;
     }
 
-    private void ApproachDestination()
+    private void SetPlayerDestination()
+    {
+        currentDestination = player.transform.position;
+        destinationIsPatrolPoint = false;
+    }
+    
+    private void ApproachDestination(float speedMultiplier = 1f)
     {
         LookTowardsDestination();
-        if (!isGrappled)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * Time.deltaTime); // TODO: use navmesh instead
-        }
+        if (isGrappled) return;
+        if (!thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StartExhaustTrail();
+        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime); // TODO: use navmesh instead
     }
 
     private void LookTowardsDestination()
@@ -114,6 +135,15 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         var targetDirection = (currentDestination - transform.position).normalized;
         var lookRotation = Quaternion.LookRotation(targetDirection);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime); // TODO: use a better T, within [0, 1]
+    }
+    
+    private void FireWeapon()
+    {
+        if (isGrappled || Time.time < lastFireTime + fireRate) return;
+        lastFireTime = Time.time;
+        // TODO: play animation
+        Instantiate(projectile, gunTip);
+        fireAudioSource.PlayOneShot(fireSfx); // TODO: fix this sometimes not playing properly, and change fireSfx to fireAudioSource.clip if that still works
     }
 
     private void OnDrawGizmos()

@@ -1,4 +1,4 @@
-﻿public class EnemyProjectileHealEffect : HealthEffectBehavior
+﻿public class EnemyProjectileHealthEffect : HealthEffectBehavior
 {
     public override int Strength => damage;
     public override HealthEffect Effect => HealthEffect.Damage;

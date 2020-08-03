@@ -4545,11 +4545,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 591604319}
-    - target: {fileID: 7467380348683872304, guid: 35c87d254ce1c034f9e041fa103c0289,
-        type: 3}
-      propertyPath: rotationSmoothing
-      value: 100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35c87d254ce1c034f9e041fa103c0289, type: 3}
 --- !u!1001 &5444071879369067341
@@ -4618,31 +4613,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
-        type: 3}
-      propertyPath: levelDimensions.z
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
-        type: 3}
-      propertyPath: levelDimensions.x
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
-        type: 3}
-      propertyPath: levelDimensions.y
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
-        type: 3}
-      propertyPath: spawnProbability.Array.data[3]
-      value: 0.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
-        type: 3}
-      propertyPath: spawnProbability.Array.data[1]
-      value: 0.37
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a1a6f451fb644741945b61152678ead, type: 3}

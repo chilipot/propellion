@@ -4,13 +4,10 @@ public class EnemyProjectileBehavior : MonoBehaviour
 {
     public float speed = 10f;
     public AudioClip hitSfx;
-    
-    private AudioSource fireSfx;
 
     private void Start()
     {
-        fireSfx = GetComponent<AudioSource>();
-        transform.LookAt(GameObject.FindWithTag("Player").transform);
+        transform.LookAt(LevelManager.Player);
     }
 
     private void Update()
@@ -21,8 +18,16 @@ public class EnemyProjectileBehavior : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        AudioSource.PlayClipAtPoint(hitSfx, transform.position);
-        var destroyDelay = fireSfx.isPlaying ? fireSfx.clip.length - fireSfx.time : 0;
-        Destroy(gameObject, destroyDelay);
+        // TODO: play a particle effect to represent projectile collision
+        Debug.Log($"projectile hit {other.name} at {Time.time}!"); // TODO: delete
+        if (other.CompareTag("Player"))
+        {
+            var hitSfxSource = AudioSourceExtension.PlayClipAndGetSource(hitSfx, transform.position);
+            hitSfxSource.volume = 0.7f;
+            hitSfxSource.minDistance = 10f;
+            hitSfxSource.maxDistance = 500f;
+            hitSfxSource.rolloffMode = AudioRolloffMode.Linear;
+        }
+        Destroy(gameObject);
     }
 }

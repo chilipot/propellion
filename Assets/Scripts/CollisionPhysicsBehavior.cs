@@ -14,7 +14,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = LevelManager.PlayerRb;
         thruster = GetComponentInChildren<ThrusterManager>();
         grapple = FindObjectOfType<GrappleGunBehavior>();
         impactTime = null;

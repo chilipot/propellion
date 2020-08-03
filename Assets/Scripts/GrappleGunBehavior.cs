@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
@@ -24,9 +23,9 @@ public class GrappleGunBehavior : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
         currentTarget = null;
-        mainCamera = Camera.main.transform;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        playerRb = player.GetComponent<Rigidbody>();
+        mainCamera = LevelManager.MainCamera.transform;
+        player = LevelManager.Player;
+        playerRb = LevelManager.PlayerRb;
         shootGrappleSfx = GetComponent<AudioSource>();
         ui = FindObjectOfType<UIManager>();
     }
@@ -43,7 +42,7 @@ public class GrappleGunBehavior : MonoBehaviour
         {
             currentTarget = new GrappleTarget(hit.transform, hit.point, player);
             lineRenderer.positionCount = 2;
-            shootGrappleSfx.Play();
+            shootGrappleSfx.PlayOneShot(shootGrappleSfx.clip);
         }
     }
 

@@ -8,7 +8,7 @@ public class ThrustBehavior : MonoBehaviour
     
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = LevelManager.PlayerRb;
         thruster = GetComponentInChildren<ThrusterManager>();
         propelTime = null;
     }

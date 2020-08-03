@@ -17,7 +17,7 @@ public class PhysicsCameraController : MonoBehaviour
         FreeCam = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        rb = GetComponent<Rigidbody>();
+        rb = LevelManager.PlayerRb;
     }
 
     private void Update()

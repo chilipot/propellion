@@ -1,24 +1,37 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
-    public static bool LevelInactive { get; private set; } = true; 
+    public static bool LevelInactive { get; private set; } = true;
+    public static bool DebugMode { get; private set; } = false;
+    public static Camera MainCamera { get; private set; }
+    public static Transform Player { get; private set; }
+    public static Rigidbody PlayerRb { get; private set; }
+
+    public bool enableDebugMode = false;
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
-    private Rigidbody playerBody;
     private AudioSource winSfx, loseSfx;
     private bool levelStarted;
-    
-    private void Start()
+
+    private void Awake()
     {
         LevelInactive = true;
+        DebugMode = enableDebugMode;
+        MainCamera = Camera.main;
+        Player = GameObject.FindWithTag("Player").transform;
+        PlayerRb = Player.GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
         ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
-        playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
-        var audioSources = GetComponents<AudioSource>();
+        var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
         levelStarted = false;
@@ -42,7 +55,7 @@ public class LevelManager : MonoBehaviour
         if (LevelInactive) return;
         EndLevel(true);
         winSfx.Play();
-        playerBody.constraints = RigidbodyConstraints.FreezeAll;
+        PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     public void Lose()
