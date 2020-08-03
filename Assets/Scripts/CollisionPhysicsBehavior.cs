@@ -6,7 +6,6 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     public float stabilizationDuration = 0.5f;
 
     private Rigidbody rb;
-    private LevelManager levelManager;
     private ThrusterManager thruster;
     private GrappleGunBehavior grapple;
     private float? impactTime;
@@ -16,7 +15,6 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        levelManager = FindObjectOfType<LevelManager>();
         thruster = GetComponentInChildren<ThrusterManager>();
         grapple = FindObjectOfType<GrappleGunBehavior>();
         impactTime = null;
@@ -26,7 +24,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if (!impactTime.HasValue || levelManager.LevelIsOver()) return; // if level is over, continue spinning indefinitely for dramatic effect
+        if (!impactTime.HasValue || LevelManager.LevelInactive) return; // if level is over, continue spinning indefinitely for dramatic effect
         var timeSinceImpact = Time.fixedTime - impactTime.Value;
         if (timeSinceImpact > stabilizationDelay) Stabilize(timeSinceImpact);
         if (rb.angularVelocity == Vector3.zero) FinishStabilizing();

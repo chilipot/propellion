@@ -2,9 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Experimental.GraphView;
-using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
@@ -26,15 +23,20 @@ public class ProceduralGeneration : MonoBehaviour
     public int chunkSize;
     public int unitCubeSize;
 
+    [Tooltip("Number of unit cubes between black hole and player start")]
+    public int blackHoleBufferLength = 5;
+    [Tooltip("Number of unit cubes that exist past the exit portal")]
+    public int exitBufferLength = 5;
+
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
-    
-    // public GameObject blackHolePrefab;
-    // public GameObject exitPortalPrefab;
+
+    public GameObject blackHolePrefab;
+    public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
-    public GameObject medicalCanisterPrefab;
+    public GameObject medicalCanisterPrefab;                     
     public GameObject alienPrefab;
 
     private GameObject asteroidCollection;
@@ -43,6 +45,9 @@ public class ProceduralGeneration : MonoBehaviour
     
     private Vector3Int numChunksInLevel;
     private Vector3Int numUnitCubesInChunk;
+
+    // index of the unit cube containing the player's start position
+    private Vector3Int playerStartUnitCube;
 
     private CullingGroup cullGroup;
     private BoundingSphere[] bounds;
@@ -60,9 +65,12 @@ public class ProceduralGeneration : MonoBehaviour
     private float canisterRadius;
     private float asteroidBaseRadius;
     private float alienRadius;
+    
+    private UIManager ui;
 
     private void Awake()
     {
+        FinishedGenerating = false;
         asteroidCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
         alienCollection = GameObject.FindGameObjectWithTag("AlienCollection");
@@ -76,7 +84,7 @@ public class ProceduralGeneration : MonoBehaviour
 
         // var entitiesPerChunk = 1; TODO: Make this more extendable
         maxEntities = numChunksInLevel.x * numUnitCubesInChunk.x * numChunksInLevel.y * numUnitCubesInChunk.y * numChunksInLevel.z * numUnitCubesInChunk.z  * 1; // 1 entity per unit cube right now
-        
+
         // Culling Setup
         var mainCam = Camera.main;
         cullGroup = new CullingGroup {targetCamera = mainCam};
@@ -93,6 +101,12 @@ public class ProceduralGeneration : MonoBehaviour
 
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
+    }
+
+    private void Start()
+    {
+        ui = FindObjectOfType<UIManager>();
+        ui.SetLevelStatus(UIManager.LevelStatus.Loading);
     }
 
     private void AddEntity(GameObject obj)
@@ -133,65 +147,91 @@ public class ProceduralGeneration : MonoBehaviour
         cullGroup.SetBoundingSphereCount(EntityCount);
     }
 
+    private void SetupBaseObjects()
+    {
+        var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
+        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
+
+        var player = GameObject.FindWithTag("Player");
+        var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
+        player.transform.position = playerStartPosition;
+        var playerStartUnitCubeAsFloat = playerStartPosition / unitCubeSize;
+        playerStartUnitCube = new Vector3Int(
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.x), 
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.y), 
+            Mathf.FloorToInt(playerStartUnitCubeAsFloat.z)
+        );
+        
+        var exitPortalPosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, levelDimensions.z - exitBufferLength * unitCubeSize - unitCubeSize / 2f);
+        Instantiate(exitPortalPrefab, exitPortalPosition, Quaternion.identity);
+    }
+    
     private IEnumerator GenerateEntities()
     {
+        SetupBaseObjects();
+        yield return null;
         for (var x = 0; x < numChunksInLevel.x; x++)
         {
             for (var y = 0; y < numChunksInLevel.y; y++)
             {
                 for (var z = 0; z < numChunksInLevel.z; z++)
                 {
-                    var chunkStart = new Vector3Int(x, y, z) * chunkSize;
-                    GenerateChunk(chunkStart);
+                    GenerateChunk(new Vector3Int(x, y, z));
                     yield return null;
                 }
             }
         }
         FinishedGenerating = true;
+        ui.SetLevelStatus(UIManager.LevelStatus.Playing);
         // TODO: Remove when there's a load screen
         Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
-    private void GenerateChunk(Vector3Int chunkStart)
+    private void GenerateChunk(Vector3Int chunkIndex)
     {
+        var unitCubeIndexOffset = chunkIndex * numUnitCubesInChunk;
+        var chunkStart = chunkIndex * chunkSize;
         for (var x = 0; x < numUnitCubesInChunk.x; x++)
         {
             for (var y = 0; y < numUnitCubesInChunk.y; y++)
             {
                 for (var z = 0; z < numUnitCubesInChunk.z; z++)
                 {
+                    var unitCubeIndex = new Vector3Int(x, y, z);
+                    if (unitCubeIndex + unitCubeIndexOffset == playerStartUnitCube) continue;
+                    
                     // The offset to the top-left of the chunk and to the center of the first unit cube,
                     // in the top left corner of the chunk
                     var unitCubeOffset = chunkStart + Vector3.one * (unitCubeSize / 2f);
-                    var unitCubeCenter = (new Vector3Int(x, y, z) * unitCubeSize) + unitCubeOffset;
+                    var unitCubeCenter = unitCubeIndex * unitCubeSize + unitCubeOffset;
 
-                    // TODO: Clean this up
-                    var rands = new float[spawnProbability.Length];
-                    for (var i = 0; i < spawnProbability.Length; i++)
-                    {
-                        rands[i] = Random.value;
-                    }
-
-                    var actionMap = new Dictionary<EntityType, Action>()
-                    {
-                        [EntityType.None] = () => {}, // Nothing
-                        [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
-                        [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter),
-                        [EntityType.Alien] = () => GenerateChunkAliens(unitCubeCenter)
-                    };
-                    for (var i = 0; i < rands.Length; i++)
-                    {
-                        var probability = spawnProbability[i];
-                        var rand = rands[i];
-                        var action = actionMap[(EntityType)i];
-                        if (rand <= probability)
-                        {
-                            action();
-                        }
-                    }
+                    RandomlyGenerateUnitCubeEntity(unitCubeCenter);
                 }
             }
         }
+    }
+
+    private void RandomlyGenerateUnitCubeEntity(Vector3 unitCubeCenter)
+    {
+        // TODO: Clean this up
+        var actionMap = new Dictionary<EntityType, Action>
+        {
+            [EntityType.None] = () => {}, // Nothing
+            [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
+            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter),
+            [EntityType.Alien] = () => GenerateChunkAliens(unitCubeCenter)
+        };
+
+        var choices = new WeightedRandomBag<EntityType>();
+        for (var i = 0; i < actionMap.Count; i++)
+        {
+            var entity = (EntityType)i;
+            var weight = spawnProbability[i];
+            choices.AddEntry(entity, weight);
+        }
+
+        var action = actionMap[choices.GetRandom()];
+        action();
     }
 
     private void GenerateChunkMedicalCanisters(Vector3 unitCubeCenter)

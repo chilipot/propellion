@@ -3,36 +3,68 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public Text healthBar;
-    public Text thrustCapacityBar;
-    public Text levelStatus;
+    public GaugeBehavior healthGauge;
+    public GaugeBehavior fuelGauge;
 
-    public void SetHealthBar(float currHealth, float maxHealth)
+    public GameObject levelStatus, reticle;
+    public Sprite missionSuccess, missionFailed, loadingSimulation;
+    public Color reticleImageHitColor = new Color(255, 92, 94);
+    
+    private Image levelStatusImage;
+    private Image reticleImage;
+
+    public enum LevelStatus
     {
-        healthBar.text = Mathf.RoundToInt(currHealth).ToString();
-        healthBar.color = Color.Lerp(Color.red, Color.green, currHealth / maxHealth);
+        Playing,
+        Loading,
+        Win,
+        Lose
+    }
+    
+    private void Awake()
+    {
+        levelStatusImage = levelStatus.GetComponent<Image>();
+        reticleImage = reticle.GetComponent<Image>();
     }
 
-    public void SetThrustCapacityBar(float currCapacity, float maxCapacity)
+    public void SetReticleFocus(bool focused)
     {
-        float capcityLeft = currCapacity / maxCapacity;
-        if (Mathf.Approximately(capcityLeft, 0f))
+        if (focused)
         {
-            thrustCapacityBar.text = "EMPTY";
-            thrustCapacityBar.color = Color.red;
-            thrustCapacityBar.fontStyle = FontStyle.Bold;
-
+            reticleImage.color = reticleImageHitColor;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(0.5f, 0.5f, 0.5f), Time.deltaTime * 4);
         }
         else
         {
-            thrustCapacityBar.text = Mathf.RoundToInt(currCapacity).ToString();
-            thrustCapacityBar.color = (capcityLeft < 0.5f) ? Color.yellow : Color.blue;
+            reticleImage.color = Color.white;
+            reticleImage.transform.localScale = Vector3.Lerp(reticleImage.transform.localScale,
+                new Vector3(1f, 1f, 1f), Time.deltaTime * 4);
         }
     }
 
-    public void SetLevelStatus(bool won)
-    {
-        levelStatus.text = won ? "You win!" : "Game over!";
-        levelStatus.gameObject.SetActive(true);
+    public void SetLevelStatus(LevelStatus status) {
+        Sprite statusSprite;
+        switch (status)
+        {
+            case LevelStatus.Playing:
+                levelStatus.SetActive(false);
+                reticleImage.enabled = true;
+                return;
+            case LevelStatus.Loading:
+                statusSprite = loadingSimulation;
+                reticleImage.enabled = false;
+                break;
+            case LevelStatus.Win:
+                statusSprite = missionSuccess;
+                reticleImage.enabled = false;
+                break;
+            default:
+                statusSprite = missionFailed;
+                reticleImage.enabled = false;
+                break;
+        }
+        levelStatusImage.sprite = statusSprite;
+        levelStatus.SetActive(true);
     }
 }

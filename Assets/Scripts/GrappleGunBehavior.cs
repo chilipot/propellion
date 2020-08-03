@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GrappleGunBehavior : MonoBehaviour
     private Rigidbody playerRb;
     private AudioSource shootGrappleSfx;
 
+    private UIManager ui;
+
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -25,11 +28,12 @@ public class GrappleGunBehavior : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         playerRb = player.GetComponent<Rigidbody>();
         shootGrappleSfx = GetComponent<AudioSource>();
+        ui = FindObjectOfType<UIManager>();
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)) StartGrapple();
+        if (Input.GetMouseButtonDown(0) && !LevelManager.LevelInactive) StartGrapple();
         else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
     }
 
@@ -41,6 +45,13 @@ public class GrappleGunBehavior : MonoBehaviour
             lineRenderer.positionCount = 2;
             shootGrappleSfx.Play();
         }
+    }
+
+    private void ReticleEffect()
+    {
+        var focusedReticle = Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength,
+            grappleableStuff);
+        ui.SetReticleFocus(focusedReticle);
     }
 
     public void StopGrapple()
@@ -70,6 +81,7 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ReticleEffect();
         if (currentTarget == null) return;
         if (GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
