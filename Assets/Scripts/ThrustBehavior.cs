@@ -4,14 +4,13 @@ public class ThrustBehavior : MonoBehaviour
 {
     private Rigidbody rb;
     private ThrusterManager thruster;
-    private bool adjustedDirection;
-    private float? propelTime = null;
+    private float? propelTime;
     
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         thruster = GetComponentInChildren<ThrusterManager>();
-        adjustedDirection = false;
+        propelTime = null;
     }
 
     private void FixedUpdate()

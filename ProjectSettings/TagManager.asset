@@ -8,6 +8,7 @@ TagManager:
   - MedicalCanisterCollection
   - AsteroidCollection
   - Reticle
+  - ExitPortal
   layers:
   - Default
   - TransparentFX
