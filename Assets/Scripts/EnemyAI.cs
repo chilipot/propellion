@@ -28,6 +28,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
     private bool isGrappled;
     private float lastFireTime;
     private AudioSource fireAudioSource;
+    private AudioSource alienAggroSfx;
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
 
@@ -41,6 +42,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         isGrappled = false;
         lastFireTime = -fireRate;
         fireAudioSource = gunTip.GetComponent<AudioSource>();
+        alienAggroSfx = GetComponent<AudioSource>();
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
     }
@@ -82,7 +84,11 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         // TODO: update animation
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
-        else if (distanceToPlayer <= chaseDistance) currentState = State.Chase;
+        else if (distanceToPlayer <= chaseDistance)
+        {
+            alienAggroSfx.PlayOneShot(alienAggroSfx.clip);
+            currentState = State.Chase;
+        }
     }
     
     private void UpdateChaseState()
