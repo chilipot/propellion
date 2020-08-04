@@ -146,7 +146,7 @@ public class ProceduralGeneration : MonoBehaviour
     private void SetupBaseObjects()
     {
         var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
-        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
+        // Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
 
         var player = GameObject.FindWithTag("Player");
         var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
