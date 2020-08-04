@@ -67,8 +67,8 @@ MonoBehaviour:
   spawnProbability:
   - 0.6
   - 0.38
-  - 0.01
-  - 0.01
+  - 0.013
+  - 0.007
   asteroidSizeRange: {x: 5, y: 60}
   viewDistance: 500
   blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
