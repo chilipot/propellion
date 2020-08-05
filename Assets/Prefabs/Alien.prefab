@@ -1789,7 +1789,6 @@ MonoBehaviour:
     type: 3}
   gunTip: {fileID: 1351008105804437600}
   fireRate: 2
-  fireSfx: {fileID: 8300000, guid: 87986e393e4de0244bdae54f12fcf3d0, type: 3}
 --- !u!114 &8421363574963126011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2040,6 +2039,11 @@ PrefabInstance:
         type: 3}
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].outWeight
       value: 0.47453097
+      objectReference: {fileID: 0}
+    - target: {fileID: 1753105797556420399, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: DopplerLevel
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069f7f6d2f5b29745b2e10789754777c, type: 3}

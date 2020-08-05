@@ -18,7 +18,6 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public GameObject projectile;
     public Transform gunTip;
     public float fireRate = 1f;
-    public AudioClip fireSfx;
     
     private State currentState;
     private Vector3 currentDestination;
@@ -27,7 +26,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private float distanceToPlayer;
     private bool isGrappled;
     private float lastFireTime;
-    private AudioSource fireAudioSource;
+    private AudioSource fireSfx;
     private AudioSource alienAggroSfx;
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
@@ -41,8 +40,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         distanceToPlayer = Mathf.Infinity;
         isGrappled = false;
         lastFireTime = -fireRate;
-        fireAudioSource = gunTip.GetComponent<AudioSource>();
-        fireAudioSource.maxDistance = attackDistance * 2f;
+        fireSfx = gunTip.GetComponent<AudioSource>();
+        fireSfx.maxDistance = attackDistance * 2f;
         alienAggroSfx = GetComponent<AudioSource>();
         alienAggroSfx.maxDistance = chaseDistance * 2f;
         mainCamera = LevelManager.MainCamera.transform;
@@ -151,7 +150,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         lastFireTime = Time.time;
         // TODO: play animation
         Instantiate(projectile, gunTip);
-        fireAudioSource.PlayOneShot(fireSfx); // TODO: fix this sometimes not playing properly, and change fireSfx to fireAudioSource.clip if that still works
+        fireSfx.PlayOneShot(fireSfx.clip);
     }
 
     private void OnDrawGizmos()
