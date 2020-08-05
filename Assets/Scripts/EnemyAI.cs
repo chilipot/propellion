@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EnemyAI : MonoBehaviour, IGrappleResponder
+public class EnemyAI : MonoBehaviour, IGrappleResponse
 {
     private enum State
     {

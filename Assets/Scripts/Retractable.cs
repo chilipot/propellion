@@ -1,16 +1,18 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using UnityEngine;
 
-public class Retractable : MonoBehaviour
+public class Retractable : MonoBehaviour, IGrappleResponse
 {
 
     public float retractSpeed = 10f; // units per second
+    
+    private static Transform destination;
 
     [CanBeNull] private Retraction currentRetraction;
 
     private void Start()
     {
+        destination = LevelManager.Player;
         currentRetraction = null;
     }
 
@@ -18,17 +20,17 @@ public class Retractable : MonoBehaviour
     {
         if (currentRetraction != null)
         {
-            transform.position = Vector3.Lerp(currentRetraction.StartPosition, currentRetraction.Destination.position,
+            transform.position = Vector3.Lerp(currentRetraction.StartPosition, destination.position,
                 (Time.time - currentRetraction.RetractStartTime) / currentRetraction.RetractDuration);
         }
     }
 
-    public void Retract(Transform dest)
+    public void OnGrappleStart()
     {
-        currentRetraction = new Retraction(transform.position, dest, retractSpeed);
+        currentRetraction = new Retraction(transform.position, retractSpeed);
     }
 
-    public void CancelRetraction()
+    public void OnGrappleStop()
     {
         currentRetraction = null;
     }
@@ -38,12 +40,10 @@ public class Retractable : MonoBehaviour
         public float RetractStartTime { get; }
         public float RetractDuration { get; }
         public Vector3 StartPosition { get; }
-        public Transform Destination { get; }
         
-        public Retraction(Vector3 startPosition, Transform destination, float retractSpeed)
+        public Retraction(Vector3 startPosition, float retractSpeed)
         {
             StartPosition = startPosition;
-            Destination = destination;
             RetractStartTime = Time.time;
             RetractDuration = Vector3.Distance(startPosition, destination.position) / retractSpeed;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -12,10 +13,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private LineRenderer lineRenderer;
     [CanBeNull] private GrappleTarget currentTarget;
     private Transform mainCamera;
-    private Transform player;
-    private Rigidbody playerRb;
     private AudioSource shootGrappleSfx;
-
     private UIManager ui;
 
     private void Start()
@@ -24,8 +22,6 @@ public class GrappleGunBehavior : MonoBehaviour
         lineRenderer.positionCount = 0;
         currentTarget = null;
         mainCamera = LevelManager.MainCamera.transform;
-        player = LevelManager.Player;
-        playerRb = LevelManager.PlayerRb;
         shootGrappleSfx = GetComponent<AudioSource>();
         ui = FindObjectOfType<UIManager>();
     }
@@ -40,7 +36,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
-            currentTarget = new GrappleTarget(hit.transform, hit.point, player);
+            currentTarget = new GrappleTarget(hit.transform, hit.point);
             lineRenderer.positionCount = 2;
             shootGrappleSfx.PlayOneShot(shootGrappleSfx.clip);
         }
@@ -86,7 +82,7 @@ public class GrappleGunBehavior : MonoBehaviour
         else
         {
             var tugForce = ComputeTugForce();
-            playerRb.AddForce(tugForce, ForceMode.Force);
+            LevelManager.PlayerRb.AddForce(tugForce, ForceMode.Force);
         }
     }
 
@@ -98,7 +94,7 @@ public class GrappleGunBehavior : MonoBehaviour
         var grappleDirection = grappleEnd - grappleStart;
         if (Physics.Raycast(grappleStart, grappleDirection, out var hit, grappleDirection.magnitude, grappleableStuff))
         {
-            if (currentTarget.Retractable && hit.collider.transform == currentTarget.Transform) return false;
+            if (currentTarget.IsRetractable && hit.collider.transform == currentTarget.Transform) return false;
             return Vector3.Distance(hit.point, currentTarget.GetGrapplePoint()) > 0.1f;
         }
         return false;
@@ -107,7 +103,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private Vector3 ComputeTugForce()
     {
         if (currentTarget == null) throw new InvalidOperationException("Not currently grappling.");
-        var grappleDirection = currentTarget.GetGrapplePoint() - player.position;
+        var grappleDirection = currentTarget.GetGrapplePoint() - LevelManager.Player.position;
         var tugStrength = grappleDirection.magnitude / maxGrappleLength * maxRetractionForce;
         var tugForce = grappleDirection.normalized * tugStrength;
         return tugForce;
@@ -116,27 +112,18 @@ public class GrappleGunBehavior : MonoBehaviour
     private class GrappleTarget
     {
         public Transform Transform { get; }
-        public Retractable Retractable { get; }
+        public bool IsRetractable { get; }
         
         private Vector3 Offset { get; }
-        private IGrappleResponder Responder { get; }
+        private IGrappleResponse[] Responses { get; }
 
-        public GrappleTarget(Transform target, Vector3 grapplePoint, Transform player)
+        public GrappleTarget(Transform target, Vector3 grapplePoint)
         {
             Transform = target;
             Offset = grapplePoint - Transform.position;
-            var targetResponder = Transform.GetComponent<IGrappleResponder>();
-            if (targetResponder != null)
-            {
-                Responder = targetResponder;
-                Responder.OnGrappleStart();
-            }
-            var targetRetractable = Transform.GetComponent<Retractable>();
-            if (targetRetractable)
-            {
-                Retractable = targetRetractable; 
-                Retractable.Retract(player);
-            }
+            Responses = Transform.GetComponentsInChildren<IGrappleResponse>();
+            foreach (var response in Responses) response.OnGrappleStart();
+            IsRetractable = Responses.Any(res => res is Retractable);
         }
 
         public Vector3 GetGrapplePoint()
@@ -146,8 +133,7 @@ public class GrappleGunBehavior : MonoBehaviour
         
         public void Release()
         {
-            if (Responder != null) Responder.OnGrappleStop();
-            if (Retractable) Retractable.CancelRetraction();
+            foreach (var response in Responses) response.OnGrappleStop();
         }
     }
 }
