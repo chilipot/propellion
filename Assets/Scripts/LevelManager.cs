@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     public static Rigidbody PlayerRb { get; private set; }
 
     public bool enableDebugMode = false;
+    public bool godMode = false;
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
@@ -57,7 +58,7 @@ public class LevelManager : MonoBehaviour
 
     public void Lose()
     {
-        if (!LevelIsActive()) return;
+        if (godMode || !LevelIsActive()) return;
         EndLevel(false);
         loseSfx.Play();
         
