@@ -28,7 +28,7 @@ public class ThrusterManager : MonoBehaviour
         
         if (engaged)
         {
-            if (LevelManager.LevelInactive) Disengage();
+            if (!LevelManager.LevelIsActive()) Disengage();
             else if (capacity > 0) capacity -= 1 * Time.deltaTime;
             else
             {
@@ -44,7 +44,7 @@ public class ThrusterManager : MonoBehaviour
     
     private void Engage()
     {
-        if (LevelManager.LevelInactive) return;
+        if (!LevelManager.LevelIsActive()) return;
         if (capacity > 0)
         {
             engaged = true;
@@ -71,7 +71,7 @@ public class ThrusterManager : MonoBehaviour
 
     public void Burst(float burstStrength)
     {
-        if (LevelManager.LevelInactive) return;
+        if (!LevelManager.LevelIsActive()) return;
         capacity -= 0.5f * burstStrength;
     }
     

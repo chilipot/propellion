@@ -524,7 +524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRetractionForce: 600
-  maxGrappleLength: 200
+  maxGrappleLength: 300
   grappleableStuff:
     serializedVersion: 2
     m_Bits: 256

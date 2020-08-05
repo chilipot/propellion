@@ -59,17 +59,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawGizmos: 0
   disableBlackHole: 0
-  levelDimensions: {x: 1024, y: 1024, z: 5128}
+  levelDimensions: {x: 1280, y: 1280, z: 5128}
   chunkSize: 256
   unitCubeSize: 64
   blackHoleBufferLength: 17
   exitBufferLength: 5
   spawnProbability:
-  - 0.6
-  - 0.38
+  - 0.64
+  - 0.34
   - 0.013
   - 0.007
-  asteroidSizeRange: {x: 5, y: 60}
+  asteroidSizeRange: {x: 5, y: 63}
   viewDistance: 500
   blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
     type: 3}

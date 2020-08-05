@@ -49,10 +49,10 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
 
     private void Update()
     {
-        if (LevelManager.LevelInactive) return;
+        if (!ProceduralGeneration.FinishedGenerating) return;
+        if (LevelManager.LevelIsOver) currentState = State.Patrol;
         if (LevelManager.DebugMode) ListenForDebugClicks();
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        // TODO: switch to patrol state if player is dead (but first we should add a PlayerIsDead variable to LevelManager, and rework LevelInactive to be a method LevelIsActive() = FinishedGenerating && !PlayerIsDead)
         switch (currentState)
         {
             case State.Patrol:
@@ -84,7 +84,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponder
         // TODO: update animation
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
-        else if (distanceToPlayer <= chaseDistance)
+        else if (!LevelManager.LevelIsOver && distanceToPlayer <= chaseDistance)
         {
             alienAggroSfx.PlayOneShot(alienAggroSfx.clip);
             currentState = State.Chase;

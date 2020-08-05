@@ -16,7 +16,8 @@ public enum EntityType
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    
+    public static bool FinishedGenerating { get; private set; }
+
     // DEBUG ONLY
     public bool drawGizmos = false;
     public bool disableBlackHole = false;
@@ -62,7 +63,6 @@ public class ProceduralGeneration : MonoBehaviour
     private Dictionary<int, int> entityIdToIndex;
     private Dictionary<int, int> entityIndexToId;
     
-    public static bool FinishedGenerating = false;
     private int maxEntities;
 
     private float canisterRadius;

@@ -1,12 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
-    public static bool LevelInactive { get; private set; } = true;
-    public static bool DebugMode { get; private set; } = false;
+    public static bool LevelIsOver { get; private set; }
+    public static bool DebugMode { get; private set; }
     public static Camera MainCamera { get; private set; }
     public static Transform Player { get; private set; }
     public static Rigidbody PlayerRb { get; private set; }
@@ -16,11 +15,10 @@ public class LevelManager : MonoBehaviour
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
-    private bool levelStarted;
 
     private void Awake()
     {
-        LevelInactive = true;
+        LevelIsOver = false;
         DebugMode = enableDebugMode;
         MainCamera = Camera.main;
         Player = GameObject.FindWithTag("Player").transform;
@@ -34,25 +32,24 @@ public class LevelManager : MonoBehaviour
         var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
-        levelStarted = false;
     }
 
     private void Update()
     {
-        if (!levelStarted && ProceduralGeneration.FinishedGenerating)
-        {
-            LevelInactive = false;
-            levelStarted = true;
-        }
-        if ((LevelInactive && levelStarted && Input.anyKeyDown) || Input.GetKeyDown(KeyCode.R))
+        if (LevelIsOver && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
+    public static bool LevelIsActive()
+    {
+        return ProceduralGeneration.FinishedGenerating && !LevelIsOver;
+    }
+
     public void Win()
     {
-        if (LevelInactive) return;
+        if (!LevelIsActive()) return;
         EndLevel(true);
         winSfx.Play();
         PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
@@ -60,7 +57,7 @@ public class LevelManager : MonoBehaviour
 
     public void Lose()
     {
-        if (LevelInactive) return;
+        if (!LevelIsActive()) return;
         EndLevel(false);
         loseSfx.Play();
         
@@ -72,7 +69,7 @@ public class LevelManager : MonoBehaviour
     private void EndLevel(bool won)
     {
         ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
-        LevelInactive = true;
+        LevelIsOver = true;
         grappleGun.StopGrapple();
     }
 }
