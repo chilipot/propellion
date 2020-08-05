@@ -42,7 +42,9 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         isGrappled = false;
         lastFireTime = -fireRate;
         fireAudioSource = gunTip.GetComponent<AudioSource>();
+        fireAudioSource.maxDistance = attackDistance * 2f;
         alienAggroSfx = GetComponent<AudioSource>();
+        alienAggroSfx.maxDistance = chaseDistance * 2f;
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
     }
