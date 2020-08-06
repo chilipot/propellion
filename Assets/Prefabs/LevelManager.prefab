@@ -70,7 +70,7 @@ MonoBehaviour:
   - 0.34
   - 0.013
   - 0.007
-  asteroidSizeRange: {x: 5, y: 63}
+  asteroidSizeRange: {x: 10, y: 63}
   viewDistance: 500
   blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
     type: 3}

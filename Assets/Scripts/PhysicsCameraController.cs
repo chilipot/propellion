@@ -8,7 +8,6 @@ public class PhysicsCameraController : MonoBehaviour
     public static bool FreeCam = true; // TODO: make this an instance variable (see TODO below)
 
     private Vector3 rotationForce;
-    private Rigidbody rb;
     
     private void Start()
     {
@@ -17,7 +16,6 @@ public class PhysicsCameraController : MonoBehaviour
         FreeCam = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        rb = LevelManager.PlayerRb;
     }
 
     private void Update()
@@ -32,6 +30,6 @@ public class PhysicsCameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddRelativeTorque(rotationForce, ForceMode.Acceleration);
+        LevelManager.PlayerRb.AddRelativeTorque(rotationForce, ForceMode.Acceleration);
     }
 }
