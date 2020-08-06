@@ -40,7 +40,6 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void Update()
     {
-        if(joint) Debug.Log(joint.maxDistance);
         if (Input.GetMouseButtonDown(0) && !LevelManager.LevelInactive) StartGrapple();
         else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
     }
