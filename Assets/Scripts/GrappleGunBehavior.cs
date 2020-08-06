@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
+    public bool breakable = false;
     public float maxRetractionForce = 150f;
-    public float minRetractonForce = 50f;
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
     public Transform gunTip;
@@ -50,6 +50,24 @@ public class GrappleGunBehavior : MonoBehaviour
         return grappling && !grappledObj;
     }
 
+    private void BuildGrapple(RaycastHit hit)
+    {
+        joint = player.AddComponent<SpringJoint>();
+        joint.autoConfigureConnectedAnchor = false;
+        joint.anchor = Vector3.zero;
+        joint.connectedBody = hit.rigidbody;
+        if (grappledObjOffset.HasValue)
+        {
+            joint.connectedAnchor = grappledObjOffset.Value.normalized;
+        }
+
+        joint.spring = 10f;
+        joint.damper = 3f;
+        joint.maxDistance = Vector3.Distance(player.transform.position, GrapplePoint());
+        joint.minDistance = 0f;
+        joint.enableCollision = true;
+    }
+
     private void StartGrapple()
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
@@ -66,17 +84,7 @@ public class GrappleGunBehavior : MonoBehaviour
                 grappledRetractable = retractable; 
                 grappledRetractable.Retract(player.transform);
             }
-
-            joint = player.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.anchor = Vector3.zero;
-            joint.connectedBody = hit.rigidbody;
-            joint.connectedAnchor = grappledObjOffset.Value.normalized;
-            joint.spring = 7f;
-            joint.damper = 3f;
-            joint.maxDistance = Vector3.Distance(player.transform.position, GrapplePoint());
-            joint.minDistance = 0f;
-            joint.enableCollision = true;
+            BuildGrapple(hit);
         }
     }
 
@@ -117,12 +125,13 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         ReticleEffect();
         if (!grappling) return;
-        if (false && GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
+        if (breakable && GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
         {
             joint.maxDistance *= 0.975f;
-            // var tugForce = ComputeTugForce();
-            // playerRb.AddForce(tugForce, ForceMode.Force);
+            // Apply an extra tug - as if the rope stopped stretching
+            var tugForce = ComputeTugForce();
+            playerRb.AddForce(tugForce, ForceMode.Impulse);
         }
     }
 
@@ -145,14 +154,8 @@ public class GrappleGunBehavior : MonoBehaviour
         var distFromGrapplePoint = grappleDirection.magnitude;
         
         var directionMultiplier = Mathf.Abs(Vector3.Dot(playerRb.velocity.normalized, grappleDirection.normalized) - 1);
-        var tensionMultiplier = 20f * directionMultiplier * Mathf.Clamp(distFromGrapplePoint / maxRetractionForce, 0.5f, 1);
-        playerRb.AddForce(grappleDirection.normalized * tensionMultiplier, ForceMode.Impulse);
-        Debug.Log("Extra: " + tensionMultiplier);
-        
-        var tugStrength = Mathf.Clamp(5 * Mathf.Pow(1.02f, distFromGrapplePoint) + 50, minRetractonForce, maxRetractionForce);
-        var tugForce = grappleDirection.normalized * tugStrength;
-        playerRb.AddForce(tugForce, ForceMode.Force);
-        Debug.Log("Strength: " + (tugForce.magnitude));
+        var tensionMultiplier = 35f * directionMultiplier * Mathf.Clamp(distFromGrapplePoint / maxRetractionForce, 0.5f, 1);
+        var tugForce = grappleDirection.normalized * tensionMultiplier;
         return tugForce;
     }
 

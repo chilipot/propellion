@@ -11,5 +11,6 @@ public enum HealthEffect
 public abstract class HealthEffectBehavior : MonoBehaviour
 {
     public abstract HealthEffect Effect { get; }
-    public abstract int Strength { get; }
+
+    public abstract int ComputeStrength(Collision collision = null);
 }

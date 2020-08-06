@@ -21,7 +21,7 @@ public class SpaceSuitManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        ProcessHealthEffect(other.gameObject);
+        ProcessHealthEffect(other.gameObject, other);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,7 +29,7 @@ public class SpaceSuitManager : MonoBehaviour
         ProcessHealthEffect(other.gameObject);
     }
 
-    private void ProcessHealthEffect(GameObject healthEffectObj)
+    private void ProcessHealthEffect(GameObject healthEffectObj, Collision collision = null)
     {
         if (Time.fixedTime - lastHealthEffect <= healthEffectInteractionDelay) return;
         var healthEffectBehavior = healthEffectObj.GetComponent<HealthEffectBehavior>();
@@ -37,10 +37,10 @@ public class SpaceSuitManager : MonoBehaviour
         switch (healthEffectBehavior.Effect)
         {
             case HealthEffect.Heal:
-                Heal(healthEffectBehavior.Strength);
+                Heal(healthEffectBehavior.ComputeStrength(collision));
                 break;
             case HealthEffect.Damage:
-                Damage(healthEffectBehavior.Strength);
+                Damage(healthEffectBehavior.ComputeStrength(collision));
                 break;
         }
         lastHealthEffect = Time.fixedTime;

@@ -2,9 +2,13 @@
 
 public class AsteroidCollisionHealthEffect : HealthEffectBehavior
 {
-    public override int Strength => damage;
+    public override int ComputeStrength(Collision collision = null) => collision == null
+        ? 0
+        : Mathf.RoundToInt(Mathf.Clamp(collision.impulse.magnitude * damageMultiplier, 0f, maxDmg));
+
     public override HealthEffect Effect => HealthEffect.Damage;
 
-    public int damage = 30;
+    public float damageMultiplier = 0.05f;
+    public float maxDmg = 30f;
 
 }
