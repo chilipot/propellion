@@ -33,6 +33,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
     private Transform projectileParent;
+    private ProceduralGeneration entityManager;
 
     private void Start()
     {
@@ -50,6 +51,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
+        entityManager = FindObjectOfType<ProceduralGeneration>();
     }
 
     private void Update()
@@ -74,10 +76,13 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
 
     private void ListenForDebugClicks()
     {
-        if (!Input.GetMouseButtonDown(0) ||
-            !Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit) ||
-            hit.transform != transform) return; 
-        Debug.Log($"Current enemy AI state: {currentState}");
+        if (!Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit) || hit.transform != transform) return;
+        if (Input.GetMouseButtonDown(0)) Debug.Log($"Current enemy AI state: {currentState}");
+        if (Input.GetMouseButtonDown(1))
+        {
+            entityManager.RemoveEntity(gameObject);
+            Destroy(gameObject);
+        }
     }
 
     private void UpdatePatrolState()

@@ -12,6 +12,7 @@ TagManager:
   - ExitPortal
   - Heavy
   - ProjectileCollection
+  - BlackHole
   layers:
   - Default
   - TransparentFX

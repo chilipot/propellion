@@ -7,6 +7,7 @@ public class BlackHoleConsumption : MonoBehaviour
     
     private LevelManager levelManager;
     private ProceduralGeneration entityManager;
+    
     private void Start()
     {
         entityManager = FindObjectOfType<ProceduralGeneration>();
