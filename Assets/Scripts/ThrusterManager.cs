@@ -30,7 +30,7 @@ public class ThrusterManager : MonoBehaviour
         {
             if (!LevelManager.LevelIsActive()) Disengage();
             else if (capacity > 0) capacity -= 1 * Time.deltaTime;
-            else
+            else if (!LevelManager.GodMode)
             {
                 Disengage();
                 capacity = 0;
@@ -45,7 +45,7 @@ public class ThrusterManager : MonoBehaviour
     private void Engage()
     {
         if (!LevelManager.LevelIsActive()) return;
-        if (capacity > 0)
+        if (capacity > 0 || LevelManager.GodMode)
         {
             engaged = true;
             if (engineSfxClipHasStarted) thrusterEngineSfx.UnPause();

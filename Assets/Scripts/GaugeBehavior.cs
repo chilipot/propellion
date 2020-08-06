@@ -14,8 +14,9 @@ public class GaugeBehavior : MonoBehaviour
     
     public void SetVal(float capacity, float maxCapacity)
     {
-        var percentageOfMax = capacity / maxCapacity;
-        gauge.fillAmount = (percentageOfMax) * (180.0f / 360);
+        var clampedCapacity = Mathf.Clamp(capacity, 0f, maxCapacity);
+        var percentageOfMax = clampedCapacity / maxCapacity;
+        gauge.fillAmount = percentageOfMax * (180.0f / 360);
         if (percentageOfMax <= lowPercentage)
         {
             animator.ResetTrigger("NotLow");

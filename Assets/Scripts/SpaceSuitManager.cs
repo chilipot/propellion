@@ -48,7 +48,7 @@ public class SpaceSuitManager : MonoBehaviour
 
     private void SetHealth(float newHealth)
     {
-        health = Mathf.Clamp(newHealth, 0, maxHealth);
+        health = Mathf.Clamp(newHealth, 0f, maxHealth);
         ui.healthGauge.SetVal(health, maxHealth);
         if (health <= 0) levelManager.Lose();
     }
