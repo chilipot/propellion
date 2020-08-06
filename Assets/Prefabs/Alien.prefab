@@ -1785,7 +1785,8 @@ MonoBehaviour:
   chaseDistance: 200
   attackDistance: 80
   chaseSpeedMultiplier: 3
-  projectile: {fileID: 9018411449781333520, guid: eb7cc70ea76c8c24b8fe0ceeefca2329,
+  projectile: {fileID: 1896060850478464, guid: 9e278e65f05df3344b3374de61db1e82, type: 3}
+  muzzleFlash: {fileID: 2423976063136330336, guid: fee69c5cf7ccae24fabd1b8983bc89ca,
     type: 3}
   gunTip: {fileID: 1351008105804437600}
   fireRate: 2
@@ -2044,6 +2045,36 @@ PrefabInstance:
         type: 3}
       propertyPath: DopplerLevel
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.3425
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0021
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0993
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069f7f6d2f5b29745b2e10789754777c, type: 3}

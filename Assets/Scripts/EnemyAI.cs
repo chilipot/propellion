@@ -16,6 +16,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public float attackDistance = 50f;
     public float chaseSpeedMultiplier = 3f;
     public GameObject projectile;
+    public GameObject muzzleFlash;
     public Transform gunTip;
     public float fireRate = 1f;
     
@@ -30,6 +31,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private AudioSource alienAggroSfx;
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
+    private Transform projectileParent;
 
     private void Start()
     {
@@ -46,6 +48,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         alienAggroSfx.maxDistance = chaseDistance * 2f;
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
+        projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
     }
 
     private void Update()
@@ -149,7 +152,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (isGrappled || Time.time < lastFireTime + fireRate) return;
         lastFireTime = Time.time;
         // TODO: play animation
-        Instantiate(projectile, gunTip);
+        Instantiate(projectile, gunTip.position, Quaternion.identity, projectileParent);
+        Instantiate(muzzleFlash, gunTip);
         fireSfx.PlayOneShot(fireSfx.clip);
     }
 
