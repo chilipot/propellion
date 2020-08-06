@@ -37,7 +37,6 @@ public class EnemyProjectileBehavior : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // TODO: play a particle effect to represent projectile collision
-        Debug.Log($"projectile hit {other.name} at {Time.time}!"); // TODO: delete
         if (other.CompareTag("Player"))
         {
             var hitSfxSource = AudioSourceExtension.PlayClipAndGetSource(hitSfx, transform.position);
