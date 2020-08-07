@@ -51,8 +51,11 @@ MonoBehaviour:
   exitBufferLength: 5
   spawnProbability:
   - 0.6
-  - 0.39
+  - 0.38
   - 0.01
+  - 0
+  - 0.01
+  chaseLevel: 1
   asteroidSizeRange: {x: 5, y: 60}
   viewDistance: 500
   blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
@@ -60,6 +63,8 @@ MonoBehaviour:
   exitPortalPrefab: {fileID: 1235273854538230, guid: 775fb5da80fc0a04a9f86c8fcb5c3eec,
     type: 3}
   asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
+    type: 3}
+  atmosphericAsteroidPrefab: {fileID: 2060055504992266407, guid: debcde28b00ffab4d9bb3e807b425684,
     type: 3}
   medicalCanisterPrefab: {fileID: 1475980397980410, guid: b889568899bb6c84d9847637a2a4a293,
     type: 3}

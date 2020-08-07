@@ -12,7 +12,8 @@ public enum EntityType
     None = 0,
     Asteroid = 1,
     MedicalCanister = 2,
-    Alien = 3
+    Alien = 3,
+    AtmosphericAsteroid = 4
 }
 
 public class ProceduralGeneration : MonoBehaviour
@@ -38,9 +39,11 @@ public class ProceduralGeneration : MonoBehaviour
     public GameObject blackHolePrefab;
     public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
+    public GameObject atmosphericAsteroidPrefab;
     public GameObject medicalCanisterPrefab;
 
     private GameObject asteroidsCollection;
+    private GameObject atmosphericAsteroidsCollection;
     private GameObject medicalCanisterCollection;
     
     private Vector3Int numChunksInLevel;
@@ -72,6 +75,7 @@ public class ProceduralGeneration : MonoBehaviour
         FinishedGenerating = false;
         asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
+        atmosphericAsteroidsCollection = GameObject.FindGameObjectWithTag("AtmosphericAsteroidsCollection");
         
         canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x / 2;
         asteroidBaseRadius = asteroidPrefab.GetComponent<Renderer>().bounds.size.x / 2;
@@ -215,14 +219,16 @@ public class ProceduralGeneration : MonoBehaviour
         {
             [EntityType.None] = () => {}, // Nothing
             [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
-            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter)
+            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter),
+            [EntityType.AtmosphericAsteroid] = () => GenerateChunkAtmosphericAsteroids(unitCubeCenter)
         };
 
         var choices = new WeightedRandomBag<EntityType>();
-        for (var i = 0; i < actionMap.Count; i++)
+        foreach (var mapping in actionMap)
         {
-            var entity = (EntityType)i;
-            var weight = spawnProbability[i];
+            var entity = mapping.Key;
+            var index = (int) entity;
+            var weight = spawnProbability[index];
             choices.AddEntry(entity, weight);
         }
 
@@ -241,6 +247,13 @@ public class ProceduralGeneration : MonoBehaviour
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
         var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize * asteroidBaseRadius);
         PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform, asteroidSize);
+    }    
+    
+    private void GenerateChunkAtmosphericAsteroids(Vector3 unitCubeCenter)
+    {
+        var asteroidSize = asteroidSizeRange[1];//Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
+        var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize * asteroidBaseRadius);
+        PlaceEntity(asteroidPosition, atmosphericAsteroidPrefab, atmosphericAsteroidsCollection.transform, asteroidSize);
     }
 
     private GameObject PlaceEntity(Vector3 position, GameObject prefab, Transform parent, float size = 1f)

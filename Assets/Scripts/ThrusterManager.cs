@@ -12,12 +12,24 @@ public class ThrusterManager : MonoBehaviour
     private float capacity; // in seconds
     private UIManager ui;
 
+
     private void Start()
     {
         engaged = false;
         capacity = maxCapacity;
         ui = FindObjectOfType<UIManager>();
         ui.fuelGauge.SetVal(maxCapacity, maxCapacity);
+    }
+
+    public void Refuel(float refuelAmount)
+    {
+        SetCapacity(capacity + refuelAmount);
+    }
+
+    private void SetCapacity(float newCapacity)
+    {
+        capacity = Mathf.Clamp(newCapacity, 0, maxCapacity);
+        ui.fuelGauge.SetVal(capacity, maxCapacity);
     }
 
     private void Update()
