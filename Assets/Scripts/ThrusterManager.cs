@@ -23,37 +23,15 @@ public class ThrusterManager : MonoBehaviour
         ui.fuelGauge.SetVal(maxCapacity, maxCapacity);
     }
 
-    private void FillFuelTank(float amount)
+    public void Refuel(float refuelAmount)
     {
-        SetCapacity(capacity + amount);
-    }
-
-    private void EmptyFuelTank(float amount)
-    {
-        SetCapacity(capacity - amount);
+        SetCapacity(capacity + refuelAmount);
     }
 
     private void SetCapacity(float newCapacity)
     {
         capacity = Mathf.Clamp(newCapacity, 0, maxCapacity);
         ui.fuelGauge.SetVal(capacity, maxCapacity);
-    }
-
-    public void ProcessThrustCapacityEffect(GameObject thrusterCapacityEffectObj)
-    {
-        if (Time.fixedTime - lastThrustCapacityEffect <= thrustCapacityEffectInteractionDelay) return;
-        var thrustCapacityBehavior  = thrusterCapacityEffectObj.GetComponent<ThrustCapacityEffectBehavior>();
-        if (!thrustCapacityBehavior) return;
-        switch (thrustCapacityBehavior.Effect)
-        {
-            case ThrustCapacityEffect.Fill:
-                FillFuelTank(thrustCapacityBehavior.ComputeStrength());
-                break;
-            case ThrustCapacityEffect.Empty:
-                EmptyFuelTank(thrustCapacityBehavior.ComputeStrength());
-                break;
-        }
-        lastThrustCapacityEffect = Time.fixedTime;
     }
 
     private void Update()
