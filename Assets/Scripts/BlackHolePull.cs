@@ -26,7 +26,7 @@ public class BlackHolePull : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         var pulledBody = other.gameObject.GetComponent<Rigidbody>();
-        RemovePulledBody(pulledBody);
+        if (pulledBody) RemovePulledBody(pulledBody);
     }
 
     private void FixedUpdate()

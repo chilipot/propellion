@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class EnemyAI : MonoBehaviour, IGrappleResponse
@@ -7,7 +8,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         Patrol,
         Chase,
-        Attack
+        Attack,
+        Dead
     }
     
     public float speed = 15f;
@@ -17,6 +19,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public float chaseSpeedMultiplier = 3f;
     public float rotationSpeed = 5f;
     public Vector2 patrolPointDistanceRange = new Vector2(10f, 50f);
+    public AudioClip deathSfx;
+    public GameObject deathVfxPrefab;
     public GameObject projectile;
     public GameObject muzzleFlash;
     public Transform gunTip;
@@ -36,6 +40,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private Transform projectileParent;
     private ProceduralGeneration entityManager;
     private Animator animator;
+    private GrappleGunBehavior grapple;
+    private Vector3? impulseVector;
 
     private void Start()
     {
@@ -56,11 +62,13 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         entityManager = FindObjectOfType<ProceduralGeneration>();
         animator = GetComponent<Animator>();
         animator.SetTrigger("Flying");
+        grapple = player.GetComponentInChildren<GrappleGunBehavior>();
+        impulseVector = null;
     }
 
     private void Update()
     {
-        if (!ProceduralGeneration.FinishedGenerating) return;
+        if (!ProceduralGeneration.FinishedGenerating || currentState == State.Dead) return;
         if (LevelManager.LevelIsOver)
         {
             currentState = State.Patrol;
@@ -72,14 +80,14 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
         switch (currentState)
         {
-            case State.Patrol:
-                UpdatePatrolState();
-                break;
             case State.Chase:
                 UpdateChaseState();
                 break;
             case State.Attack:
                 UpdateAttackState();
+                break;
+            default:
+                UpdatePatrolState();
                 break;
         }
     }
@@ -160,7 +168,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         LookTowardsDestination();
         if (isGrappled) return;
         if (!thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StartExhaustTrail();
-        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime);
+        // TODO: use a rigidbody force instead of changing transform.position?
+        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime); // TODO: uncomment
     }
 
     private void LookTowardsDestination()
@@ -179,6 +188,32 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         fireSfx.PlayOneShot(fireSfx.clip);
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (currentState == State.Dead || !other.CompareTag("SpaceKatana")) return;
+        animator.SetTrigger("Hit");
+        currentState = State.Dead;
+        grapple.StopGrapple();
+        var position = transform.position;
+        AudioSource.PlayClipAtPoint(deathSfx, position); // TODO: make this louder by giving it a mixer
+        var deathVfx = Instantiate(deathVfxPrefab, position, Quaternion.identity);
+        deathVfx.transform.LookAt(player);
+        // var hitDirection = (position - player.position).normalized;
+        // TODO: fix this impulseVector
+        impulseVector = transform.forward * -1000f;  //hitDirection * 1000f;
+        // TODO: update animation
+        // TODO: corpse dissolve VFX
+        // TODO: make not grappleable
+    }
+
+    private void FixedUpdate()
+    {
+        if (!impulseVector.HasValue) return;
+        var rb = GetComponent<Rigidbody>();
+        rb.AddForce(/*impulseVector.Value*/ transform.forward * -1000f, ForceMode.Impulse);
+        impulseVector = null;
+    }
+
     private void OnDrawGizmos()
     {
         var position = transform.position;
@@ -191,6 +226,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     // TODO: enter a Grappled state
     public void OnGrappleStart()
     {
+        if (currentState == State.Dead) return;
         isGrappled = true;
         animator.SetTrigger("Grappled");
         animator.ResetTrigger("Flying");
@@ -200,6 +236,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     // TODO: exit a Grappled state
     public void OnGrappleStop()
     {
+        if (currentState == State.Dead) return;
         isGrappled = false;
         if (distanceToPlayer < maxAttackDistance)
         {

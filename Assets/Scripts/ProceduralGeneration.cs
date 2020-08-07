@@ -34,7 +34,6 @@ public class ProceduralGeneration : MonoBehaviour
 
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
-
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
 

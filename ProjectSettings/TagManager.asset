@@ -13,6 +13,7 @@ TagManager:
   - Heavy
   - ProjectileCollection
   - BlackHole
+  - SpaceKatana
   layers:
   - Default
   - TransparentFX
@@ -23,8 +24,8 @@ TagManager:
   - 
   - 
   - Grappleable
-  - 
-  - 
+  - SpaceKatana
+  - GrappleGun
   - 
   - 
   - 
