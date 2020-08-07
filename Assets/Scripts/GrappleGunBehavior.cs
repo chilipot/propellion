@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GrappleGunBehavior : MonoBehaviour
 {
+    public bool breakable = false;
     public float maxRetractionForce = 150f;
     public float maxGrappleLength = 250f;
     public LayerMask grappleableStuff;
@@ -36,7 +37,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
-            currentTarget = new GrappleTarget(hit.transform, hit.point);
+            currentTarget = new GrappleTarget(hit.transform, hit.point, hit.rigidbody);
             lineRenderer.positionCount = 2;
             shootGrappleSfx.PlayOneShot(shootGrappleSfx.clip);
         }
@@ -78,11 +79,13 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         ReticleEffect();
         if (currentTarget == null) return;
-        if (GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
+        if (breakable && GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
         {
+            currentTarget.UpdateJoint();
+            // Apply an extra tug - as if the rope stopped stretching
             var tugForce = ComputeTugForce();
-            LevelManager.PlayerRb.AddForce(tugForce, ForceMode.Force);
+            LevelManager.PlayerRb.AddForce(tugForce, ForceMode.Impulse);
         }
     }
 
@@ -104,8 +107,10 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         if (currentTarget == null) throw new InvalidOperationException("Not currently grappling.");
         var grappleDirection = currentTarget.GetGrapplePoint() - LevelManager.Player.position;
-        var tugStrength = grappleDirection.magnitude / maxGrappleLength * maxRetractionForce;
-        var tugForce = grappleDirection.normalized * tugStrength;
+        var distFromGrapplePoint = grappleDirection.magnitude;
+        var directionMultiplier = Mathf.Abs(Vector3.Dot(LevelManager.PlayerRb.velocity.normalized, grappleDirection.normalized) - 1);
+        var tensionMultiplier = 35f * directionMultiplier * Mathf.Clamp(distFromGrapplePoint / maxRetractionForce, 0.5f, 1);
+        var tugForce = grappleDirection.normalized * tensionMultiplier;
         return tugForce;
     }
 
@@ -116,23 +121,41 @@ public class GrappleGunBehavior : MonoBehaviour
         
         private Vector3 Offset { get; }
         private IGrappleResponse[] Responses { get; }
+        private SpringJoint joint { get; }
 
-        public GrappleTarget(Transform target, Vector3 grapplePoint)
+        public GrappleTarget(Transform target, Vector3 grapplePoint, Rigidbody targetBody)
         {
             Transform = target;
             Offset = grapplePoint - Transform.position;
             Responses = Transform.GetComponentsInChildren<IGrappleResponse>();
             foreach (var response in Responses) response.OnGrappleStart();
             IsRetractable = Responses.Any(res => res is Retractable);
+            
+            joint = LevelManager.Player.gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor = false;
+            joint.anchor = Vector3.zero;
+            joint.connectedBody = targetBody;
+            joint.connectedAnchor = target.InverseTransformPoint(grapplePoint);
+            joint.spring = 10f;
+            joint.damper = 3f;
+            joint.maxDistance = Vector3.Distance(LevelManager.Player.position, GetGrapplePoint());
+            joint.minDistance = 0f;
+            joint.enableCollision = true;
         }
 
         public Vector3 GetGrapplePoint()
         {
             return Transform.position + Offset;
         }
+
+        public void UpdateJoint()
+        {
+            joint.maxDistance *= 0.975f;
+        }
         
         public void Release()
         {
+            Destroy(joint);
             foreach (var response in Responses) response.OnGrappleStop();
         }
     }
