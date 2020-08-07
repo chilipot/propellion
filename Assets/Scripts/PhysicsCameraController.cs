@@ -22,7 +22,7 @@ public class PhysicsCameraController : MonoBehaviour
     {
         // TODO: instead of checking LevelIsOver here, encapsulate that logic into FreeCam by making it a
         // a private instance variable w/ public setter, which refuses to set it to true if LevelIsOver
-        if (!FreeCam || !LevelManager.LevelIsActive()) return;
+        if (!FreeCam || !LevelManager.LevelIsActive) return;
         var moveX = Input.GetAxis("Mouse X") * mouseSensitivity;
         var moveY = Input.GetAxis("Mouse Y") * mouseSensitivity * -1;
         rotationForce = new Vector3(moveY, moveX, 0);
