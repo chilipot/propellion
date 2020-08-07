@@ -29,7 +29,7 @@ public class GrappleGunBehavior : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && LevelManager.LevelIsActive()) StartGrapple();
+        if (Input.GetMouseButtonDown(0) && LevelManager.LevelIsActive) StartGrapple();
         else if (Input.GetMouseButtonUp(0) || GrappleTargetDestroyed()) StopGrapple();
     }
 
@@ -71,7 +71,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private void DrawGrappleRope()
     {
         if (currentTarget == null) return;
-        Vector3[] renderPositions = {gunTip.position, currentTarget.GetGrapplePoint()};
+        Vector3[] renderPositions = {gunTip.position, currentTarget.GrapplePoint};
         lineRenderer.SetPositions(renderPositions);
     }
 
@@ -98,7 +98,7 @@ public class GrappleGunBehavior : MonoBehaviour
         if (Physics.Raycast(grappleStart, grappleDirection, out var hit, grappleDirection.magnitude, grappleableStuff))
         {
             if (currentTarget.IsRetractable && hit.collider.transform == currentTarget.Transform) return false;
-            return Vector3.Distance(hit.point, currentTarget.GetGrapplePoint()) > 0.1f;
+            return Vector3.Distance(hit.point, currentTarget.GrapplePoint) > 0.1f;
         }
         return false;
     }
@@ -106,7 +106,7 @@ public class GrappleGunBehavior : MonoBehaviour
     private Vector3 ComputeTugForce()
     {
         if (currentTarget == null) throw new InvalidOperationException("Not currently grappling.");
-        var grappleDirection = currentTarget.GetGrapplePoint() - LevelManager.Player.position;
+        var grappleDirection = currentTarget.GrapplePoint - LevelManager.Player.position;
         var distFromGrapplePoint = grappleDirection.magnitude;
         var directionMultiplier = Mathf.Abs(Vector3.Dot(LevelManager.PlayerRb.velocity.normalized, grappleDirection.normalized) - 1);
         var tensionMultiplier = 35f * directionMultiplier * Mathf.Clamp(distFromGrapplePoint / maxRetractionForce, 0.5f, 1);
@@ -118,10 +118,12 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         public Transform Transform { get; }
         public bool IsRetractable { get; }
-        
+
+        public Vector3 GrapplePoint => Transform.position + Offset;
+
         private Vector3 Offset { get; }
         private IGrappleResponse[] Responses { get; }
-        private SpringJoint joint { get; }
+        private SpringJoint Joint { get; }
 
         public GrappleTarget(Transform target, Vector3 grapplePoint, Rigidbody targetBody)
         {
@@ -131,31 +133,26 @@ public class GrappleGunBehavior : MonoBehaviour
             foreach (var response in Responses) response.OnGrappleStart();
             IsRetractable = Responses.Any(res => res is Retractable);
             
-            joint = LevelManager.Player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.anchor = Vector3.zero;
-            joint.connectedBody = targetBody;
-            joint.connectedAnchor = target.InverseTransformPoint(grapplePoint);
-            joint.spring = 10f;
-            joint.damper = 3f;
-            joint.maxDistance = Vector3.Distance(LevelManager.Player.position, GetGrapplePoint());
-            joint.minDistance = 0f;
-            joint.enableCollision = true;
-        }
-
-        public Vector3 GetGrapplePoint()
-        {
-            return Transform.position + Offset;
+            Joint = LevelManager.Player.gameObject.AddComponent<SpringJoint>();
+            Joint.autoConfigureConnectedAnchor = false;
+            Joint.anchor = Vector3.zero;
+            Joint.connectedBody = targetBody;
+            Joint.connectedAnchor = target.InverseTransformPoint(grapplePoint);
+            Joint.spring = 10f;
+            Joint.damper = 3f;
+            Joint.maxDistance = Vector3.Distance(LevelManager.Player.position, GrapplePoint);
+            Joint.minDistance = 0f;
+            Joint.enableCollision = true;
         }
 
         public void UpdateJoint()
         {
-            joint.maxDistance *= 0.975f;
+            Joint.maxDistance *= 0.975f;
         }
         
         public void Release()
         {
-            Destroy(joint);
+            Destroy(Joint);
             foreach (var response in Responses) response.OnGrappleStop();
         }
     }
