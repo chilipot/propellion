@@ -4,7 +4,6 @@ public class ThrusterManager : MonoBehaviour
 {
     private const KeyCode EngageKey = KeyCode.Space;
     
-    public float thrustCapacityEffectInteractionDelay = 5f;
     public float power = 10f;
     public float maxCapacity = 10f; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
@@ -12,11 +11,10 @@ public class ThrusterManager : MonoBehaviour
     private bool engaged;
     private float capacity; // in seconds
     private UIManager ui;
-    private float lastThrustCapacityEffect;
+
 
     private void Start()
     {
-        lastThrustCapacityEffect = -thrustCapacityEffectInteractionDelay;
         engaged = false;
         capacity = maxCapacity;
         ui = FindObjectOfType<UIManager>();

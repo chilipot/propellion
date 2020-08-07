@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e08a9e32e99418991c139d7e5aba430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thrustCapacityEffectInteractionDelay: 1
   refuelAmount: 5
 --- !u!114 &-3175038907984685755
 MonoBehaviour:
