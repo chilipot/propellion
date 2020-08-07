@@ -528,6 +528,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firstLevel: Prototype
   fadeToBlackAnimation: {fileID: 1629922029}
+  buttonClickSfx: {fileID: 8300000, guid: c10e837e5ec01ec4e982d48287e0b25c, type: 3}
 --- !u!4 &1884270956
 Transform:
   m_ObjectHideFlags: 0

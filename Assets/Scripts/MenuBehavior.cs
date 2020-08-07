@@ -10,11 +10,18 @@ public class MenuBehavior : MonoBehaviour
     
     public string firstLevel;
     public Animator fadeToBlackAnimation;
+    public AudioClip buttonClickSfx;
 
     private static readonly int FadeOut = Animator.StringToHash("FadeOut");
 
+    private Transform mainCam;
     private bool menuOptionSelected = false;
-    
+
+    private void Awake()
+    {
+        mainCam = Camera.main.transform;
+    }
+
     private IEnumerator LoadLevel(string levelName)
     {
         if (menuOptionSelected) yield break;
@@ -27,6 +34,7 @@ public class MenuBehavior : MonoBehaviour
     
     public void PlayGame()
     {
+        AudioSource.PlayClipAtPoint(buttonClickSfx, mainCam.position);
         StartCoroutine(nameof(LoadLevel), firstLevel);
     }
 
