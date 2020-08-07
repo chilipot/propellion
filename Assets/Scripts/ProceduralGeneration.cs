@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
@@ -17,7 +16,11 @@ public enum EntityType
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    public bool drawGizmos = false; // DEBUG ONLY
+    public static bool FinishedGenerating { get; private set; }
+
+    // DEBUG ONLY
+    public bool drawGizmos = false;
+    public bool disableBlackHole = false;
     
     // Unit cubes should evenly subdivide chunk, and chunks should evenly subdivide level.
     public Vector3Int levelDimensions;
@@ -31,16 +34,19 @@ public class ProceduralGeneration : MonoBehaviour
 
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
+
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
 
     public GameObject blackHolePrefab;
     public GameObject exitPortalPrefab;
     public GameObject asteroidPrefab;
-    public GameObject medicalCanisterPrefab;
+    public GameObject medicalCanisterPrefab;                     
+    public GameObject alienPrefab;
 
-    private GameObject asteroidsCollection;
+    private GameObject asteroidCollection;
     private GameObject medicalCanisterCollection;
+    private GameObject alienCollection;
     
     private Vector3Int numChunksInLevel;
     private Vector3Int numUnitCubesInChunk;
@@ -58,22 +64,24 @@ public class ProceduralGeneration : MonoBehaviour
     private Dictionary<int, int> entityIdToIndex;
     private Dictionary<int, int> entityIndexToId;
     
-    public static bool FinishedGenerating = false;
     private int maxEntities;
 
     private float canisterRadius;
     private float asteroidBaseRadius;
-
+    private float alienRadius;
+    
     private UIManager ui;
 
     private void Awake()
     {
         FinishedGenerating = false;
-        asteroidsCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
+        asteroidCollection = GameObject.FindGameObjectWithTag("AsteroidCollection");
         medicalCanisterCollection = GameObject.FindGameObjectWithTag("MedicalCanisterCollection");
+        alienCollection = GameObject.FindGameObjectWithTag("AlienCollection");
         
         canisterRadius = medicalCanisterPrefab.GetComponent<Renderer>().bounds.size.x / 2;
         asteroidBaseRadius = asteroidPrefab.GetComponent<Renderer>().bounds.size.x / 2;
+        alienRadius = alienPrefab.GetComponentInChildren<Renderer>().bounds.size.y / 2; // TODO: verify this is the longest axis of the alien prefab
 
         numChunksInLevel = levelDimensions / chunkSize;
         numUnitCubesInChunk = Vector3Int.one * (chunkSize / unitCubeSize);
@@ -109,7 +117,7 @@ public class ProceduralGeneration : MonoBehaviour
     {
         var id = obj.GetInstanceID();
         var tf = obj.transform;
-        var radius = obj.GetComponent<Renderer>().bounds.size.x / 2;
+        var radius = obj.GetComponentInChildren<Renderer>().bounds.size.x / 2;
         entityLookup.Add(id, obj);
         var index = EntityCount - 1;
         bounds[index] = new BoundingSphere {position = tf.position, radius = radius};
@@ -146,11 +154,11 @@ public class ProceduralGeneration : MonoBehaviour
     private void SetupBaseObjects()
     {
         var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
-        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
+        if (!disableBlackHole) Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
 
-        var player = GameObject.FindWithTag("Player");
+        var player = GameObject.FindWithTag("Player").transform;
         var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
-        player.transform.position = playerStartPosition;
+        player.position = playerStartPosition;
         var playerStartUnitCubeAsFloat = playerStartPosition / unitCubeSize;
         playerStartUnitCube = new Vector3Int(
             Mathf.FloorToInt(playerStartUnitCubeAsFloat.x), 
@@ -214,7 +222,8 @@ public class ProceduralGeneration : MonoBehaviour
         {
             [EntityType.None] = () => {}, // Nothing
             [EntityType.Asteroid] = () => GenerateChunkAsteroids(unitCubeCenter),
-            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter)
+            [EntityType.MedicalCanister] = () => GenerateChunkMedicalCanisters(unitCubeCenter),
+            [EntityType.Alien] = () => GenerateChunkAliens(unitCubeCenter)
         };
 
         var choices = new WeightedRandomBag<EntityType>();
@@ -239,7 +248,13 @@ public class ProceduralGeneration : MonoBehaviour
     {
         var asteroidSize = Random.Range(asteroidSizeRange[0], asteroidSizeRange[1]);
         var asteroidPosition = RandomEntityPosition(unitCubeCenter, asteroidSize * asteroidBaseRadius);
-        PlaceEntity(asteroidPosition, asteroidPrefab, asteroidsCollection.transform, asteroidSize);
+        PlaceEntity(asteroidPosition, asteroidPrefab, asteroidCollection.transform, asteroidSize);
+    }
+    
+    private void GenerateChunkAliens(Vector3 unitCubeCenter)
+    {
+        var alienPosition = RandomEntityPosition(unitCubeCenter, alienRadius);
+        PlaceEntity(alienPosition, alienPrefab, alienCollection.transform);
     }
 
     private GameObject PlaceEntity(Vector3 position, GameObject prefab, Transform parent, float size = 1f)

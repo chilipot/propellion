@@ -14,7 +14,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = LevelManager.PlayerRb;
         thruster = GetComponentInChildren<ThrusterManager>();
         grapple = FindObjectOfType<GrappleGunBehavior>();
         impactTime = null;
@@ -24,7 +24,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if (!impactTime.HasValue || LevelManager.LevelInactive) return; // if level is over, continue spinning indefinitely for dramatic effect
+        if (!impactTime.HasValue || !LevelManager.LevelIsActive) return; // if level is over, continue spinning indefinitely for dramatic effect
         var timeSinceImpact = Time.fixedTime - impactTime.Value;
         if (timeSinceImpact > stabilizationDelay) Stabilize(timeSinceImpact);
         if (rb.angularVelocity == Vector3.zero) FinishStabilizing();
@@ -48,11 +48,12 @@ public class CollisionPhysicsBehavior : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        grapple.StopGrapple();
+        if (!other.gameObject.CompareTag("Heavy")) return;
         CameraController.FreeCam = false;
         PhysicsCameraController.FreeCam = false;
         rb.angularDrag = 0;
         thruster.Disengage();
-        grapple.StopGrapple();
     }
 
     private void OnCollisionExit(Collision other)

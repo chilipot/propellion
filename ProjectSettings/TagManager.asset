@@ -7,8 +7,12 @@ TagManager:
   - Chunks
   - MedicalCanisterCollection
   - AsteroidCollection
+  - AlienCollection
   - Reticle
   - ExitPortal
+  - Heavy
+  - ProjectileCollection
+  - BlackHole
   layers:
   - Default
   - TransparentFX

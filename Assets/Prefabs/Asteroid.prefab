@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: -3175038907984685755}
   m_Layer: 8
   m_Name: Asteroid
-  m_TagString: Untagged
+  m_TagString: Heavy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,7 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c0fbb3e4dda4edd8726a8e6438b0415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 30
+  damageMultiplier: 1.5
+  maxDmg: 30
 --- !u!114 &-3175038907984685755
 MonoBehaviour:
   m_ObjectHideFlags: 0
