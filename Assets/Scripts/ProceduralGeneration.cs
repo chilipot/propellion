@@ -32,9 +32,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     // Indices match up to values of EntityType enum
     public float[] spawnProbability;
-    [Tooltip("Will there be a black hole to chase the player")]
-    public bool chaseLevel = true;
-    
+
     public Vector2 asteroidSizeRange;
     public float viewDistance = 500f;
 
@@ -153,10 +151,7 @@ public class ProceduralGeneration : MonoBehaviour
     private void SetupBaseObjects()
     {
         var blackHolePosition = new Vector3(levelDimensions.x / 2f, levelDimensions.y / 2f, unitCubeSize / 2f);
-        if (chaseLevel)
-        {
-            Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
-        }
+        Instantiate(blackHolePrefab, blackHolePosition, Quaternion.identity);
 
         var player = GameObject.FindWithTag("Player");
         var playerStartPosition = blackHolePosition + blackHoleBufferLength * unitCubeSize * Vector3.forward;
