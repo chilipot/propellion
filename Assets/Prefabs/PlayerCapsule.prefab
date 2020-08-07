@@ -733,9 +733,13 @@ GameObject:
   - component: {fileID: 1303055481445047046}
   - component: {fileID: 1328612489717511264}
   - component: {fileID: 1321481380157522358}
+  - component: {fileID: 87649416000929095}
+  - component: {fileID: 6798207292967881666}
+  - component: {fileID: 2770301983102807879}
+  - component: {fileID: 5124527430879427490}
   m_Layer: 9
   m_Name: SpaceKatana
-  m_TagString: Untagged
+  m_TagString: SpaceKatana
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -747,15 +751,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1297307194774765900}
-  m_LocalRotation: {x: 0.06907373, y: -0.2062168, z: -0.0071728257, w: 0.97603893}
-  m_LocalPosition: {x: 0.45, y: -1.057, z: 0.66921365}
+  m_LocalRotation: {x: 0.07266442, y: -0.20609055, z: -0.006405602, w: 0.9758102}
+  m_LocalPosition: {x: 0.514, y: -1, z: 0.66921365}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6084224335957832726}
   - {fileID: 1039362111564378118}
   m_Father: {fileID: 4443904973295190065}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 7.5780005, y: -24.023, z: -2.457}
+  m_LocalEulerAnglesHint: {x: 8, y: -24.023, z: -2.457}
 --- !u!33 &1328612489717511264
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -803,6 +807,148 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &87649416000929095
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297307194774765900}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.016358621, y: 5.130097, z: 0.033618964}
+  m_Center: {x: 0.002143562, y: 2.848595, z: 0.028978547}
+--- !u!82 &6798207292967881666
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297307194774765900}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -6989506166072334923, guid: 6d9cb12c561dd4f4091c9187867d584c,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: 64d477535c82eb54abbedbfcc042b2a6, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!95 &2770301983102807879
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297307194774765900}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7fb38ff20812e9347b30b1dec8dd7082, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5124527430879427490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297307194774765900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c779b7a03f6f141bb96b1d06d7baa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitbox: {fileID: 6238232503373232808}
 --- !u!1 &2861601199117130068
 GameObject:
   m_ObjectHideFlags: 0
@@ -831,7 +977,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2861601199117130068}
   m_LocalRotation: {x: -0, y: 0.7467576, z: -0, w: 0.66509634}
-  m_LocalPosition: {x: -0.16359632, y: -0.287, z: 0.925}
+  m_LocalPosition: {x: -0.16359632, y: -0.287, z: 0.865}
   m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_Children:
   - {fileID: 902185155239834749}
@@ -1084,12 +1230,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed70c007aec06344b62456ba54f6722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  breakable: 0
   maxRetractionForce: 600
   maxGrappleLength: 300
   grappleableStuff:
     serializedVersion: 2
     m_Bits: 256
   gunTip: {fileID: 902185155239834749}
+--- !u!1 &3127974933613685332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2181105692267302323}
+  - component: {fileID: 6238232503373232808}
+  - component: {fileID: 6179492633066020418}
+  m_Layer: 0
+  m_Name: KatanaHitbox
+  m_TagString: SpaceKatana
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2181105692267302323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127974933613685332}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.223, z: 2.246}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4443904973295190065}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6238232503373232808
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127974933613685332}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 9.533288}
+  m_Center: {x: 0, y: 0, z: 3.1661859}
+--- !u!114 &6179492633066020418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127974933613685332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 956a3e90a0ae62143a9a8967414d9f4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4443904973018483981
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,6 +1512,7 @@ Transform:
   m_Children:
   - {fileID: 8493152433553973875}
   - {fileID: 1303055481445047046}
+  - {fileID: 2181105692267302323}
   m_Father: {fileID: 4443904973018484023}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1819,7 +2024,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.16862746, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 30
+  m_Range: 50
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10

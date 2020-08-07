@@ -4,7 +4,8 @@ using UnityEngine;
 public class Retractable : MonoBehaviour, IGrappleResponse
 {
 
-    public float retractSpeed = 10f; // units per second
+    public float retractSpeed = 100f; // units per second
+    public float stopDistance = 0f;
     
     private static Transform destination;
 
@@ -18,11 +19,15 @@ public class Retractable : MonoBehaviour, IGrappleResponse
 
     private void Update()
     {
-        if (currentRetraction != null)
-        {
+        if (currentRetraction != null) // TODO: also check if we're at stop distance, in which case don't lerp
             transform.position = Vector3.Lerp(currentRetraction.StartPosition, destination.position,
                 (Time.time - currentRetraction.RetractStartTime) / currentRetraction.RetractDuration);
-        }
+    }
+
+    private void LateUpdate()
+    {
+        if (currentRetraction != null && Vector3.Distance(transform.position, destination.position) <= stopDistance)
+            transform.position = destination.position + destination.forward * stopDistance;
     }
 
     public void OnGrappleStart()

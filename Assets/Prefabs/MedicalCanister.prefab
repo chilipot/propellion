@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   retractSpeed: 200
+  stopDistance: 0
 --- !u!114 &-2111090493773922744
 MonoBehaviour:
   m_ObjectHideFlags: 0
