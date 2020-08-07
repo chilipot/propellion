@@ -9,6 +9,7 @@ TagManager:
   - AsteroidCollection
   - Reticle
   - ExitPortal
+  - AtmosphericAsteroidsCollection
   layers:
   - Default
   - TransparentFX
