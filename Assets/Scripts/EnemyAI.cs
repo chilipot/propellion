@@ -12,8 +12,9 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     }
     
     public float speed = 15f;
-    public float chaseDistance = 100f;
-    public float attackDistance = 50f;
+    public float chaseDistance = 150f;
+    public float maxAttackDistance = 75f;
+    public float minAttackDistance = 25f;
     public float chaseSpeedMultiplier = 3f;
     public GameObject projectile;
     public GameObject muzzleFlash;
@@ -32,6 +33,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
     private Transform projectileParent;
+    private Animator animator;
 
     private void Start()
     {
@@ -43,18 +45,26 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         isGrappled = false;
         lastFireTime = -fireRate;
         fireSfx = gunTip.GetComponent<AudioSource>();
-        fireSfx.maxDistance = attackDistance * 2f;
+        fireSfx.maxDistance = maxAttackDistance * 2f;
         alienAggroSfx = GetComponent<AudioSource>();
         alienAggroSfx.maxDistance = chaseDistance * 2f;
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
+        animator = GetComponent<Animator>();
+        animator.SetTrigger("Flying");
     }
 
     private void Update()
     {
         if (!ProceduralGeneration.FinishedGenerating) return;
-        if (LevelManager.LevelIsOver) currentState = State.Patrol;
+        if (LevelManager.LevelIsOver)
+        {
+            currentState = State.Patrol;
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+            animator.SetTrigger("Flying");
+        }
         if (LevelManager.DebugMode) ListenForDebugClicks();
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
         switch (currentState)
@@ -85,7 +95,6 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private void UpdatePatrolState()
     {
         if (!destinationIsPatrolPoint) SetRandomDestination();
-        // TODO: update animation
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
         else if (!LevelManager.LevelIsOver && distanceToPlayer <= chaseDistance)
@@ -97,21 +106,37 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     
     private void UpdateChaseState()
     {
-        // TODO: update animation
         SetPlayerDestination();
         ApproachDestination(chaseSpeedMultiplier);
-        if (distanceToPlayer <= attackDistance) currentState = State.Attack;
+        if (distanceToPlayer <= maxAttackDistance)
+        {
+            lastFireTime = Time.time - 0.5f; // TODO: don't hardcode the animation transition state time
+            currentState = State.Attack;
+            animator.SetTrigger("Shooting");
+            // TODO: figure out whether resetting old triggers every time a new trigger is set is necessary (if not, remove all ResetTrigger calls, if it is, try just resetting previous trigger, not all triggers)
+            animator.ResetTrigger("Flying");
+            animator.ResetTrigger("Grappled");
+        }
         else if (distanceToPlayer > chaseDistance) currentState = State.Patrol;
     }
     
     private void UpdateAttackState()
     {
-        // TODO: update animation
         if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
         SetPlayerDestination();
-        LookTowardsDestination();  // TODO: ApproachDestination() with a minimum distance to keep from it
+        
+        // TODO: refine this so they aim to be in between states and not jitter, and also adjust thruster exhaust trail particles accordingly (based on when they are/aren't moving)
+        if (distanceToPlayer > minAttackDistance) ApproachDestination();
+        else LookTowardsDestination();
+        
         FireWeapon();
-        if (distanceToPlayer > attackDistance) currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
+        if (distanceToPlayer > maxAttackDistance)
+        {
+            currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+            animator.SetTrigger("Flying");
+        }
     }
     
     private void UpdateDeadState()
@@ -151,7 +176,6 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         if (isGrappled || Time.time < lastFireTime + fireRate) return;
         lastFireTime = Time.time;
-        // TODO: play animation
         Instantiate(projectile, gunTip.position, Quaternion.identity, projectileParent);
         Instantiate(muzzleFlash, gunTip);
         fireSfx.PlayOneShot(fireSfx.clip);
@@ -163,16 +187,34 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(position, chaseDistance);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(position, attackDistance);
+        Gizmos.DrawWireSphere(position, maxAttackDistance);
     }
     
+    // TODO: enter a Grappled state
     public void OnGrappleStart()
     {
         isGrappled = true;
+        animator.SetTrigger("Grappled");
+        animator.ResetTrigger("Flying");
+        animator.ResetTrigger("Shooting");
     }
 
+    // TODO: exit a Grappled state
     public void OnGrappleStop()
     {
         isGrappled = false;
+        if (distanceToPlayer < maxAttackDistance)
+        {
+            animator.SetTrigger("Shooting");
+            animator.ResetTrigger("Flying");
+            animator.ResetTrigger("Grappled");
+            lastFireTime = Time.time; // TODO: don't hardcode the animation transition state time
+        }
+        else
+        {
+            animator.SetTrigger("Flying");
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+        }
     }
 }
