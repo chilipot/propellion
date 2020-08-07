@@ -4,34 +4,44 @@ using UnityEngine.SceneManagement;
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
-    public static bool LevelInactive { get; private set; } = true; 
+    public static bool LevelIsOver { get; private set; }
+    public static bool DebugMode { get; private set; }
+    public static bool GodMode { get; private set; }
+    public static Camera MainCamera { get; private set; }
+    public static Transform Player { get; private set; }
+    public static Rigidbody PlayerRb { get; private set; }
+
+    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver;
+
+    public bool enableDebugMode = false;
+    public bool enableGodMode = false;
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
-    private Rigidbody playerBody;
     private AudioSource winSfx, loseSfx;
-    private bool levelStarted;
-    
+
+    private void Awake()
+    {
+        LevelIsOver = false;
+        DebugMode = enableDebugMode;
+        GodMode = enableGodMode;
+        MainCamera = Camera.main;
+        Player = GameObject.FindWithTag("Player").transform;
+        PlayerRb = Player.GetComponent<Rigidbody>();
+    }
+
     private void Start()
     {
-        LevelInactive = true;
         ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
-        playerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
-        var audioSources = GetComponents<AudioSource>();
+        var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
-        levelStarted = false;
     }
 
     private void Update()
     {
-        if (!levelStarted && ProceduralGeneration.FinishedGenerating)
-        {
-            LevelInactive = false;
-            levelStarted = true;
-        }
-        if ((LevelInactive && levelStarted && Input.anyKeyDown) || Input.GetKeyDown(KeyCode.R))
+        if (LevelIsOver && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -39,15 +49,15 @@ public class LevelManager : MonoBehaviour
 
     public void Win()
     {
-        if (LevelInactive) return;
+        if (!LevelIsActive) return;
         EndLevel(true);
         winSfx.Play();
-        playerBody.constraints = RigidbodyConstraints.FreezeAll;
+        PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     public void Lose()
     {
-        if (LevelInactive) return;
+        if (GodMode || !LevelIsActive) return;
         EndLevel(false);
         loseSfx.Play();
         
@@ -59,7 +69,7 @@ public class LevelManager : MonoBehaviour
     private void EndLevel(bool won)
     {
         ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
-        LevelInactive = true;
+        LevelIsOver = true;
         grappleGun.StopGrapple();
     }
 }

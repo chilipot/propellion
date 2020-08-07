@@ -1,45 +1,51 @@
-﻿using UnityEngine;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 
-public class Retractable : MonoBehaviour
+public class Retractable : MonoBehaviour, IGrappleResponse
 {
 
     public float retractSpeed = 10f; // units per second
+    
+    private static Transform destination;
 
-    private Retraction? retraction;
+    [CanBeNull] private Retraction currentRetraction;
+
+    private void Start()
+    {
+        destination = LevelManager.Player;
+        currentRetraction = null;
+    }
 
     private void Update()
     {
-        if (retraction.HasValue)
+        if (currentRetraction != null)
         {
-            transform.position = Vector3.Lerp(retraction.Value.StartPosition, retraction.Value.Destination.position,
-                (Time.time - retraction.Value.RetractStartTime) / retraction.Value.RetractDuration);
+            transform.position = Vector3.Lerp(currentRetraction.StartPosition, destination.position,
+                (Time.time - currentRetraction.RetractStartTime) / currentRetraction.RetractDuration);
         }
     }
 
-    public void Retract(Transform dest)
+    public void OnGrappleStart()
     {
-        retraction = new Retraction(transform.position, dest, retractSpeed);
+        currentRetraction = new Retraction(transform.position, retractSpeed);
     }
 
-    public void CancelRetraction()
+    public void OnGrappleStop()
     {
-        retraction = null;
+        currentRetraction = null;
     }
     
-}
-
-public readonly struct Retraction
-{
-    public Retraction(Vector3 startPosition, Transform destination, float retractSpeed)
+    private class Retraction
     {
-        StartPosition = startPosition;
-        Destination = destination;
-        RetractStartTime = Time.time;
-        RetractDuration = Vector3.Distance(startPosition, destination.position) / retractSpeed;
+        public float RetractStartTime { get; }
+        public float RetractDuration { get; }
+        public Vector3 StartPosition { get; }
+        
+        public Retraction(Vector3 startPosition, float retractSpeed)
+        {
+            StartPosition = startPosition;
+            RetractStartTime = Time.time;
+            RetractDuration = Vector3.Distance(startPosition, destination.position) / retractSpeed;
+        }
     }
-
-    public readonly float RetractStartTime;
-    public readonly float RetractDuration;
-    public readonly Vector3 StartPosition;
-    public readonly Transform Destination;
 }

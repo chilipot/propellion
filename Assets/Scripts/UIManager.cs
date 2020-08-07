@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: make this a singleton
 public class UIManager : MonoBehaviour
 {
     public GaugeBehavior healthGauge;

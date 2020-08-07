@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5444071878488652858}
+  - component: {fileID: 1567464388497733264}
   - component: {fileID: 5444071878488652859}
   m_Layer: 0
   m_Name: LevelManager
@@ -25,12 +26,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5444071878488652856}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -250}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1567464388497733264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5444071878488652856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75bb46840b2dd0b489b2efdc6a4a6637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableDebugMode: 0
+  enableGodMode: 0
 --- !u!114 &5444071878488652859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,16 +59,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawGizmos: 0
-  levelDimensions: {x: 1024, y: 1024, z: 5128}
+  disableBlackHole: 0
+  levelDimensions: {x: 1280, y: 1280, z: 5128}
   chunkSize: 256
   unitCubeSize: 64
   blackHoleBufferLength: 17
   exitBufferLength: 5
   spawnProbability:
-  - 0.6
-  - 0.39
-  - 0.01
-  asteroidSizeRange: {x: 5, y: 60}
+  - 0.64
+  - 0.34
+  - 0.013
+  - 0.007
+  asteroidSizeRange: {x: 10, y: 63}
   viewDistance: 500
   blackHolePrefab: {fileID: 659794716657429926, guid: 6f887a66242e5e346a24de39b9fc1950,
     type: 3}
@@ -62,4 +79,6 @@ MonoBehaviour:
   asteroidPrefab: {fileID: 2060055504992266407, guid: 01662818540e9e34f81f5ebdd14cab1d,
     type: 3}
   medicalCanisterPrefab: {fileID: 1475980397980410, guid: b889568899bb6c84d9847637a2a4a293,
+    type: 3}
+  alienPrefab: {fileID: 8421363574963125988, guid: 52a41f9ae1ed61945b8e66991d6bf50c,
     type: 3}

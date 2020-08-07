@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MedicalCanisterHealthEffect : HealthEffectBehavior
 {
-    public override int ComputeStrength([CanBeNull] Collision collision = null) => healAmount;
+    public override int ComputeStrength(Collision collision = null) => healAmount;
     
     public override HealthEffect Effect => HealthEffect.Heal;
 

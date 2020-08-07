@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
-using UnityEngine;
+﻿using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
@@ -23,7 +19,7 @@ public class CameraController : MonoBehaviour
     {
         // TODO: instead of checking LevelIsOver here, encapsulate that logic into FreeCam by making it a
         // a private instance variable w/ public setter, which refuses to set it to true if LevelIsOver
-        if (!FreeCam || LevelManager.LevelInactive) return;
+        if (!FreeCam || !LevelManager.LevelIsActive) return;
         
         var moveX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         var moveY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime * -1;

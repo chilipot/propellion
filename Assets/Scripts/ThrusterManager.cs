@@ -10,12 +10,14 @@ public class ThrusterManager : MonoBehaviour
     
     private bool engaged;
     private float capacity; // in seconds
+    private bool engineSfxClipHasStarted;
     private UIManager ui;
 
     private void Start()
     {
         engaged = false;
         capacity = maxCapacity;
+        engineSfxClipHasStarted = false;
         ui = FindObjectOfType<UIManager>();
         ui.fuelGauge.SetVal(maxCapacity, maxCapacity);
     }
@@ -26,13 +28,13 @@ public class ThrusterManager : MonoBehaviour
         
         if (engaged)
         {
-            if (LevelManager.LevelInactive) Disengage();
+            if (!LevelManager.LevelIsActive) Disengage();
             else if (capacity > 0) capacity -= 1 * Time.deltaTime;
-            else
+            else if (!LevelManager.GodMode)
             {
                 Disengage();
                 capacity = 0;
-                thrusterEmptySfx.Play();
+                thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
             }
             ui.fuelGauge.SetVal(capacity, maxCapacity);
         }
@@ -42,13 +44,18 @@ public class ThrusterManager : MonoBehaviour
     
     private void Engage()
     {
-        if (LevelManager.LevelInactive) return;
-        if (capacity > 0)
+        if (!LevelManager.LevelIsActive) return;
+        if (LevelManager.GodMode || capacity > 0)
         {
             engaged = true;
-            thrusterEngineSfx.Play();
+            if (engineSfxClipHasStarted) thrusterEngineSfx.UnPause();
+            else
+            {
+                thrusterEngineSfx.Play();
+                engineSfxClipHasStarted = true;
+            }
         }
-        else thrusterEmptySfx.Play();
+        else thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
     }
 
     public void Disengage()
@@ -64,7 +71,7 @@ public class ThrusterManager : MonoBehaviour
 
     public void Burst(float burstStrength)
     {
-        if (LevelManager.LevelInactive) return;
+        if (!LevelManager.LevelIsActive) return;
         capacity -= 0.5f * burstStrength;
     }
     
