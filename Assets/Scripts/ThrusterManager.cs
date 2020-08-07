@@ -39,10 +39,10 @@ public class ThrusterManager : MonoBehaviour
         ui.fuelGauge.SetVal(capacity, maxCapacity);
     }
 
-    public void ProcessThrustCapacityEffect(GameObject healthEffectObj)
+    public void ProcessThrustCapacityEffect(GameObject thrusterCapacityEffectObj)
     {
         if (Time.fixedTime - lastThrustCapacityEffect <= thrustCapacityEffectInteractionDelay) return;
-        var thrustCapacityBehavior  = healthEffectObj.GetComponent<ThrustCapacityEffectBehavior>();
+        var thrustCapacityBehavior  = thrusterCapacityEffectObj.GetComponent<ThrustCapacityEffectBehavior>();
         if (!thrustCapacityBehavior) return;
         switch (thrustCapacityBehavior.Effect)
         {
