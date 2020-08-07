@@ -64,3 +64,6 @@ crashlytics-build.properties
 # Rider
 /.idea/
 
+# Unity asset/package structure
+/Assets/IgnoredPackages.meta
+/Assets/IgnoredPackages/
