@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public enum HealthEffect
@@ -12,5 +13,5 @@ public abstract class HealthEffectBehavior : MonoBehaviour
 {
     public abstract HealthEffect Effect { get; }
 
-    public abstract int ComputeStrength(Collision collision = null);
+    public abstract int ComputeStrength([CanBeNull] Collision collision = null);
 }
