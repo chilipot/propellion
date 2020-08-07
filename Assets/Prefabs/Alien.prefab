@@ -1767,8 +1767,10 @@ MonoBehaviour:
   maxAttackDistance: 80
   minAttackDistance: 25
   chaseSpeedMultiplier: 3
-  projectile: {fileID: 1896060850478464, guid: 9e278e65f05df3344b3374de61db1e82, type: 3}
-  muzzleFlash: {fileID: 2423976063136330336, guid: fee69c5cf7ccae24fabd1b8983bc89ca,
+  rotationSpeed: 5
+  patrolPointDistanceRange: {x: 10, y: 50}
+  projectile: {fileID: 1473007591874996, guid: 728f429499e829142a6f509ef738d75b, type: 3}
+  muzzleFlash: {fileID: 1580551768239302, guid: 8e12ab99fb750fb4f98c64f831662a57,
     type: 3}
   gunTip: {fileID: 1351008105804437600}
   fireRate: 2

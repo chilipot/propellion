@@ -7,8 +7,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         Patrol,
         Chase,
-        Attack,
-        Dead
+        Attack
     }
     
     public float speed = 15f;
@@ -16,6 +15,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public float maxAttackDistance = 75f;
     public float minAttackDistance = 25f;
     public float chaseSpeedMultiplier = 3f;
+    public float rotationSpeed = 5f;
+    public Vector2 patrolPointDistanceRange = new Vector2(10f, 50f);
     public GameObject projectile;
     public GameObject muzzleFlash;
     public Transform gunTip;
@@ -33,6 +34,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
     private Transform projectileParent;
+    private ProceduralGeneration entityManager;
     private Animator animator;
 
     private void Start()
@@ -51,6 +53,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
+        entityManager = FindObjectOfType<ProceduralGeneration>();
         animator = GetComponent<Animator>();
         animator.SetTrigger("Flying");
     }
@@ -78,18 +81,18 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             case State.Attack:
                 UpdateAttackState();
                 break;
-            case State.Dead:
-                UpdateDeadState();
-                break;
         }
     }
 
     private void ListenForDebugClicks()
     {
-        if (!Input.GetMouseButtonDown(0) ||
-            !Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit) ||
-            hit.transform != transform) return; 
-        Debug.Log($"Current enemy AI state: {currentState}");
+        if (!Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit) || hit.transform != transform) return;
+        if (Input.GetMouseButtonDown(0)) Debug.Log($"Current enemy AI state: {currentState}");
+        if (Input.GetMouseButtonDown(1))
+        {
+            entityManager.RemoveEntity(gameObject);
+            Destroy(gameObject);
+        }
     }
 
     private void UpdatePatrolState()
@@ -138,16 +141,11 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             animator.SetTrigger("Flying");
         }
     }
-    
-    private void UpdateDeadState()
-    {
-        // TODO (or remove this state if not necessary)
-    }
-    
+
     private void SetRandomDestination()
     {
         // TODO: more intelligently choose a patrol point so that a point is not within an asteroid
-        currentDestination = transform.position + Random.onUnitSphere * Random.Range(10, 30); // TODO: make the range min/max inspector variables, if a similar methodology is maintained
+        currentDestination = transform.position + Random.onUnitSphere * Random.Range(patrolPointDistanceRange[0], patrolPointDistanceRange[1]);
         destinationIsPatrolPoint = true;
     }
 
@@ -162,14 +160,14 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         LookTowardsDestination();
         if (isGrappled) return;
         if (!thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StartExhaustTrail();
-        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime); // TODO: use navmesh instead
+        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime);
     }
 
     private void LookTowardsDestination()
     {
         var targetDirection = (currentDestination - transform.position).normalized;
         var lookRotation = Quaternion.LookRotation(targetDirection);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime); // TODO: use a better T, within [0, 1]
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
     }
     
     private void FireWeapon()

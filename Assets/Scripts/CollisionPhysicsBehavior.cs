@@ -24,7 +24,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if (!impactTime.HasValue || !LevelManager.LevelIsActive()) return; // if level is over, continue spinning indefinitely for dramatic effect
+        if (!impactTime.HasValue || !LevelManager.LevelIsActive) return; // if level is over, continue spinning indefinitely for dramatic effect
         var timeSinceImpact = Time.fixedTime - impactTime.Value;
         if (timeSinceImpact > stabilizationDelay) Stabilize(timeSinceImpact);
         if (rb.angularVelocity == Vector3.zero) FinishStabilizing();

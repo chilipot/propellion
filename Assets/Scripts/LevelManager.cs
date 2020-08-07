@@ -6,12 +6,15 @@ public class LevelManager : MonoBehaviour
 {
     public static bool LevelIsOver { get; private set; }
     public static bool DebugMode { get; private set; }
+    public static bool GodMode { get; private set; }
     public static Camera MainCamera { get; private set; }
     public static Transform Player { get; private set; }
     public static Rigidbody PlayerRb { get; private set; }
 
+    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver;
+
     public bool enableDebugMode = false;
-    public bool godMode = false;
+    public bool enableGodMode = false;
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
@@ -21,6 +24,7 @@ public class LevelManager : MonoBehaviour
     {
         LevelIsOver = false;
         DebugMode = enableDebugMode;
+        GodMode = enableGodMode;
         MainCamera = Camera.main;
         Player = GameObject.FindWithTag("Player").transform;
         PlayerRb = Player.GetComponent<Rigidbody>();
@@ -43,14 +47,9 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public static bool LevelIsActive()
-    {
-        return ProceduralGeneration.FinishedGenerating && !LevelIsOver;
-    }
-
     public void Win()
     {
-        if (!LevelIsActive()) return;
+        if (!LevelIsActive) return;
         EndLevel(true);
         winSfx.Play();
         PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
@@ -58,7 +57,7 @@ public class LevelManager : MonoBehaviour
 
     public void Lose()
     {
-        if (godMode || !LevelIsActive()) return;
+        if (GodMode || !LevelIsActive) return;
         EndLevel(false);
         loseSfx.Play();
         

@@ -23,13 +23,7 @@ public class WeightedRandomBag<T>
     public T GetRandom()
     {
         var r = Random.value * accumulatedWeight;
-
-        foreach (var entry in entries.Where(entry => entry.AccumulatedWeight >= r))
-        {
-            return entry.Item;
-        }
-
-        return default; //should only happen when there are no entries
+        return entries.FirstOrDefault(entry => entry.AccumulatedWeight >= r).Item;
     }
 }
 
