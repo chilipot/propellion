@@ -211,6 +211,7 @@ AudioMixerController:
     - abd2ee23c980da0439145f8f8dbb3882
     - 9473e1e7c5236644a9462efb7ab41b86
     - 0346ecba5d5bb35459e581a57bdb5fce
+    - 2c7b73f9bd6880a4c83a26a06e2eb297
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -236,6 +237,7 @@ AudioMixerGroupController:
   - {fileID: 5094958696509041168}
   - {fileID: -3859745272713386737}
   - {fileID: -6989506166072334923}
+  - {fileID: 7613584017085698272}
   m_Volume: 387e70311ba926842a217ad135921276
   m_Pitch: 31cf27f93e2714e4ca7230a925553256
   m_Send: 00000000000000000000000000000000
@@ -273,10 +275,11 @@ AudioMixerSnapshotController:
     387e70311ba926842a217ad135921276: 0.13552584
     9919ad41f3810964d8be07acff2cec45: 0
     6bcfc7914b5eca04c808d0c6817b67e4: 4.165108
+    da5bd622b04095d45ba6897886cf60bd: 4
     e19380929a264e9439b49414a30ce0d3: 3.2656894
     a4a6be6957be40f438d3325028b7042e: 6.2251854
     52b5bbbc302b3e740b31b346c462a3ee: -3.5090396
-    a3d27b4ec3614104193ec93a5bf3ab5f: -6
+    a3d27b4ec3614104193ec93a5bf3ab5f: -6.000001
     1cf21a5f36281ad4a8534359bcffc597: -3.5090396
   m_TransitionOverrides: {}
 --- !u!244 &688364284436867115
@@ -336,6 +339,20 @@ AudioMixerEffectController:
   m_EffectID: 75344e4a110fa1e40a777524ceff2d93
   m_EffectName: Attenuation
   m_MixLevel: fd063f5c42d5c054daf99db1b2503e11
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!244 &2459606621660816262
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: ade74b4374c9adb44a9cf9c00b3ac4fd
+  m_EffectName: Attenuation
+  m_MixLevel: 14e965fd1817f51438f8e251721c294c
   m_Parameters: []
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
@@ -458,6 +475,25 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 4342746012931622291}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!243 &7613584017085698272
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Stab
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 2c7b73f9bd6880a4c83a26a06e2eb297
+  m_Children: []
+  m_Volume: da5bd622b04095d45ba6897886cf60bd
+  m_Pitch: de597cfff3c06384fb64545df9733e6f
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: 2459606621660816262}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0

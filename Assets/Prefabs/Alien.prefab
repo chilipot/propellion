@@ -1718,8 +1718,9 @@ GameObject:
   - component: {fileID: 8421363574963126011}
   - component: {fileID: -7629252726361082976}
   - component: {fileID: 26404531669705576}
+  - component: {fileID: 5772657515286396096}
   m_Layer: 8
-  m_Name: Alien
+  m_Name: AlienMERGE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1784,7 +1785,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 20
   chaseDistance: 200
-  attackDistance: 80
+  maxAttackDistance: 80
+  minAttackDistance: 25
   chaseSpeedMultiplier: 3
   rotationSpeed: 5
   patrolPointDistanceRange: {x: 10, y: 50}
@@ -2015,6 +2017,25 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &5772657515286396096
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8421363574963125988}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: f13349cc09b03d447a26b54d406aaa8e, type: 3}
+  m_Controller: {fileID: 9100000, guid: 71e3c5a6384993c4a8e66c49c5a5d711, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &2331463969643864815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2184,15 +2205,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069f7f6d2f5b29745b2e10789754777c, type: 3}
---- !u!4 &1351008105804437600 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
-    type: 3}
-  m_PrefabInstance: {fileID: 2331463969643864815}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2329548099111898669 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4276584366140610, guid: 069f7f6d2f5b29745b2e10789754777c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2331463969643864815}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1351008105804437600 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
     type: 3}
   m_PrefabInstance: {fileID: 2331463969643864815}
   m_PrefabAsset: {fileID: 0}
