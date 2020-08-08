@@ -1,5 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
 public class EnemyAI : MonoBehaviour, IGrappleResponse
@@ -18,7 +18,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public float chaseSpeedMultiplier = 3f;
     public float rotationSpeed = 5f;
     public Vector2 patrolPointDistanceRange = new Vector2(10f, 50f);
-    public AudioClip deathSfx;
+    public AudioClip stabSfx;
+    public AudioMixerGroup stabSfxMixer;
     public GameObject deathVfxPrefab;
     public GameObject projectile;
     public GameObject muzzleFlash;
@@ -33,7 +34,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private bool isGrappled;
     private float lastFireTime;
     private AudioSource fireSfx;
-    private AudioSource alienAggroSfx;
+    private AudioSource aggroSfx;
+    private AudioSource screamSfx;
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
     private Transform projectileParent;
@@ -52,8 +54,10 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         lastFireTime = -fireRate;
         fireSfx = gunTip.GetComponent<AudioSource>();
         fireSfx.maxDistance = attackDistance * 2f;
-        alienAggroSfx = GetComponent<AudioSource>();
-        alienAggroSfx.maxDistance = chaseDistance * 2f;
+        var audioSources= GetComponents<AudioSource>();
+        aggroSfx = audioSources[0];
+        aggroSfx.maxDistance = chaseDistance * 2f;
+        screamSfx = audioSources[1];
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
@@ -101,7 +105,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
         else if (!LevelManager.LevelIsOver && distanceToPlayer <= chaseDistance)
         {
-            alienAggroSfx.PlayOneShot(alienAggroSfx.clip);
+            aggroSfx.PlayOneShot(aggroSfx.clip);
             currentState = State.Chase;
         }
     }
@@ -170,12 +174,13 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         currentState = State.Dead;
         grapple.StopGrapple();
         var position = transform.position;
-        AudioSource.PlayClipAtPoint(deathSfx, position); // TODO: make this louder by giving it a mixer
+        var sliceSfxSource = AudioSourceExtension.PlayClipAndGetSource(stabSfx, position);
+        sliceSfxSource.outputAudioMixerGroup = stabSfxMixer;
+        screamSfx.Play();
         var deathVfx = Instantiate(deathVfxPrefab, position, Quaternion.identity);
         deathVfx.transform.LookAt(player);
-        // var hitDirection = (position - player.position).normalized;
-        // TODO: fix this impulseVector
-        impulseVector = transform.forward * -1000f;  //hitDirection * 1000f;
+        var hitDirection = (position - player.position).normalized;
+        impulseVector = hitDirection * 50f;
         // TODO: update animation
         // TODO: corpse dissolve VFX
         // TODO: make not grappleable
@@ -185,7 +190,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         if (!impulseVector.HasValue) return;
         var rb = GetComponent<Rigidbody>();
-        rb.AddForce(/*impulseVector.Value*/ transform.forward * -1000f, ForceMode.Impulse);
+        rb.AddForce(impulseVector.Value, ForceMode.VelocityChange);
         impulseVector = null;
     }
 

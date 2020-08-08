@@ -26,6 +26,7 @@ public class Retractable : MonoBehaviour, IGrappleResponse
 
     private void LateUpdate()
     {
+        // TODO: prevent spring joint from pulling player in direction of retractable once at stopping distance
         if (currentRetraction != null && Vector3.Distance(transform.position, destination.position) <= stopDistance)
             transform.position = destination.position + destination.forward * stopDistance;
     }
