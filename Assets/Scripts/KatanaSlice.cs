@@ -24,13 +24,11 @@ public class KatanaSlice : MonoBehaviour
         swingSfx.PlayOneShot(swingSfx.clip);
         swingAnimation.SetTrigger(ShouldSwing);
         hitbox.enabled = true;
-        Debug.Log("enabling collider!"); // TODO: delete
         Invoke(nameof(DisableCollider), swingAnimation.GetCurrentAnimatorStateInfo(0).length); // TODO: only enable collider while katana is swinging DOWN, not for the full animation (maybe split into separate states?)
     }
 
     private void DisableCollider()
     {
-        Debug.Log("disabling collider!"); // TODO: delete
         hitbox.enabled = false;
     }
     

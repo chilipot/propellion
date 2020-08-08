@@ -148,7 +148,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (isGrappled) return;
         if (!thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StartExhaustTrail();
         // TODO: use a rigidbody force instead of changing transform.position?
-        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime); // TODO: uncomment
+        transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime);
     }
 
     private void LookTowardsDestination()
@@ -189,8 +189,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private void FixedUpdate()
     {
         if (!impulseVector.HasValue) return;
-        var rb = GetComponent<Rigidbody>();
-        rb.AddForce(impulseVector.Value, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(impulseVector.Value, ForceMode.VelocityChange);
         impulseVector = null;
     }
 

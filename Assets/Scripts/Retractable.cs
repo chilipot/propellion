@@ -19,7 +19,7 @@ public class Retractable : MonoBehaviour, IGrappleResponse
 
     private void Update()
     {
-        if (currentRetraction != null) // TODO: also check if we're at stop distance, in which case don't lerp
+        if (currentRetraction != null && !AtStopDistance)
             transform.position = Vector3.Lerp(currentRetraction.StartPosition, destination.position,
                 (Time.time - currentRetraction.RetractStartTime) / currentRetraction.RetractDuration);
     }
@@ -27,9 +27,11 @@ public class Retractable : MonoBehaviour, IGrappleResponse
     private void LateUpdate()
     {
         // TODO: prevent spring joint from pulling player in direction of retractable once at stopping distance
-        if (currentRetraction != null && Vector3.Distance(transform.position, destination.position) <= stopDistance)
+        if (currentRetraction != null && AtStopDistance) 
             transform.position = destination.position + destination.forward * stopDistance;
     }
+
+    private bool AtStopDistance => Vector3.Distance(transform.position, destination.position) <= stopDistance;
 
     public void OnGrappleStart()
     {
