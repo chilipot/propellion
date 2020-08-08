@@ -228,6 +228,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         if (currentState == State.Dead) return;
         isGrappled = true;
+        animator.ResetTrigger("Flying");
         animator.SetTrigger("Grappled");
         animator.ResetTrigger("Shooting");
     }
