@@ -15,10 +15,13 @@ public class LevelManager : MonoBehaviour
 
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
+
+    public string nextLevel;
     
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
+    private bool levelWon = false;
 
     private void Awake()
     {
@@ -41,9 +44,13 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        if (LevelIsOver && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
+        if ((LevelIsOver && !levelWon && Input.anyKeyDown) || (!LevelIsOver && Input.GetKeyDown(KeyCode.R)))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            ReloadCurrentLevel();
+        }
+        else if (LevelIsOver && levelWon && Input.anyKeyDown)
+        {
+            LoadNextLevel();
         }
     }
 
@@ -53,6 +60,7 @@ public class LevelManager : MonoBehaviour
         EndLevel(true);
         winSfx.Play();
         PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
+        levelWon = true;
     }
 
     public void Lose()
@@ -71,5 +79,15 @@ public class LevelManager : MonoBehaviour
         ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
         LevelIsOver = true;
         grappleGun.StopGrapple();
+    }
+
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(nextLevel);
+    }
+
+    private void ReloadCurrentLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
