@@ -61,7 +61,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
         entityManager = FindObjectOfType<ProceduralGeneration>();
         animator = GetComponent<Animator>();
-        animator.SetTrigger("Flying");
+        AnimTrigger("Flying");
         grapple = player.GetComponentInChildren<GrappleGunBehavior>();
         impulseVector = null;
     }
@@ -72,9 +72,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (LevelManager.LevelIsOver)
         {
             currentState = State.Patrol;
-            animator.ResetTrigger("Shooting");
-            animator.ResetTrigger("Grappled");
-            animator.SetTrigger("Flying");
+            AnimTrigger("Flying");
         }
         if (LevelManager.DebugMode) ListenForDebugClicks();
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -123,10 +121,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         {
             lastFireTime = Time.time - 0.5f; // TODO: don't hardcode the animation transition state time
             currentState = State.Attack;
-            animator.SetTrigger("Shooting");
-            // TODO: figure out whether resetting old triggers every time a new trigger is set is necessary (if not, remove all ResetTrigger calls, if it is, try just resetting previous trigger, not all triggers)
-            animator.ResetTrigger("Flying");
-            animator.ResetTrigger("Grappled");
+            AnimTrigger("Shooting");
         }
         else if (distanceToPlayer > chaseDistance) currentState = State.Patrol;
     }
@@ -144,9 +139,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (distanceToPlayer > maxAttackDistance)
         {
             currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
-            animator.ResetTrigger("Shooting");
-            animator.ResetTrigger("Grappled");
-            animator.SetTrigger("Flying");
+            AnimTrigger("Grappled");
         }
     }
 
@@ -191,7 +184,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private void OnTriggerStay(Collider other)
     {
         if (currentState == State.Dead || !other.CompareTag("SpaceKatana")) return;
-        animator.SetTrigger("Hit");
+        AnimTrigger("Hit");
         currentState = State.Dead;
         grapple.StopGrapple();
         var position = transform.position;
@@ -228,9 +221,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         if (currentState == State.Dead) return;
         isGrappled = true;
-        animator.SetTrigger("Grappled");
-        animator.ResetTrigger("Flying");
-        animator.ResetTrigger("Shooting");
+        AnimTrigger("Grappled");
     }
 
     // TODO: exit a Grappled state
@@ -240,16 +231,23 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         isGrappled = false;
         if (distanceToPlayer < maxAttackDistance)
         {
-            animator.SetTrigger("Shooting");
-            animator.ResetTrigger("Flying");
-            animator.ResetTrigger("Grappled");
+            AnimTrigger("Shooting");
             lastFireTime = Time.time; // TODO: don't hardcode the animation transition state time
         }
         else
         {
-            animator.SetTrigger("Flying");
-            animator.ResetTrigger("Shooting");
-            animator.ResetTrigger("Grappled");
+            AnimTrigger("Flying");
         }
     }
+    
+    // Thanks to "memoid" https://answers.unity.com/questions/981044/animator-trigger-not-reseting-bug.html
+    // Not the most efficient solution, but it'll do
+    private void AnimTrigger(string triggerName)
+    {
+        foreach(AnimatorControllerParameter p in animator.parameters)
+            if (p.type == AnimatorControllerParameterType.Trigger)
+                animator.ResetTrigger(p.name);
+        animator.SetTrigger(triggerName);
+    }
 }
+
