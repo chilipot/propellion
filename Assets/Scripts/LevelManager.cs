@@ -15,10 +15,11 @@ public class LevelManager : MonoBehaviour
 
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
-    
+
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
+    private bool levelWon;
 
     private void Awake()
     {
@@ -37,14 +38,14 @@ public class LevelManager : MonoBehaviour
         var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
+        levelWon = false;
     }
 
     private void Update()
     {
-        if (LevelIsOver && Input.anyKeyDown || Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+        var isLastLevel = SceneManager.GetActiveScene().buildIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
+        if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
+        else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
     }
 
     public void Win()
@@ -53,6 +54,7 @@ public class LevelManager : MonoBehaviour
         EndLevel(true);
         winSfx.Play();
         PlayerRb.constraints = RigidbodyConstraints.FreezeAll;
+        levelWon = true;
     }
 
     public void Lose()
@@ -71,5 +73,15 @@ public class LevelManager : MonoBehaviour
         ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
         LevelIsOver = true;
         grappleGun.StopGrapple();
+    }
+
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    private void ReloadCurrentLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
