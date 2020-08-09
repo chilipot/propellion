@@ -16,12 +16,10 @@ public class LevelManager : MonoBehaviour
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
 
-    public string nextLevel;
-    
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
-    private bool levelWon = false;
+    private bool levelWon;
 
     private void Awake()
     {
@@ -40,18 +38,14 @@ public class LevelManager : MonoBehaviour
         var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
         loseSfx = audioSources[2];
+        levelWon = false;
     }
 
     private void Update()
     {
-        if ((LevelIsOver && !levelWon && Input.anyKeyDown) || (!LevelIsOver && Input.GetKeyDown(KeyCode.R)))
-        {
-            ReloadCurrentLevel();
-        }
-        else if (LevelIsOver && levelWon && Input.anyKeyDown)
-        {
-            LoadNextLevel();
-        }
+        var isLastLevel = SceneManager.GetActiveScene().buildIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
+        if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
+        else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
     }
 
     public void Win()
@@ -83,7 +77,7 @@ public class LevelManager : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(nextLevel);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     private void ReloadCurrentLevel()
