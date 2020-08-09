@@ -4225,6 +4225,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8950262637617117143, guid: 458a8e348ff791445a9743a0e23ef52f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 458a8e348ff791445a9743a0e23ef52f, type: 3}
 --- !u!1001 &2092916882
@@ -4698,8 +4703,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1567464388497733264, guid: 7a1a6f451fb644741945b61152678ead,
         type: 3}
+      propertyPath: nextLevel
+      value: BlackHoleLevel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1567464388497733264, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
       propertyPath: nextLevelIndex
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5444071878488652856, guid: 7a1a6f451fb644741945b61152678ead,
         type: 3}
@@ -4760,6 +4770,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[3]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[2]
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[1]
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[0]
+      value: 0.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: asteroidSizeRange.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: asteroidSizeRange.y
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: exitBufferLength
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: disableBlackHole
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a1a6f451fb644741945b61152678ead, type: 3}

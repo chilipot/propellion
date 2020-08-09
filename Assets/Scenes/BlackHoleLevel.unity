@@ -4698,6 +4698,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1567464388497733264, guid: 7a1a6f451fb644741945b61152678ead,
         type: 3}
+      propertyPath: nextLevel
+      value: Prototype
+      objectReference: {fileID: 0}
+    - target: {fileID: 1567464388497733264, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
       propertyPath: nextLevelIndex
       value: 3
       objectReference: {fileID: 0}
@@ -4760,6 +4765,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: exitBufferLength
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[3]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: blackHoleBufferLength
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[1]
+      value: 0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[2]
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5444071878488652859, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: spawnProbability.Array.data[0]
+      value: 0.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a1a6f451fb644741945b61152678ead, type: 3}

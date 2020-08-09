@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableDebugMode: 0
   enableGodMode: 0
+  nextLevel: 
 --- !u!114 &5444071878488652859
 MonoBehaviour:
   m_ObjectHideFlags: 0
