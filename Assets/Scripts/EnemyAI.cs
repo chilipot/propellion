@@ -80,7 +80,6 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             animator.SetTrigger("Flying");
         }
         if (LevelManager.DebugMode) ListenForDebugClicks();
-        if (currentState == State.Grappled) return;
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
         switch (currentState)
         {
@@ -89,6 +88,9 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
                 break;
             case State.Attack:
                 UpdateAttackState();
+                break;
+            case State.Grappled:
+                UpdateGrappledState();
                 break;
             default:
                 UpdatePatrolState();
@@ -152,6 +154,13 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             animator.ResetTrigger("Grappled");
             animator.SetTrigger("Flying");
         }
+    }
+
+    private void UpdateGrappledState()
+    {
+        if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
+        SetPlayerDestination();
+        LookTowardsDestination();
     }
 
     private void SetRandomDestination()
