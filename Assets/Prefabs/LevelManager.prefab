@@ -108,3 +108,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c143a9e2e9b5422fa3b2e22c9afba40d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setVoicelines:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
