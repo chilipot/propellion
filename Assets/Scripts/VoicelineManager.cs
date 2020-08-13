@@ -61,7 +61,12 @@ public class VoicelinePlaybackHistory
 
 public class VoicelineManager : MonoBehaviour
 {
-    public static string[] voicelines;
+    // TODO: Fix This
+    public static string[] voicelines = new[]
+    {
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+        "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38"
+    };
 
     private ProceduralGeneration entityManager;
     
@@ -114,7 +119,7 @@ public class VoicelineManager : MonoBehaviour
             {
                 // Play the voiceline
                 var voiceline = voicelinesToPlay[randInd];
-                Debug.Log("PLAYED: " + voiceline);
+                Debug.Log("PLAYED: " + voicelines[voiceline]);
                 PlaybackHistory.AddRecord(voiceline);
             }
         }
