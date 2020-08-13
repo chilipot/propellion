@@ -2,28 +2,124 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
-public interface IVoiceline
+
+public class VoicelinePlaybackRecord
 {
-   void Play();
+    public int Voiceline { get; }
+    public DateTime Timestamp { get; }
+
+    public VoicelinePlaybackRecord(int index)
+    {
+        Voiceline = index;
+        Timestamp = DateTime.Now;
+    }
+}
+
+public class VoicelinePlaybackHistory
+{
+    public static List<VoicelinePlaybackRecord> GlobalTimeline = new List<VoicelinePlaybackRecord>();
+    public static Dictionary<int, List<VoicelinePlaybackRecord>> LevelTimelines = new Dictionary<int, List<VoicelinePlaybackRecord>>();
+    public static List<VoicelinePlaybackRecord> LevelAttemptTimeline =new List<VoicelinePlaybackRecord>();
+    
+    private static Dictionary<int, Dictionary<int, int>> LevelPlaybackCounts = new Dictionary<int, Dictionary<int, int>>();
+
+    public void Initialize(int numVoicelines)
+    {
+        LevelAttemptTimeline.Clear();
+        if (LevelTimelines.Count == 0 && LevelPlaybackCounts.Count == 0)
+        {
+            for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                LevelPlaybackCounts.Add(i, new Dictionary<int, int>()); 
+                for (var j = 0; j < numVoicelines; j++)
+                {
+                    LevelPlaybackCounts[i].Add(j, 0);
+                }
+                LevelTimelines.Add(i, new List<VoicelinePlaybackRecord>());
+            }
+        }
+    }
+
+    private Dictionary<int, int> CurrentLevelPlaybackCountLookup => LevelPlaybackCounts[LevelManager.LevelIndex];
+    public List<VoicelinePlaybackRecord> CurrentLevelTimeline => LevelTimelines[LevelManager.LevelIndex];
+    public int GlobalCount(int voiceline) => LevelPlaybackCounts.Values.Sum(d => d[voiceline]);
+    public int LevelCount(int voiceline) => CurrentLevelPlaybackCountLookup[voiceline];
+    public int LevelAttemptCount(int voiceline) => LevelAttemptTimeline.Count(record => record.Voiceline == voiceline);
+
+    public void AddRecord(int voiceline)
+    {
+        var record = new VoicelinePlaybackRecord(voiceline);
+        GlobalTimeline.Insert(0, record);
+        CurrentLevelTimeline.Insert(0, record);
+        LevelAttemptTimeline.Insert(0, record);
+        CurrentLevelPlaybackCountLookup[voiceline]++;
+    }
 }
 
 public class VoicelineManager : MonoBehaviour
 {
-    public string[] voicelines;
+    public static string[] voicelines;
 
     private ProceduralGeneration entityManager;
-    private Dictionary<string, bool> playedVoicelines;
+    
+    private static VoicelinePlaybackHistory PlaybackHistory = new VoicelinePlaybackHistory();
 
-    private void Awake()
+    private interface IVoiceline
     {
-        playedVoicelines = new Dictionary<string, bool>();
-        foreach (var voiceline in voicelines)
+        void Play();
+    }
+
+    private class Voiceline : IVoiceline
+    {
+        private int voicelineIndex;
+        public Voiceline(int voicelineIndex)
         {
-            playedVoicelines[voiceline] = false;
+            this.voicelineIndex = voicelineIndex;
+        }
+    
+        public void Play()
+        {
+            // Play the voiceline
+            Debug.Log("PLAYED: " + voicelines[voicelineIndex]);
+            PlaybackHistory.AddRecord(voicelineIndex);
         }
     }
 
+    private class RandomVoicelineGroup : IVoiceline
+    {
+        private int[] voicelineIndices;
+        private bool withReplacement;
+        private Func<int, bool> predicate;
+        private bool includeNothing;
+        public RandomVoicelineGroup(int[] voicelineIndices, Func<int, bool> predicate = null, bool withReplacement = false, bool includeNothing = true)
+        {
+            this.voicelineIndices = voicelineIndices;
+            this.withReplacement = withReplacement;
+            this.predicate = predicate ?? ((i) => PlaybackHistory.GlobalCount(i) == 0);
+            this.includeNothing = includeNothing;
+        }
+        public void Play()
+        {
+            var voicelinesToPlay= (withReplacement) ? voicelineIndices.ToList() : voicelineIndices.Where(voicelineIndex => predicate(voicelineIndex)).ToList();
+            if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
+            var randInd = Random.Range(0, (includeNothing ? voicelinesToPlay.Count : voicelinesToPlay.Count - 1));
+            if (includeNothing && randInd == voicelinesToPlay.Count)
+            {
+                Debug.Log("PLAYED: NOTHING");
+            }
+            else
+            {
+                // Play the voiceline
+                var voiceline = voicelinesToPlay[randInd];
+                Debug.Log("PLAYED: " + voiceline);
+                PlaybackHistory.AddRecord(voiceline);
+            }
+        }
+    }
+    
     private void Start()
     {
         entityManager = FindObjectOfType<ProceduralGeneration>();
@@ -31,6 +127,7 @@ public class VoicelineManager : MonoBehaviour
 
     private void OnEnable()
     {
+        PlaybackHistory.Initialize(voicelines.Length); // Doesn't always initialize without persistence
         StatsCollector.OnStatUpdate += PlayVoiceline;
     }
 
@@ -39,23 +136,23 @@ public class VoicelineManager : MonoBehaviour
         StatsCollector.OnStatUpdate -= PlayVoiceline;
     }
 
-    private bool AllLinesPlayed(IEnumerable<int> voicelineIndices) =>
-        voicelineIndices.All((n) => playedVoicelines[voicelines[n]]);
-    
     private IVoiceline TraverseOnAlienSlaid(StatChangeRecord statChangeRecord)
     {
-        var aliensSlain = StatsCollector.GetLevelStat(Stat.AliensSlain);
+        var aliensSlain = StatsCollector.GetGlobalStat(Stat.AliensSlain);
         if (aliensSlain == 1)
         {
             // Play #14
+            return new Voiceline(13);
         }
-        else if (!playedVoicelines[voicelines[15]])
+        else if (PlaybackHistory.GlobalCount(15) == 0 && !entityManager.disableBlackHole)
         {
             // Random Play: #15, #16, Nothing
+            return new RandomVoicelineGroup(new []{14, 15});
         }
         else
         {
             // Random Play: #15 or Nothing
+            return new RandomVoicelineGroup(new []{14});
         }
 
         return null;
@@ -77,12 +174,15 @@ public class VoicelineManager : MonoBehaviour
         if (asteroidsBumpedInSuccession >= 4)
         {
             // Play #2
+            return new Voiceline(1);
         } else if (StatsCollector.PerLevelAttemptStats[Stat.AsteroidsBumped] == 10)
         {
             // Random Play: #21, #6, #8
-        } else if (playedVoicelines[voicelines[5]] && !playedVoicelines[voicelines[6]])
+            return new RandomVoicelineGroup(new []{20, 5, 7});
+        } else if (PlaybackHistory.LevelAttemptCount(5) > 0 && PlaybackHistory.LevelAttemptCount(6) == 0)
         {
             // Play #7
+            return new Voiceline(6);
         }
 
         return null;
@@ -91,41 +191,50 @@ public class VoicelineManager : MonoBehaviour
     private IVoiceline TraverseOnDeath(StatChangeRecord statChangeRecord)
     {
         var numDeaths = StatsCollector.GetLevelStat(Stat.TotalDeaths);
-        if (10 <= numDeaths && numDeaths <= 25 && numDeaths % 5 == 0)
+        var initialDeathClips = new[] {0, 30, 21, 23};
+        if (10 <= numDeaths && numDeaths <= (10 + 5 * (initialDeathClips.Length - 1)) && numDeaths % 5 == 0)
         {
-            if (AllLinesPlayed(new[] {0, 30, 21, 23}) && !playedVoicelines[voicelines[28]])
-            {
-                // Play #29
-            }
-            else
-            {
-                // Random Play (unplayed): #1, #31, #22, #24
-            }
-        } else if (numDeaths >= 30 && numDeaths % 5 == 0)
+            // Random Play: #1, #31, #22, #24
+            return new RandomVoicelineGroup(initialDeathClips);
+        } else if (numDeaths >= (10 + 5 * initialDeathClips.Length) && numDeaths % 5 == 0)
         {
             // Play #38
+            return new Voiceline(38);
         }
         else
         {
-            var playedTwentyNine = playedVoicelines[voicelines[28]];
+            var playedTwentyNine = PlaybackHistory.GlobalCount(28) > 0;
             switch (statChangeRecord.ChangedStat)
             {
-                case Stat.AsteroidCollisionDeaths when AllLinesPlayed(new []{ 32, 31, 27, 26, 22, 18, 17, 9, 2, 3, 10}) && !playedTwentyNine:
-                case Stat.EnemyProjectileDeaths when AllLinesPlayed(new[] {33, 35, 25, 2, 3, 10}) && !playedTwentyNine:
-                case Stat.BlackHoleDeaths when AllLinesPlayed(new[] {11, 29, 3, 10}) && !playedTwentyNine:
+                case Stat.AsteroidCollisionDeaths
+                    when (new[] {32, 31, 27, 26, 22, 18, 17, 9, 2, 3, 10}).All(v =>
+                        PlaybackHistory.GlobalCount(v) > 0) && !playedTwentyNine:
+                case Stat.EnemyProjectileDeaths
+                    when (new[] {33, 35, 25, 36, 12, 2, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
+                         !playedTwentyNine:
+                case Stat.BlackHoleDeaths when (new[] {11, 29, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
+                                               !playedTwentyNine:
                     // Play #29
+                    return new Voiceline(28);
                     break;
                 case Stat.BlackHoleDeaths when StatsCollector.GetLevelStat(Stat.BlackHoleDeaths) == 5:
                     // Play #12
+                    return new Voiceline(11);
                     break;
                 case Stat.BlackHoleDeaths:
                     // Random Play: #30, #4, #11
+                    return new RandomVoicelineGroup(new [] {29, 3, 10});
                     break;
                 case Stat.EnemyProjectileDeaths when StatsCollector.GetLevelStat(Stat.EnemyProjectileDeaths) >= 3:
-                    // Random Play: #34, #36, #26, #3, #4, #11
+                    // Random Play: #34, #36, #26, #37, #13, #3, #4, #11
+                    return new RandomVoicelineGroup(new []{33, 35, 25, 36, 12, 2, 3, 10});
                     break;
+                case Stat.EnemyProjectileDeaths:
+                    // Random Play: #37, #13, #3, #4, #11
+                    return new RandomVoicelineGroup(new []{36, 12, 2, 3, 10});
                 case Stat.AsteroidCollisionDeaths:
                     // Random Play: #33, #32, #28, #27, #23, #19, #18, #11, #10, #4, #3
+                    return new RandomVoicelineGroup(new []{32, 31, 27, 26, 22, 18, 17, 10, 9, 3, 2});
                     break;
             }
         }
@@ -137,6 +246,7 @@ public class VoicelineManager : MonoBehaviour
         if (StatsCollector.PerLevelAttemptStats[Stat.MedicalCanistersPickedUp] == 8)
         {
             // Play #5
+            return new Voiceline(4);
         }
         return null;
     }
@@ -147,6 +257,7 @@ public class VoicelineManager : MonoBehaviour
         if (StatsCollector.PerLevelAttemptStats[Stat.EmptyThrusters] == 1)
         {
             // Random Play: #20 or Nothing
+            return new RandomVoicelineGroup(new []{19});
         }
         return null;
     }
@@ -157,6 +268,7 @@ public class VoicelineManager : MonoBehaviour
                                             && StatsCollector.GetLevelStat(Stat.TotalDeaths) == 0)
         {
             // Play #25
+            return new Voiceline(24);
         }
 
         return null;
