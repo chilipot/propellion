@@ -3,6 +3,8 @@
 public class MedicalCanisterPickup : MonoBehaviour
 {
     public GameObject healAura;
+    
+    public static readonly StatEvent PickupEvent = new StatEvent(StatEventType.MedicalCanisterPickedUp);
 
     private GrappleGunBehavior grapple;
     private ProceduralGeneration entityManager;
@@ -21,6 +23,7 @@ public class MedicalCanisterPickup : MonoBehaviour
         var medicalCanister = gameObject;
         medicalCanister.SetActive(false);
         entityManager.RemoveEntity(medicalCanister);
+        PickupEvent.Trigger();
         Destroy(medicalCanister, 2);
     }
 }

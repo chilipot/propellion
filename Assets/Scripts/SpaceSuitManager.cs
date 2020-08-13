@@ -5,6 +5,8 @@ public class SpaceSuitManager : MonoBehaviour
     public float healthEffectInteractionDelay = 0.5f;
     public float maxHealth = 100f;
     
+    public static readonly StatEvent DamageDeathEvent = new StatEvent(StatEventType.SpaceSuitDamageDeath);
+    
     private float health;
     private float lastHealthEffect;
     private LevelManager levelManager;
@@ -37,30 +39,34 @@ public class SpaceSuitManager : MonoBehaviour
         switch (healthEffectBehavior.Effect)
         {
             case HealthEffect.Heal:
-                Heal(healthEffectBehavior.ComputeStrength(collision));
+                Heal(healthEffectBehavior.ComputeStrength(collision), healthEffectBehavior.Source);
                 break;
             case HealthEffect.Damage:
-                Damage(healthEffectBehavior.ComputeStrength(collision));
+                Damage(healthEffectBehavior.ComputeStrength(collision), healthEffectBehavior.Source);
                 break;
         }
         lastHealthEffect = Time.fixedTime;
     }
 
-    private void SetHealth(float newHealth)
+    private void SetHealth(float newHealth, HealthEffectSource? healthEffectSource = null)
     {
         health = Mathf.Clamp(newHealth, 0f, maxHealth);
         ui.healthGauge.SetVal(health, maxHealth);
-        if (health <= 0) levelManager.Lose();
+        if (health <= 0)
+        {
+            DamageDeathEvent.Trigger(healthEffectSource);
+            levelManager.Lose();
+        }
     }
     
-    private void Heal(int heal)
+    private void Heal(int heal, HealthEffectSource source)
     {
-        SetHealth(health + heal);
+        SetHealth(health + heal, source);
     }
     
-    private void Damage(int dmg)
+    private void Damage(int dmg, HealthEffectSource source)
     {
-        SetHealth(health - dmg);
+        SetHealth(health - dmg, source);
     }
     
 }

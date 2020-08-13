@@ -8,6 +8,8 @@ public class ThrusterManager : MonoBehaviour
     public float maxCapacity = 10f; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
     
+    public static StatEvent EmptyThrusterEvent = new StatEvent(StatEventType.ThrusterEmptied);
+    
     private bool engaged;
     private float capacity; // in seconds
     private bool engineSfxClipHasStarted;
@@ -55,7 +57,11 @@ public class ThrusterManager : MonoBehaviour
                 engineSfxClipHasStarted = true;
             }
         }
-        else thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
+        else
+        {
+            EmptyThrusterEvent.Trigger();
+            thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
+        }
     }
 
     public void Disengage()

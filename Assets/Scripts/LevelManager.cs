@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
+    public static string LevelName => SceneManager.GetActiveScene().name;
+    public static int LevelIndex => SceneManager.GetActiveScene().buildIndex;
     public static bool LevelIsOver { get; private set; }
     public static bool DebugMode { get; private set; }
     public static bool GodMode { get; private set; }
@@ -43,7 +45,7 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        var isLastLevel = SceneManager.GetActiveScene().buildIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
+        var isLastLevel = LevelIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
         if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
         else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
     }
@@ -77,11 +79,11 @@ public class LevelManager : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(LevelIndex + 1);
     }
 
     private void ReloadCurrentLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(LevelIndex);
     }
 }
