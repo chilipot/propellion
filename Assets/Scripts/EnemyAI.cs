@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
 public class EnemyAI : MonoBehaviour, IGrappleResponse
@@ -7,15 +8,21 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         Patrol,
         Chase,
-        Attack
+        Attack,
+        Grappled,
+        Dead
     }
     
     public float speed = 15f;
-    public float chaseDistance = 100f;
-    public float attackDistance = 50f;
+    public float chaseDistance = 150f;
+    public float maxAttackDistance = 75f;
+    public float minAttackDistance = 25f;
     public float chaseSpeedMultiplier = 3f;
     public float rotationSpeed = 5f;
     public Vector2 patrolPointDistanceRange = new Vector2(10f, 50f);
+    public AudioClip stabSfx;
+    public AudioMixerGroup stabSfxMixer;
+    public GameObject deathVfxPrefab;
     public GameObject projectile;
     public GameObject muzzleFlash;
     public Transform gunTip;
@@ -26,14 +33,17 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private bool destinationIsPatrolPoint;
     private Transform player;
     private float distanceToPlayer;
-    private bool isGrappled;
     private float lastFireTime;
     private AudioSource fireSfx;
-    private AudioSource alienAggroSfx;
+    private AudioSource aggroSfx;
+    private AudioSource screamSfx;
     private Transform mainCamera;
     private ThrusterParticleManager thrusterParticleManager;
     private Transform projectileParent;
     private ProceduralGeneration entityManager;
+    private Animator animator;
+    private GrappleGunBehavior grapple;
+    private Vector3? impulseVector;
 
     private void Start()
     {
@@ -42,34 +52,48 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         destinationIsPatrolPoint = false;
         player = LevelManager.Player;
         distanceToPlayer = Mathf.Infinity;
-        isGrappled = false;
         lastFireTime = -fireRate;
         fireSfx = gunTip.GetComponent<AudioSource>();
-        fireSfx.maxDistance = attackDistance * 2f;
-        alienAggroSfx = GetComponent<AudioSource>();
-        alienAggroSfx.maxDistance = chaseDistance * 2f;
+        fireSfx.maxDistance = maxAttackDistance * 2f;
+        var audioSources= GetComponents<AudioSource>();
+        aggroSfx = audioSources[0];
+        aggroSfx.maxDistance = chaseDistance * 2f;
+        screamSfx = audioSources[1];
         mainCamera = LevelManager.MainCamera.transform;
         thrusterParticleManager = GetComponentInChildren<ThrusterParticleManager>();
         projectileParent = GameObject.FindWithTag("ProjectileCollection").transform;
         entityManager = FindObjectOfType<ProceduralGeneration>();
+        animator = GetComponent<Animator>();
+        animator.SetTrigger("Flying");
+        grapple = player.GetComponentInChildren<GrappleGunBehavior>();
+        impulseVector = null;
     }
 
     private void Update()
     {
-        if (!ProceduralGeneration.FinishedGenerating) return;
-        if (LevelManager.LevelIsOver) currentState = State.Patrol;
+        if (!ProceduralGeneration.FinishedGenerating || currentState == State.Dead) return;
+        if (LevelManager.LevelIsOver)
+        {
+            currentState = State.Patrol;
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+            animator.SetTrigger("Flying");
+        }
         if (LevelManager.DebugMode) ListenForDebugClicks();
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
         switch (currentState)
         {
-            case State.Patrol:
-                UpdatePatrolState();
-                break;
             case State.Chase:
                 UpdateChaseState();
                 break;
             case State.Attack:
                 UpdateAttackState();
+                break;
+            case State.Grappled:
+                UpdateGrappledState();
+                break;
+            default:
+                UpdatePatrolState();
                 break;
         }
     }
@@ -88,33 +112,55 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private void UpdatePatrolState()
     {
         if (!destinationIsPatrolPoint) SetRandomDestination();
-        // TODO: update animation
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
         else if (!LevelManager.LevelIsOver && distanceToPlayer <= chaseDistance)
         {
-            alienAggroSfx.PlayOneShot(alienAggroSfx.clip);
+            aggroSfx.PlayOneShot(aggroSfx.clip);
             currentState = State.Chase;
         }
     }
     
     private void UpdateChaseState()
     {
-        // TODO: update animation
         SetPlayerDestination();
         ApproachDestination(chaseSpeedMultiplier);
-        if (distanceToPlayer <= attackDistance) currentState = State.Attack;
+        if (distanceToPlayer <= maxAttackDistance)
+        {
+            lastFireTime = Time.time - 0.5f; // TODO: don't hardcode the animation transition state time
+            currentState = State.Attack;
+            animator.SetTrigger("Shooting");
+            // TODO: figure out whether resetting old triggers every time a new trigger is set is necessary (if not, remove all ResetTrigger calls, if it is, try just resetting previous trigger, not all triggers)
+            animator.ResetTrigger("Flying");
+            animator.ResetTrigger("Grappled");
+        }
         else if (distanceToPlayer > chaseDistance) currentState = State.Patrol;
     }
     
     private void UpdateAttackState()
     {
-        // TODO: update animation
+        if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail(); // TODO: this isn't always accurate -- make it on when moving, off when not
+        SetPlayerDestination();
+        
+        // TODO: refine this so they aim to be in between states and not jitter, and also adjust thruster exhaust trail particles accordingly (based on when they are/aren't moving)
+        if (distanceToPlayer > minAttackDistance) ApproachDestination();
+        else LookTowardsDestination();
+        
+        FireWeapon();
+        if (distanceToPlayer > maxAttackDistance)
+        {
+            currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+            animator.SetTrigger("Flying");
+        }
+    }
+
+    private void UpdateGrappledState()
+    {
         if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
         SetPlayerDestination();
         LookTowardsDestination();
-        FireWeapon();
-        if (distanceToPlayer > attackDistance) currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
     }
 
     private void SetRandomDestination()
@@ -133,8 +179,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     private void ApproachDestination(float speedMultiplier = 1f)
     {
         LookTowardsDestination();
-        if (isGrappled) return;
         if (!thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StartExhaustTrail();
+        // TODO: use a rigidbody force instead of changing transform.position?
         transform.position = Vector3.MoveTowards(transform.position, currentDestination, speed * speedMultiplier * Time.deltaTime);
     }
 
@@ -147,12 +193,41 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     
     private void FireWeapon()
     {
-        if (isGrappled || Time.time < lastFireTime + fireRate) return;
+        if (Time.time < lastFireTime + fireRate) return;
         lastFireTime = Time.time;
-        // TODO: play animation
         Instantiate(projectile, gunTip.position, Quaternion.identity, projectileParent);
         Instantiate(muzzleFlash, gunTip);
         fireSfx.PlayOneShot(fireSfx.clip);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (currentState == State.Dead || !other.CompareTag("SpaceKatana")) return;
+        currentState = State.Dead;
+        animator.SetTrigger("Hit");
+        animator.ResetTrigger("Shooting");
+        animator.ResetTrigger("Flying");
+        animator.ResetTrigger("Grappled");
+        grapple.StopGrapple();
+        if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
+        var position = transform.position;
+        var sliceSfxSource = AudioSourceExtension.PlayClipAndGetSource(stabSfx, position);
+        sliceSfxSource.outputAudioMixerGroup = stabSfxMixer;
+        screamSfx.Play();
+        var deathVfx = Instantiate(deathVfxPrefab, position, Quaternion.identity);
+        deathVfx.transform.LookAt(player);
+        var hitDirection = (position - player.position).normalized;
+        impulseVector = hitDirection * 50f;
+        // TODO: update animation
+        // TODO: corpse dissolve VFX
+        // TODO: make not grappleable
+    }
+
+    private void FixedUpdate()
+    {
+        if (!impulseVector.HasValue) return;
+        GetComponent<Rigidbody>().AddForce(impulseVector.Value, ForceMode.VelocityChange);
+        impulseVector = null;
     }
 
     private void OnDrawGizmos()
@@ -161,16 +236,48 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(position, chaseDistance);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(position, attackDistance);
+        Gizmos.DrawWireSphere(position, maxAttackDistance);
     }
     
+    // TODO: enter a Grappled state
     public void OnGrappleStart()
     {
-        isGrappled = true;
+        if (currentState == State.Dead) return;
+        currentState = State.Grappled;
+        animator.ResetTrigger("Flying");
+        animator.SetTrigger("Grappled");
+        animator.ResetTrigger("Shooting");
+        if (thrusterParticleManager.ExhaustTrailActive) thrusterParticleManager.StopExhaustTrail();
     }
 
+    // TODO: exit a Grappled state
     public void OnGrappleStop()
     {
-        isGrappled = false;
+        if (currentState == State.Dead) return;
+        if (distanceToPlayer < maxAttackDistance)
+        {
+            currentState = State.Attack;
+            animator.SetTrigger("Shooting");
+            animator.ResetTrigger("Flying");
+            animator.ResetTrigger("Grappled");
+            lastFireTime = Time.time; // TODO: don't start firing immediately, change transition duration in animation controller and adjust lastFireTime accordingly here
+        }
+        else
+        {
+            currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
+            animator.SetTrigger("Flying");
+            animator.ResetTrigger("Shooting");
+            animator.ResetTrigger("Grappled");
+        }
+    }
+
+    // TODO use this instead of manually resetting triggers each time
+    // Thanks to "memoid" from https://answers.unity.com/questions/981044/animator-trigger-not-reseting-bug.html
+    private void AnimTrigger(string triggerName)
+    {
+        foreach(AnimatorControllerParameter p in animator.parameters)
+            if (p.type == AnimatorControllerParameterType.Trigger)
+                animator.ResetTrigger(p.name);
+        animator.SetTrigger(triggerName);
     }
 }

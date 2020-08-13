@@ -81,5 +81,5 @@ MonoBehaviour:
     type: 3}
   medicalCanisterPrefab: {fileID: 1475980397980410, guid: b889568899bb6c84d9847637a2a4a293,
     type: 3}
-  alienPrefab: {fileID: 8421363574963125988, guid: 52a41f9ae1ed61945b8e66991d6bf50c,
+  alienPrefab: {fileID: 8421363574963125988, guid: f99f46672b01b9e449185b1039bc14e6,
     type: 3}
