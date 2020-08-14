@@ -24,8 +24,8 @@ public class IntroCutsceneController : MonoBehaviour
 
     private void Update()
     {
-        // press escape to skip cutscene
-        if (Input.GetKeyDown(KeyCode.Escape)) LoadFirstLevel();
+        // press space or return to skip cutscene (TODO: make this the ESC key if not on WebGL, and add an inspector variable for array of skip keycodes)
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)) LoadFirstLevel();
         
         // rotate the skybox to simulate space station moving through space when player looks out the window
         if (skyboxShouldRotate) RenderSettings.skybox.SetFloat(Rotation, Time.time * spaceStationFlightSpeed);
