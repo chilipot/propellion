@@ -245,7 +245,7 @@ public class VoicelineManager : MonoBehaviour
                 case Stat.EnemyProjectileDeaths
                     when (new[] {33, 35, 25, 36, 12, 2, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
                          !playedTwentyNine:
-                case Stat.BlackHoleDeaths when (new[] {11, 29, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
+                case Stat.BlackHoleDeaths when (new[] {29, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
                                                !playedTwentyNine:
                     // Play #29
                     return new Voiceline(28);
