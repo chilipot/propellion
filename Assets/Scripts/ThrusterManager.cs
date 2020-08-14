@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ThrusterManager : MonoBehaviour
 {
-    private const KeyCode EngageKey = KeyCode.Space;
-    
+
     public float power = 10f;
     public float maxCapacity = 10f; // in seconds
     public AudioSource thrusterEngineSfx, thrusterEmptySfx;
@@ -12,6 +12,7 @@ public class ThrusterManager : MonoBehaviour
     private float capacity; // in seconds
     private bool engineSfxClipHasStarted;
     private UIManager ui;
+    private bool pressingThrustButton;
 
     private void Start()
     {
@@ -20,12 +21,22 @@ public class ThrusterManager : MonoBehaviour
         engineSfxClipHasStarted = false;
         ui = FindObjectOfType<UIManager>();
         ui.fuelGauge.SetVal(maxCapacity, maxCapacity);
+        pressingThrustButton = false;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(EngageKey)) Engage();
-        
+        if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) >= 0.01f || Mathf.Abs(Input.GetAxisRaw("Vertical")) >= 0.01f)
+        {
+            Engage();
+            pressingThrustButton = true;
+        }
+        else
+        {
+            Disengage();
+            pressingThrustButton = false;
+        }
+            
         if (engaged)
         {
             if (!LevelManager.LevelIsActive) Disengage();
@@ -38,13 +49,11 @@ public class ThrusterManager : MonoBehaviour
             }
             ui.fuelGauge.SetVal(capacity, maxCapacity);
         }
-
-        if (Input.GetKeyUp(EngageKey) && engaged) Disengage();
     }
     
     private void Engage()
     {
-        if (!LevelManager.LevelIsActive) return;
+        if (!LevelManager.LevelIsActive || engaged) return;
         if (LevelManager.GodMode || capacity > 0)
         {
             engaged = true;
@@ -55,7 +64,7 @@ public class ThrusterManager : MonoBehaviour
                 engineSfxClipHasStarted = true;
             }
         }
-        else thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
+        else if (!pressingThrustButton) thrusterEmptySfx.PlayOneShot(thrusterEmptySfx.clip);
     }
 
     public void Disengage()
