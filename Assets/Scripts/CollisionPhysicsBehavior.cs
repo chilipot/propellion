@@ -53,7 +53,7 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Heavy")) return;
         // This assumes asteroids are the only heavies. TODO: Place this event + trigger in a better location
-        AsteroidBumpEvent.Trigger();
+        if (LevelManager.LevelIsActive) AsteroidBumpEvent.Trigger();
         CameraController.FreeCam = false;
         PhysicsCameraController.FreeCam = false;
         rb.angularDrag = 0;

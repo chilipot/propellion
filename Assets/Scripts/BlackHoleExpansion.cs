@@ -21,7 +21,7 @@ public class BlackHoleExpansion : MonoBehaviour
 
     private void Update()
     {
-        if (!ProceduralGeneration.FinishedGenerating) return;
+        if (!LevelManager.LevelIsActive) return;
         var consumptionFieldNewScale = consumptionField.localScale + Time.deltaTime * expansionRate * Vector3.one;
         consumptionField.localScale = consumptionFieldNewScale;
         

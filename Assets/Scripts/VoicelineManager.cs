@@ -61,11 +61,13 @@ public class VoicelinePlaybackHistory
 
 public class VoicelineManager : MonoBehaviour
 {
-    public string[] setVoicelines;
+    public AudioClip[] setVoicelines;
     
-    public static string[] voicelines;
+    public static AudioClip[] voicelines;
 
     private ProceduralGeneration entityManager;
+
+    private static AudioSource bemisAudioSource;
     
     private static VoicelinePlaybackHistory PlaybackHistory = new VoicelinePlaybackHistory();
 
@@ -74,7 +76,24 @@ public class VoicelineManager : MonoBehaviour
         void Play();
     }
 
-    private class Voiceline : IVoiceline
+    private abstract class AVoiceline : IVoiceline
+    {
+        protected void _Play(int voicelineIndex)
+        {
+            var voiceline = voicelines[voicelineIndex];
+            Debug.Log("PLAYED: " + voiceline.name);
+            if (!bemisAudioSource.isPlaying)
+            {
+                bemisAudioSource.clip = voiceline;
+                bemisAudioSource.PlayDelayed(1);
+            }
+            PlaybackHistory.AddRecord(voicelineIndex);
+        }
+
+        public abstract void Play();
+    }
+
+    private class Voiceline : AVoiceline
     {
         private int voicelineIndex;
         public Voiceline(int voicelineIndex)
@@ -82,15 +101,14 @@ public class VoicelineManager : MonoBehaviour
             this.voicelineIndex = voicelineIndex;
         }
     
-        public void Play()
+        public override void Play()
         {
             // Play the voiceline
-            Debug.Log("PLAYED: " + voicelines[voicelineIndex]);
-            PlaybackHistory.AddRecord(voicelineIndex);
+            _Play(voicelineIndex);
         }
     }
 
-    private class RandomVoicelineGroup : IVoiceline
+    private class RandomVoicelineGroup : AVoiceline
     {
         private int[] voicelineIndices;
         private bool withReplacement;
@@ -103,7 +121,7 @@ public class VoicelineManager : MonoBehaviour
             this.predicate = predicate ?? ((i) => PlaybackHistory.GlobalCount(i) == 0);
             this.includeNothing = includeNothing;
         }
-        public void Play()
+        public override void Play()
         {
             var voicelinesToPlay= (withReplacement) ? voicelineIndices.ToList() : voicelineIndices.Where(voicelineIndex => predicate(voicelineIndex)).ToList();
             if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
@@ -114,10 +132,9 @@ public class VoicelineManager : MonoBehaviour
             }
             else
             {
-                // Play the voiceline
-                var voiceline = voicelinesToPlay[randInd];
-                Debug.Log("PLAYED: " + voicelines[voiceline]);
-                PlaybackHistory.AddRecord(voiceline);
+                // Play the random voiceline
+                var voicelineIndex = voicelinesToPlay[randInd];
+                _Play(voicelineIndex);
             }
         }
     }
@@ -125,6 +142,7 @@ public class VoicelineManager : MonoBehaviour
     private void Awake()
     {
         voicelines = setVoicelines;
+        PlaybackHistory.Initialize(voicelines.Length); // Doesn't always initialize without persistence
     }
 
     private void Start()
@@ -134,7 +152,7 @@ public class VoicelineManager : MonoBehaviour
 
     private void OnEnable()
     {
-        PlaybackHistory.Initialize(voicelines.Length); // Doesn't always initialize without persistence
+        bemisAudioSource = GameObject.FindGameObjectWithTag("B3M1S").GetComponent<AudioSource>();
         StatsCollector.OnStatUpdate += PlayVoiceline;
     }
 
@@ -181,7 +199,15 @@ public class VoicelineManager : MonoBehaviour
         if (asteroidsBumpedInSuccession >= 4)
         {
             // Play #2
-            return new Voiceline(1);
+            var asteroidsBumpedInSuccessionVoiceline = 1;
+            var cooldown = 5; // in minutes
+            var playedRecently = PlaybackHistory.CurrentLevelTimeline
+                .TakeWhile(record => DateTime.Now.Subtract(record.Timestamp) <= TimeSpan.FromMinutes(cooldown))
+                .Any(record => record.Voiceline == asteroidsBumpedInSuccessionVoiceline);
+            if (!playedRecently)
+            {
+                return new Voiceline(asteroidsBumpedInSuccessionVoiceline);
+            }
         } else if (StatsCollector.PerLevelAttemptStats[Stat.AsteroidsBumped] == 10)
         {
             // Random Play: #21, #6, #8

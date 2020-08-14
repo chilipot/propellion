@@ -33,6 +33,7 @@ public class SpaceSuitManager : MonoBehaviour
 
     private void ProcessHealthEffect(GameObject healthEffectObj, Collision collision = null)
     {
+        if (!LevelManager.LevelIsActive) return; // Ignore stuff when the level isn't playing
         if (Time.fixedTime - lastHealthEffect <= healthEffectInteractionDelay) return;
         var healthEffectBehavior = healthEffectObj.GetComponent<HealthEffectBehavior>();
         if (!healthEffectBehavior) return;

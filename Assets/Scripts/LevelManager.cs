@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
     public bool enableGodMode = false;
 
     private UIManager ui;
+    private AudioSource bemis;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
     private bool levelWon;
@@ -35,6 +36,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        bemis = GameObject.FindGameObjectWithTag("B3M1S").GetComponent<AudioSource>();
         ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
         var audioSources = MainCamera.GetComponents<AudioSource>();
@@ -45,6 +47,7 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
+        if (bemis.isPlaying) return; // LET BEMIS FINISH!
         var isLastLevel = LevelIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
         if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
         else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();

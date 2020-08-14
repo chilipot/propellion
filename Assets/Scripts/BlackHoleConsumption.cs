@@ -18,6 +18,7 @@ public class BlackHoleConsumption : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!LevelManager.LevelIsActive) return;
         var consumedBody = other.gameObject.GetComponent<Rigidbody>();
         if (!consumedBody) return;
         blackHolePull.RemovePulledBody(consumedBody);
