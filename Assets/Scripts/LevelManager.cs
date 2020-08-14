@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
@@ -13,8 +14,9 @@ public class LevelManager : MonoBehaviour
     public static Transform Player { get; private set; }
     public static Rigidbody PlayerRb { get; private set; }
 
-    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver;
-
+    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver && !PauseMenuBehavior.Paused;
+    public static LevelStatus CurrentLevelStatus { get; private set; }
+    
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
 
@@ -23,9 +25,19 @@ public class LevelManager : MonoBehaviour
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
     private bool levelWon;
+    
+    public enum LevelStatus
+    {
+        Playing,
+        Loading,
+        Win,
+        Lose,
+        Paused
+    }
 
     private void Awake()
     {
+        ui = FindObjectOfType<UIManager>();
         LevelIsOver = false;
         DebugMode = enableDebugMode;
         GodMode = enableGodMode;
@@ -37,7 +49,6 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         bemis = GameObject.FindGameObjectWithTag("B3M1S").GetComponent<AudioSource>();
-        ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
         var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
@@ -75,17 +86,36 @@ public class LevelManager : MonoBehaviour
 
     private void EndLevel(bool won)
     {
-        ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
+        SetLevelStatus(won ? LevelStatus.Win : LevelStatus.Lose);
         LevelIsOver = true;
         grappleGun.StopGrapple();
     }
 
+    public void SetLevelStatus(LevelStatus status)
+    {
+        Debug.Log(CurrentLevelStatus + " VS " + status);
+        CurrentLevelStatus = status;
+        ui.HandleLevelStatus(status);
+        switch (status)
+        {
+            case LevelStatus.Playing:
+            case LevelStatus.Win:
+            case LevelStatus.Lose:
+                if (!PauseMenuBehavior.Paused) Time.timeScale = 1f;
+                break;
+            case LevelStatus.Loading:
+            case LevelStatus.Paused:
+                Time.timeScale = 0f;
+                break;
+        }
+    }
+    
     private void LoadNextLevel()
     {
         SceneManager.LoadScene(LevelIndex + 1);
     }
 
-    private void ReloadCurrentLevel()
+    public void ReloadCurrentLevel()
     {
         SceneManager.LoadScene(LevelIndex);
     }

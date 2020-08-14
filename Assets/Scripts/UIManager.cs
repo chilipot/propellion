@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // TODO: make this a singleton
@@ -14,13 +16,7 @@ public class UIManager : MonoBehaviour
     private Image levelStatusImage;
     private Image reticleImage;
 
-    public enum LevelStatus
-    {
-        Playing,
-        Loading,
-        Win,
-        Lose
-    }
+
     
     private void Awake()
     {
@@ -44,28 +40,39 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetLevelStatus(LevelStatus status) {
+    public void HandleLevelStatus(LevelManager.LevelStatus status) {
         Sprite statusSprite;
         switch (status)
         {
-            case LevelStatus.Playing:
+            case LevelManager.LevelStatus.Playing:
                 levelStatus.SetActive(false);
                 reticleImage.enabled = true;
-                return;
-            case LevelStatus.Loading:
+                break;
+            case LevelManager.LevelStatus.Loading:
                 statusSprite = loadingSimulation;
                 reticleImage.enabled = false;
+                
+                levelStatusImage.sprite = statusSprite;
+                levelStatus.SetActive(true);
                 break;
-            case LevelStatus.Win:
+            case LevelManager.LevelStatus.Win:
                 statusSprite = missionSuccess;
                 reticleImage.enabled = false;
+                
+                levelStatusImage.sprite = statusSprite;
+                levelStatus.SetActive(true);
                 break;
-            default:
+            case LevelManager.LevelStatus.Lose:
                 statusSprite = missionFailed;
                 reticleImage.enabled = false;
+                
+                levelStatusImage.sprite = statusSprite;
+                levelStatus.SetActive(true);
+                break;
+            case LevelManager.LevelStatus.Paused:
+                reticleImage.enabled = false;
+                levelStatus.SetActive(false);
                 break;
         }
-        levelStatusImage.sprite = statusSprite;
-        levelStatus.SetActive(true);
     }
 }

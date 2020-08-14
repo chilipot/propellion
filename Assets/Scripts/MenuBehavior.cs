@@ -17,6 +17,8 @@ public class MenuBehavior : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         mainCam = Camera.main.transform;
     }
 
