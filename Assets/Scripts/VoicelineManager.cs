@@ -143,7 +143,7 @@ public class VoicelineManager : MonoBehaviour
         StatsCollector.OnStatUpdate -= PlayVoiceline;
     }
 
-    private IVoiceline TraverseOnAlienSlaid(StatChangeRecord statChangeRecord)
+    private IVoiceline TraverseOnAlienSlayed(StatChangeRecord statChangeRecord)
     {
         var aliensSlain = StatsCollector.GetGlobalStat(Stat.AliensSlain);
         if (aliensSlain == 1)
@@ -287,7 +287,7 @@ public class VoicelineManager : MonoBehaviour
         switch (statChangeRecord.ChangedStat)
         {
             case Stat.AliensSlain:
-                triggeredVoiceline = TraverseOnAlienSlaid(statChangeRecord);
+                triggeredVoiceline = TraverseOnAlienSlayed(statChangeRecord);
                 break;
             case Stat.MedicalCanistersPickedUp:
                 triggeredVoiceline = TraverseOnMedicalCanisterPickedUp(statChangeRecord);
