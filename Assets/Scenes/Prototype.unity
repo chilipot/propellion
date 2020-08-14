@@ -4701,6 +4701,11 @@ PrefabInstance:
       propertyPath: nextLevelIndex
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1567464388497733264, guid: 7a1a6f451fb644741945b61152678ead,
+        type: 3}
+      propertyPath: isLastLevel
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5444071878488652856, guid: 7a1a6f451fb644741945b61152678ead,
         type: 3}
       propertyPath: m_Name

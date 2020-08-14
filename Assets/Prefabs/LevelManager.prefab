@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableDebugMode: 0
   enableGodMode: 0
-  nextLevel: 
+  isLastLevel: 0
 --- !u!114 &5444071878488652859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,5 +81,5 @@ MonoBehaviour:
     type: 3}
   medicalCanisterPrefab: {fileID: 1475980397980410, guid: b889568899bb6c84d9847637a2a4a293,
     type: 3}
-  alienPrefab: {fileID: 8421363574963125988, guid: 52a41f9ae1ed61945b8e66991d6bf50c,
+  alienPrefab: {fileID: 8421363574963125988, guid: 8854be590776988409f44d2fc146a459,
     type: 3}

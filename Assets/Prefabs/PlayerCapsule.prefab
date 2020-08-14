@@ -523,6 +523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed70c007aec06344b62456ba54f6722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  breakable: 0
   maxRetractionForce: 600
   maxGrappleLength: 300
   grappleableStuff:
