@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5043736762174289445}
   - component: {fileID: 5043736762174289444}
   m_Layer: 0
-  m_Name: Directional Light
+  m_Name: LevelLighting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1335
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0

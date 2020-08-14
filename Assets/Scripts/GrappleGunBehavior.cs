@@ -37,6 +37,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         if (Physics.Raycast(mainCamera.position, mainCamera.forward, out var hit, maxGrappleLength, grappleableStuff))
         {
+            // TODO: fail if there's no rigidbody, with a debug error
             currentTarget = new GrappleTarget(hit.transform, hit.point, hit.rigidbody);
             lineRenderer.positionCount = 2;
             shootGrappleSfx.PlayOneShot(shootGrappleSfx.clip);
@@ -79,6 +80,7 @@ public class GrappleGunBehavior : MonoBehaviour
     {
         ReticleEffect();
         if (currentTarget == null) return;
+        // TODO: make grapple always breakable by space katana if it's in the way (to mimic being sliced), and play sfx when it happens
         if (breakable && GrappleBroken()) StopGrapple(); // TODO: add particle effects, SFX, and/or animation to indicate what happened
         else
         {
