@@ -93,7 +93,6 @@ public class LevelManager : MonoBehaviour
 
     public void SetLevelStatus(LevelStatus status)
     {
-        Debug.Log(CurrentLevelStatus + " VS " + status);
         CurrentLevelStatus = status;
         ui.HandleLevelStatus(status);
         switch (status)
