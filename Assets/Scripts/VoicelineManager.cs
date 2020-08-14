@@ -81,11 +81,11 @@ public class VoicelineManager : MonoBehaviour
         protected void _Play(int voicelineIndex)
         {
             var voiceline = voicelines[voicelineIndex];
-            Debug.Log("PLAYED: " + voiceline.name);
+            if (LevelManager.DebugMode) Debug.Log("PLAYED: " + voiceline.name);
             if (!bemisAudioSource.isPlaying)
             {
                 bemisAudioSource.clip = voiceline;
-                bemisAudioSource.PlayDelayed(1);
+                bemisAudioSource.PlayDelayed(1f);
             }
             PlaybackHistory.AddRecord(voicelineIndex);
         }
@@ -164,23 +164,17 @@ public class VoicelineManager : MonoBehaviour
     private IVoiceline TraverseOnAlienSlayed(StatChangeRecord statChangeRecord)
     {
         var aliensSlain = StatsCollector.GetGlobalStat(Stat.AliensSlain);
-        if (aliensSlain == 1)
-        {
-            // Play #14
-            return new Voiceline(13);
-        }
-        else if (PlaybackHistory.GlobalCount(15) == 0 && !entityManager.disableBlackHole)
+        
+        if (aliensSlain == 1) return new Voiceline(13); // Play #14
+        
+        if (PlaybackHistory.GlobalCount(15) == 0 && !entityManager.disableBlackHole)
         {
             // Random Play: #15, #16, Nothing
             return new RandomVoicelineGroup(new []{14, 15});
         }
-        else
-        {
-            // Random Play: #15 or Nothing
-            return new RandomVoicelineGroup(new []{14});
-        }
-
-        return null;
+        
+        // Random Play: #15 or Nothing
+        return new RandomVoicelineGroup(new []{14});
     }
     
     private IVoiceline TraverseOnAsteroidBumped(StatChangeRecord statChangeRecord)
@@ -190,29 +184,25 @@ public class VoicelineManager : MonoBehaviour
         {
             if (DateTime.Now.Subtract(record.Timestamp) > TimeSpan.FromSeconds(15)) break;
 
-            if (record.ChangedStat == Stat.AsteroidsBumped)
-            {
-                asteroidsBumpedInSuccession++;
-            }
+            if (record.ChangedStat == Stat.AsteroidsBumped) asteroidsBumpedInSuccession++;
         }
 
         if (asteroidsBumpedInSuccession >= 4)
         {
             // Play #2
-            var asteroidsBumpedInSuccessionVoiceline = 1;
-            var cooldown = 5; // in minutes
+            const int asteroidsBumpedInSuccessionVoiceline = 1;
+            const int cooldown = 5; // in minutes
             var playedRecently = PlaybackHistory.CurrentLevelTimeline
                 .TakeWhile(record => DateTime.Now.Subtract(record.Timestamp) <= TimeSpan.FromMinutes(cooldown))
                 .Any(record => record.Voiceline == asteroidsBumpedInSuccessionVoiceline);
-            if (!playedRecently)
-            {
-                return new Voiceline(asteroidsBumpedInSuccessionVoiceline);
-            }
-        } else if (StatsCollector.PerLevelAttemptStats[Stat.AsteroidsBumped] == 10)
+            if (!playedRecently) return new Voiceline(asteroidsBumpedInSuccessionVoiceline);
+        } 
+        else if (StatsCollector.PerLevelAttemptStats[Stat.AsteroidsBumped] == 7)
         {
             // Random Play: #21, #6, #8
             return new RandomVoicelineGroup(new []{20, 5, 7});
-        } else if (PlaybackHistory.LevelAttemptCount(5) > 0 && PlaybackHistory.LevelAttemptCount(6) == 0)
+        } 
+        else if (PlaybackHistory.LevelAttemptCount(5) > 0 && PlaybackHistory.LevelAttemptCount(6) == 0)
         {
             // Play #7
             return new Voiceline(6);
@@ -224,87 +214,67 @@ public class VoicelineManager : MonoBehaviour
     private IVoiceline TraverseOnDeath(StatChangeRecord statChangeRecord)
     {
         var numDeaths = StatsCollector.GetLevelStat(Stat.TotalDeaths);
-        var initialDeathClips = new[] {0, 30, 21, 23};
-        if (10 <= numDeaths && numDeaths <= (10 + 5 * (initialDeathClips.Length - 1)) && numDeaths % 5 == 0)
+        var repeatedDeathClips = new[] {30, 21, 23};
+        const int repeatedDeathMinimum = 5;
+        const int repeatedDeathInterval = 2;
+        if (numDeaths >= repeatedDeathMinimum && (numDeaths - repeatedDeathMinimum) % repeatedDeathInterval == 0)
         {
-            // Random Play: #1, #31, #22, #24
-            return new RandomVoicelineGroup(initialDeathClips);
-        } else if (numDeaths >= (10 + 5 * initialDeathClips.Length) && numDeaths % 5 == 0)
-        {
-            // Play #38
-            return new Voiceline(38);
+            if (repeatedDeathClips.All(v => PlaybackHistory.LevelCount(v) > 0)) return new Voiceline(37);
+            return new RandomVoicelineGroup(repeatedDeathClips); // Random Play: #31, #22, #24
         }
-        else
+        var playedTwentyNine = PlaybackHistory.GlobalCount(28) > 0;
+        switch (statChangeRecord.ChangedStat)
         {
-            var playedTwentyNine = PlaybackHistory.GlobalCount(28) > 0;
-            switch (statChangeRecord.ChangedStat)
-            {
-                case Stat.AsteroidCollisionDeaths
-                    when (new[] {32, 31, 27, 26, 22, 18, 17, 9, 2, 3, 10}).All(v =>
-                        PlaybackHistory.GlobalCount(v) > 0) && !playedTwentyNine:
-                case Stat.EnemyProjectileDeaths
-                    when (new[] {33, 35, 25, 36, 12, 2, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
-                         !playedTwentyNine:
-                case Stat.BlackHoleDeaths when (new[] {29, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
-                                               !playedTwentyNine:
-                    // Play #29
-                    return new Voiceline(28);
-                    break;
-                case Stat.BlackHoleDeaths when StatsCollector.GetLevelStat(Stat.BlackHoleDeaths) == 5:
-                    // Play #12
-                    return new Voiceline(11);
-                    break;
-                case Stat.BlackHoleDeaths:
-                    // Random Play: #30, #4, #11
-                    return new RandomVoicelineGroup(new [] {29, 3, 10});
-                    break;
-                case Stat.EnemyProjectileDeaths when StatsCollector.GetLevelStat(Stat.EnemyProjectileDeaths) >= 3:
-                    // Random Play: #34, #36, #26, #37, #13, #3, #4, #11
-                    return new RandomVoicelineGroup(new []{33, 35, 25, 36, 12, 2, 3, 10});
-                    break;
-                case Stat.EnemyProjectileDeaths:
-                    // Random Play: #37, #13, #3, #4, #11
-                    return new RandomVoicelineGroup(new []{36, 12, 2, 3, 10});
-                case Stat.AsteroidCollisionDeaths:
-                    // Random Play: #33, #32, #28, #27, #23, #19, #18, #11, #10, #4, #3
-                    return new RandomVoicelineGroup(new []{32, 31, 27, 26, 22, 18, 17, 10, 9, 3, 2});
-                    break;
-            }
+            case Stat.AsteroidCollisionDeaths
+                when (new[] {32, 31, 27, 26, 22, 18, 17, 9, 2, 3, 10}).All(v =>
+                    PlaybackHistory.GlobalCount(v) > 0) && !playedTwentyNine:
+            case Stat.EnemyProjectileDeaths
+                when (new[] {33, 35, 25, 36, 12, 2, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
+                     !playedTwentyNine:
+            case Stat.BlackHoleDeaths when (new[] {29, 3, 10}).All(v => PlaybackHistory.GlobalCount(v) > 0) &&
+                                           !playedTwentyNine:
+                // Play #29
+                return new Voiceline(28);
+            case Stat.BlackHoleDeaths when StatsCollector.GetLevelStat(Stat.BlackHoleDeaths) == 5:
+                // Play #12
+                return new Voiceline(11);
+            case Stat.BlackHoleDeaths:
+                // Random Play: #30, #4, #11
+                return new RandomVoicelineGroup(new [] {29, 3, 10});
+            case Stat.EnemyProjectileDeaths when StatsCollector.GetLevelStat(Stat.EnemyProjectileDeaths) >= 3:
+                // Random Play: #34, #36, #26, #37, #13, #3, #4, #11
+                return new RandomVoicelineGroup(new []{33, 35, 25, 36, 12, 2, 3, 10});
+            case Stat.EnemyProjectileDeaths:
+                // Random Play: #37, #13, #3, #4, #11
+                return new RandomVoicelineGroup(new []{36, 12, 2, 3, 10});
+            case Stat.AsteroidCollisionDeaths:
+                // Random Play: #33, #32, #28, #27, #23, #19, #18, #11, #10, #4, #3
+                return new RandomVoicelineGroup(new []{32, 31, 27, 26, 22, 18, 17, 10, 9, 3, 2});
         }
         return null;
     }
     
     private IVoiceline TraverseOnMedicalCanisterPickedUp(StatChangeRecord statChangeRecord)
     {
-        if (StatsCollector.PerLevelAttemptStats[Stat.MedicalCanistersPickedUp] == 8)
-        {
-            // Play #5
-            return new Voiceline(4);
-        }
-        return null;
+        return StatsCollector.PerLevelAttemptStats[Stat.MedicalCanistersPickedUp] == 6 ? new Voiceline(4) : null;
     }
     
     private IVoiceline TraverseOnEmptyThruster(StatChangeRecord statChangeRecord)
     {
         // TODO: Make this wait for 5 mins between playing when thruster refueling is added, otherwise this plays once
-        if (StatsCollector.PerLevelAttemptStats[Stat.EmptyThrusters] == 1)
-        {
-            // Random Play: #20 or Nothing
-            return new RandomVoicelineGroup(new []{19});
-        }
-        return null;
+
+        return StatsCollector.PerLevelAttemptStats[Stat.EmptyThrusters] == 1
+            ? new RandomVoicelineGroup(new[] {19}) // Random Play: #20 or Nothing
+            : null;
     }
     
     private IVoiceline TraverseOnBeatLevel(StatChangeRecord statChangeRecord)
     {
-        if (!entityManager.disableBlackHole && StatsCollector.GetLevelStat(Stat.Successes) == 1
-                                            && StatsCollector.GetLevelStat(Stat.TotalDeaths) == 0)
-        {
-            // Play #25
-            return new Voiceline(24);
-        }
-
-        return null;
+        return !entityManager.disableBlackHole && 
+            StatsCollector.GetLevelStat(Stat.Successes) == 1 &&
+            StatsCollector.GetLevelStat(Stat.TotalDeaths) == 0
+            ? new Voiceline(24) // Play #25
+            : null;
     }
 
     private void PlayVoiceline(StatChangeRecord statChangeRecord)
