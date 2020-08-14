@@ -15,6 +15,7 @@ public class LevelManager : MonoBehaviour
 
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
+    public bool isLastLevel = false;
 
     private UIManager ui;
     private GrappleGunBehavior grappleGun;
@@ -43,7 +44,6 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        var isLastLevel = SceneManager.GetActiveScene().buildIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
         if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
         else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
     }
