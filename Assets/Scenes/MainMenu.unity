@@ -684,9 +684,24 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 894125263, guid: 3ce6090148e725c4f8d85bc3a96a76b8, type: 3}
       propertyPath: m_text
-      value: "Left Click & Hold - Grapple and reel in towards target\r\n\r\n\nRight
-        Click - Swing katana\r\n\r\n\nSPACE - Thrust forward in direction you're
-        facing \n\r\n\nTAB - Toggle Pausing"
+      value: 'Left Click & Hold - Grapple and reel in towards target
+
+        
+
+
+        Right
+        Click - Swing katana
+
+        
+
+
+        SPACE - Thrust forward in direction
+        you''re facing + Skip Cutscenes
+
+        
+
+
+        TAB - Toggle Pausing'
       objectReference: {fileID: 0}
     - target: {fileID: 1817912926312194, guid: 3ce6090148e725c4f8d85bc3a96a76b8, type: 3}
       propertyPath: m_Name
@@ -809,12 +824,6 @@ PrefabInstance:
       objectReference: {fileID: 1884270955}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ce6090148e725c4f8d85bc3a96a76b8, type: 3}
---- !u!95 &551472426 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3933265774662855865, guid: 3ce6090148e725c4f8d85bc3a96a76b8,
-    type: 3}
-  m_PrefabInstance: {fileID: 551472425}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &551472427 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224862354553891428, guid: 3ce6090148e725c4f8d85bc3a96a76b8,
@@ -1350,7 +1359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb66bde69b454003a673450ac2d29ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeToBlackAnimation: {fileID: 551472426}
   buttonClickSfx: {fileID: 8300000, guid: 74ea7609cf00fe24aa9d22fbca5ecf3a, type: 3}
 --- !u!4 &1884270956
 Transform:

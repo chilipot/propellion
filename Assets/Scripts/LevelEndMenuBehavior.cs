@@ -37,7 +37,7 @@ public class LevelEndMenuBehavior : MonoBehaviour
             case LevelManager.LevelStatus.Win:
                 continueButtonText.text = continueOnWinText;
                 title.text = winMessage;
-                if (LevelManager.LevelIndex == SceneManager.sceneCountInBuildSettings - 1)
+                if (LevelManager.IsLastLevel)
                 {
                     continueButton.gameObject.SetActive(false);
                 }

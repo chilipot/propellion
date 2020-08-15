@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     public static string LevelName => SceneManager.GetActiveScene().name;
     public static int LevelIndex => SceneManager.GetActiveScene().buildIndex;
+    public static bool IsLastLevel => LevelIndex == SceneManager.sceneCountInBuildSettings - 1;
     public static bool LevelIsOver { get; private set; }
     public static bool DebugMode { get; private set; }
     public static bool GodMode { get; private set; }
@@ -19,7 +20,6 @@ public class LevelManager : MonoBehaviour
     
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
-    public bool isLastLevel = false;
 
     private UIManager ui;
     private AudioSource bemis;
