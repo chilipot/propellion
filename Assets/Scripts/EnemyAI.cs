@@ -29,6 +29,8 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public Transform gunTip;
     public float fireRate = 1f;
     
+    public static readonly StatEvent SlayAlienEvent = new StatEvent(StatEventType.AlienSlayed);
+    
     public Transform enemyEyes;
     public float fieldOfView = 90f;
     
@@ -208,6 +210,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     {
         if (currentState == State.Dead || !other.CompareTag("SpaceKatana")) return;
         currentState = State.Dead;
+        SlayAlienEvent.Trigger();
         animator.SetTrigger("Hit");
         animator.ResetTrigger("Shooting");
         animator.ResetTrigger("Flying");

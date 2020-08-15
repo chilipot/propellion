@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
 public class LevelManager : MonoBehaviour
 {
+    public static string LevelName => SceneManager.GetActiveScene().name;
+    public static int LevelIndex => SceneManager.GetActiveScene().buildIndex;
     public static bool LevelIsOver { get; private set; }
     public static bool DebugMode { get; private set; }
     public static bool GodMode { get; private set; }
@@ -19,6 +21,7 @@ public class LevelManager : MonoBehaviour
     public bool isLastLevel = false;
 
     private UIManager ui;
+    private AudioSource bemis;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
     private bool levelWon;
@@ -35,6 +38,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        bemis = GameObject.FindGameObjectWithTag("B3M1S").GetComponent<AudioSource>();
         ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
         var audioSources = MainCamera.GetComponents<AudioSource>();
@@ -45,6 +49,7 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
+        if (bemis.isPlaying) return; // LET BEMIS FINISH!
         if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
         else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
     }
@@ -78,11 +83,11 @@ public class LevelManager : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(LevelIndex + 1);
     }
 
     private void ReloadCurrentLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(LevelIndex);
     }
 }
