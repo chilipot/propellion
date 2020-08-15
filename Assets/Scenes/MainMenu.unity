@@ -682,9 +682,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 894125263, guid: 3ce6090148e725c4f8d85bc3a96a76b8, type: 3}
+      propertyPath: m_text
+      value: "Left Click & Hold - Grapple and reel in towards target\r\n\r\n\nRight
+        Click - Swing katana\r\n\r\n\nSPACE - Thrust forward in direction you're
+        facing \n\r\n\nTAB - Toggle Pausing"
+      objectReference: {fileID: 0}
     - target: {fileID: 1817912926312194, guid: 3ce6090148e725c4f8d85bc3a96a76b8, type: 3}
       propertyPath: m_Name
       value: MainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 114708166476095624, guid: 3ce6090148e725c4f8d85bc3a96a76b8,
+        type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224862354553891428, guid: 3ce6090148e725c4f8d85bc3a96a76b8,
         type: 3}
