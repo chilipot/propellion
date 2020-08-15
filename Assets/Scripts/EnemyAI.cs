@@ -30,7 +30,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public float fireRate = 1f;
     
     public Transform enemyEyes;
-    public float fieldOfView = 100f;
+    public float fieldOfView = 90f;
     
     private State currentState;
     private Vector3 currentDestination;

@@ -1832,7 +1832,7 @@ MonoBehaviour:
   gunTip: {fileID: 1351008105804437600}
   fireRate: 2
   enemyEyes: {fileID: 318197053724568105}
-  fieldOfView: 100
+  fieldOfView: 90
 --- !u!114 &8421363574963126011
 MonoBehaviour:
   m_ObjectHideFlags: 0
