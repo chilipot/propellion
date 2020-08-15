@@ -10,6 +10,7 @@ public enum HealthEffect
 public enum HealthEffectSource
 {
     AlienProjectile,
+    AlienFiringSquadProjectile,
     Asteroid,
     MedicalCanister
 }

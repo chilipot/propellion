@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3700048254846263182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 318197053724568105}
+  m_Layer: 8
+  m_Name: EnemyEyes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &318197053724568105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3700048254846263182}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8417758528798852726}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8419488601352244462
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +148,8 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2.0510384e-32, y: 0.009447606, z: 0.012272215}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 318197053724568105}
   m_Father: {fileID: 8416804994146753298}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1720,7 +1751,7 @@ GameObject:
   - component: {fileID: 26404531669705576}
   - component: {fileID: 5772657515286396096}
   m_Layer: 8
-  m_Name: AlienMERGE
+  m_Name: Alien
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1800,6 +1831,8 @@ MonoBehaviour:
     type: 3}
   gunTip: {fileID: 1351008105804437600}
   fireRate: 2
+  enemyEyes: {fileID: 318197053724568105}
+  fieldOfView: 90
 --- !u!114 &8421363574963126011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2205,15 +2238,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069f7f6d2f5b29745b2e10789754777c, type: 3}
---- !u!4 &2329548099111898669 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4276584366140610, guid: 069f7f6d2f5b29745b2e10789754777c,
-    type: 3}
-  m_PrefabInstance: {fileID: 2331463969643864815}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1351008105804437600 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3667258952818309775, guid: 069f7f6d2f5b29745b2e10789754777c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2331463969643864815}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2329548099111898669 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4276584366140610, guid: 069f7f6d2f5b29745b2e10789754777c,
     type: 3}
   m_PrefabInstance: {fileID: 2331463969643864815}
   m_PrefabAsset: {fileID: 0}
