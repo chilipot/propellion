@@ -188,8 +188,6 @@ public class ProceduralGeneration : MonoBehaviour
         }
         FinishedGenerating = true;
         levelManager.SetLevelStatus(LevelManager.LevelStatus.Playing);
-        // TODO: Remove when there's a load screen
-        Debug.Log($"Finished Generating: Up to {maxEntities} Entities"); 
     }
 
     private void GenerateChunk(Vector3Int chunkIndex)

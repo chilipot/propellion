@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
     
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
+    public bool isLastLevel = false;
 
     private UIManager ui;
     private AudioSource bemis;
