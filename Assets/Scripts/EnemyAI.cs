@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
@@ -27,6 +28,9 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
     public GameObject muzzleFlash;
     public Transform gunTip;
     public float fireRate = 1f;
+    
+    public Transform enemyEyes;
+    public float fieldOfView = 100f;
     
     private State currentState;
     private Vector3 currentDestination;
@@ -114,7 +118,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         if (!destinationIsPatrolPoint) SetRandomDestination();
         ApproachDestination();
         if (Vector3.Distance(transform.position, currentDestination) < 1f) SetRandomDestination();
-        else if (!LevelManager.LevelIsOver && distanceToPlayer <= chaseDistance)
+        else if (!LevelManager.LevelIsOver && IsPlayerInClearFOV())
         {
             aggroSfx.PlayOneShot(aggroSfx.clip);
             currentState = State.Chase;
@@ -134,7 +138,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             animator.ResetTrigger("Flying");
             animator.ResetTrigger("Grappled");
         }
-        else if (distanceToPlayer > chaseDistance) currentState = State.Patrol;
+        else if (!IsPlayerInClearFOV()) currentState = State.Patrol;
     }
     
     private void UpdateAttackState()
@@ -237,6 +241,17 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         Gizmos.DrawWireSphere(position, chaseDistance);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(position, maxAttackDistance);
+
+        Vector3 frontRayPoint = enemyEyes.position + (enemyEyes.forward * chaseDistance);
+        Vector3 leftRayPoint = Quaternion.Euler(0, fieldOfView * 0.5f, 0) * frontRayPoint;
+        Vector3 rightRayPoint = Quaternion.Euler(0, -fieldOfView * 0.5f, 0) * frontRayPoint;
+        
+        Debug.DrawLine(enemyEyes.position, frontRayPoint, Color.cyan);
+        Debug.DrawLine(enemyEyes.position, leftRayPoint, Color.yellow);
+        Debug.DrawLine(enemyEyes.position, rightRayPoint, Color.yellow);
+        
+        ///////////////////
+        
     }
     
     // TODO: enter a Grappled state
@@ -264,7 +279,7 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
         }
         else
         {
-            currentState = distanceToPlayer > chaseDistance ? State.Patrol : State.Chase;
+            currentState = IsPlayerInClearFOV() ? State.Chase : State.Patrol;
             animator.SetTrigger("Flying");
             animator.ResetTrigger("Shooting");
             animator.ResetTrigger("Grappled");
@@ -279,5 +294,23 @@ public class EnemyAI : MonoBehaviour, IGrappleResponse
             if (p.type == AnimatorControllerParameterType.Trigger)
                 animator.ResetTrigger(p.name);
         animator.SetTrigger(triggerName);
+    }
+
+    public bool IsPlayerInClearFOV()
+    {
+        Vector3 directionToPlayer = player.transform.position - enemyEyes.position;
+        
+        if (Vector3.Angle(directionToPlayer, enemyEyes.forward) <= fieldOfView)
+        {
+            if (Physics.Raycast(enemyEyes.position, directionToPlayer, out var hit, chaseDistance))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
