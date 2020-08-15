@@ -9,9 +9,11 @@ public class SpaceSuitManager : MonoBehaviour
     private float lastHealthEffect;
     private LevelManager levelManager;
     private UIManager ui;
-
+    private bool killOnNextHit;
+    
     private void Start()
     {
+        killOnNextHit = false;
         health = 0f;
         lastHealthEffect = -healthEffectInteractionDelay;
         levelManager = FindObjectOfType<LevelManager>();
@@ -60,7 +62,18 @@ public class SpaceSuitManager : MonoBehaviour
     
     private void Damage(int dmg)
     {
-        SetHealth(health - dmg);
+        if (killOnNextHit)
+        {
+            SetHealth(0);
+        }
+        else
+        {
+            SetHealth(health - dmg);
+        }
     }
-    
+
+    public void SetKillOnNextHit(bool val)
+    {
+        killOnNextHit = val;
+    }
 }

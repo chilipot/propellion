@@ -111,6 +111,8 @@ public class ProceduralGeneration : MonoBehaviour
     {
         ui = FindObjectOfType<UIManager>();
         ui.SetLevelStatus(UIManager.LevelStatus.Loading);
+        transform.localScale = levelDimensions;
+        transform.position = transform.localScale / 2;
     }
 
     private void AddEntity(GameObject obj)
