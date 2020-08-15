@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // TODO: determine best practice for level managers (all static members? always use FindObjectOfType<LevelManager>()? always use inspector variable?)
@@ -6,6 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     public static string LevelName => SceneManager.GetActiveScene().name;
     public static int LevelIndex => SceneManager.GetActiveScene().buildIndex;
+    public static bool IsLastLevel => LevelIndex == SceneManager.sceneCountInBuildSettings - 1;
     public static bool LevelIsOver { get; private set; }
     public static bool DebugMode { get; private set; }
     public static bool GodMode { get; private set; }
@@ -13,20 +15,30 @@ public class LevelManager : MonoBehaviour
     public static Transform Player { get; private set; }
     public static Rigidbody PlayerRb { get; private set; }
 
-    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver;
-
+    public static bool LevelIsActive => ProceduralGeneration.FinishedGenerating && !LevelIsOver && !PauseMenuBehavior.Paused;
+    public static LevelStatus CurrentLevelStatus { get; private set; }
+    
     public bool enableDebugMode = false;
     public bool enableGodMode = false;
-    public bool isLastLevel = false;
 
     private UIManager ui;
     private AudioSource bemis;
     private GrappleGunBehavior grappleGun;
     private AudioSource winSfx, loseSfx;
     private bool levelWon;
+    
+    public enum LevelStatus
+    {
+        Playing,
+        Loading,
+        Win,
+        Lose,
+        Paused
+    }
 
     private void Awake()
     {
+        ui = FindObjectOfType<UIManager>();
         LevelIsOver = false;
         DebugMode = enableDebugMode;
         GodMode = enableGodMode;
@@ -38,7 +50,6 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         bemis = GameObject.FindGameObjectWithTag("B3M1S").GetComponent<AudioSource>();
-        ui = FindObjectOfType<UIManager>();
         grappleGun = FindObjectOfType<GrappleGunBehavior>();
         var audioSources = MainCamera.GetComponents<AudioSource>();
         winSfx = audioSources[1];
@@ -46,12 +57,13 @@ public class LevelManager : MonoBehaviour
         levelWon = false;
     }
 
-    private void Update()
-    {
-        if (bemis.isPlaying) return; // LET BEMIS FINISH!
-        if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
-        else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
-    }
+    // private void Update()
+    // {
+    //     if (bemis.isPlaying) return; // LET BEMIS FINISH!
+    //     var isLastLevel = LevelIndex == 3; // TODO: come up with a story-relevant endgame instead of just hardcodedly repeating last level
+    //     if (LevelIsOver && (!levelWon || isLastLevel) && Input.anyKeyDown || !LevelIsOver && Input.GetKeyDown(KeyCode.R)) ReloadCurrentLevel();
+    //     else if (LevelIsOver && levelWon && Input.anyKeyDown) LoadNextLevel();
+    // }
 
     public void Win()
     {
@@ -75,17 +87,35 @@ public class LevelManager : MonoBehaviour
 
     private void EndLevel(bool won)
     {
-        ui.SetLevelStatus(won ? UIManager.LevelStatus.Win : UIManager.LevelStatus.Lose);
+        SetLevelStatus(won ? LevelStatus.Win : LevelStatus.Lose);
         LevelIsOver = true;
         grappleGun.StopGrapple();
     }
 
-    private void LoadNextLevel()
+    public void SetLevelStatus(LevelStatus status)
+    {
+        CurrentLevelStatus = status;
+        ui.HandleLevelStatus(status);
+        switch (status)
+        {
+            case LevelStatus.Playing:
+            case LevelStatus.Win:
+            case LevelStatus.Lose:
+                if (!PauseMenuBehavior.Paused) Time.timeScale = 1f;
+                break;
+            case LevelStatus.Loading:
+            case LevelStatus.Paused:
+                Time.timeScale = 0f;
+                break;
+        }
+    }
+    
+    public void LoadNextLevel()
     {
         SceneManager.LoadScene(LevelIndex + 1);
     }
 
-    private void ReloadCurrentLevel()
+    public void ReloadCurrentLevel()
     {
         SceneManager.LoadScene(LevelIndex);
     }

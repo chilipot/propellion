@@ -70,7 +70,7 @@ public class ProceduralGeneration : MonoBehaviour
     private float asteroidBaseRadius;
     private float alienRadius;
     
-    private UIManager ui;
+    private LevelManager levelManager;
 
     private void Awake()
     {
@@ -102,6 +102,8 @@ public class ProceduralGeneration : MonoBehaviour
         entityTransforms = new Dictionary<int, Transform>();
         entityIdToIndex = new Dictionary<int, int>();
         entityIndexToId = new Dictionary<int, int>();
+        
+        levelManager = FindObjectOfType<LevelManager>();
 
         StartCoroutine(nameof(GenerateEntities));
         StartCoroutine(nameof(UpdateCulledObjectBounds));
@@ -109,8 +111,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void Start()
     {
-        ui = FindObjectOfType<UIManager>();
-        ui.SetLevelStatus(UIManager.LevelStatus.Loading);
+        levelManager.SetLevelStatus(LevelManager.LevelStatus.Loading);
     }
 
     private void AddEntity(GameObject obj)
@@ -186,7 +187,7 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
         FinishedGenerating = true;
-        ui.SetLevelStatus(UIManager.LevelStatus.Playing);
+        levelManager.SetLevelStatus(LevelManager.LevelStatus.Playing);
     }
 
     private void GenerateChunk(Vector3Int chunkIndex)
