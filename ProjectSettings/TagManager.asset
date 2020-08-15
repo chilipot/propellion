@@ -14,6 +14,7 @@ TagManager:
   - ProjectileCollection
   - BlackHole
   - SpaceKatana
+  - B3M1S
   layers:
   - Default
   - TransparentFX

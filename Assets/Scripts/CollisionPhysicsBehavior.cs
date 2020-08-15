@@ -5,6 +5,9 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     public float stabilizationDelay = 0.5f;
     public float stabilizationDuration = 0.5f;
 
+    // This assumes asteroids are the only heavies. TODO: Place this event + trigger in a better location
+    public static readonly StatEvent AsteroidBumpEvent = new StatEvent(StatEventType.AsteroidBumped);
+    
     private Rigidbody rb;
     private ThrusterManager thruster;
     private GrappleGunBehavior grapple;
@@ -49,6 +52,8 @@ public class CollisionPhysicsBehavior : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (!other.gameObject.CompareTag("Heavy")) return;
+        // This assumes asteroids are the only heavies. TODO: Place this event + trigger in a better location
+        if (LevelManager.LevelIsActive) AsteroidBumpEvent.Trigger();
         CameraController.FreeCam = false;
         PhysicsCameraController.FreeCam = false;
         rb.angularDrag = 0;

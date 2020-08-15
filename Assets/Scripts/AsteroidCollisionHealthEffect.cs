@@ -8,6 +8,7 @@ public class AsteroidCollisionHealthEffect : HealthEffectBehavior
         : Mathf.RoundToInt(Mathf.Clamp(collision.impulse.magnitude / Time.fixedDeltaTime / 1000 * damageMultiplier,1f, maxDmg));
 
     public override HealthEffect Effect => HealthEffect.Damage;
+    public override HealthEffectSource Source => HealthEffectSource.Asteroid;
 
     public float damageMultiplier = 1.5f;
     public float maxDmg = 30f;
