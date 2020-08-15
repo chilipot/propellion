@@ -69,18 +69,6 @@ public class SpaceSuitManager : MonoBehaviour
     
     private void Damage(int dmg, HealthEffectSource source)
     {
-        if (killOnNextHit)
-        {
-            SetHealth(0, source);
-        }
-        else
-        {
-            SetHealth(health - dmg, source);
-        }
-    }
-
-    public void SetKillOnNextHit(bool val)
-    {
-        killOnNextHit = val;
+        SetHealth(health - dmg, source);
     }
 }

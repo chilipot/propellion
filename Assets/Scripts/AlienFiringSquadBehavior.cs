@@ -11,11 +11,10 @@ public class AlienFiringSquadBehavior : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            LevelManager.Player.GetComponent<SpaceSuitManager>().SetKillOnNextHit(true);
             LevelManager.PlayerRb.constraints = RigidbodyConstraints.FreezePosition;
-            var firingSquad = Instantiate(AlienFiringSquad, 
-                LevelManager.Player.position + LevelManager.Player.forward * 50,
-                Quaternion.identity);
+            Instantiate(AlienFiringSquad,
+                LevelManager.Player.position + LevelManager.Player.forward * 30,
+                LevelManager.Player.rotation);
         }
     }
 }
