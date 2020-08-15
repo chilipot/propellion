@@ -6,6 +6,7 @@ using UnityEngine.UI;
 // TODO: make this a singleton
 public class UIManager : MonoBehaviour
 {
+    public LevelEndMenuBehavior endMenu;
     public GaugeBehavior healthGauge;
     public GaugeBehavior fuelGauge;
 
@@ -20,6 +21,7 @@ public class UIManager : MonoBehaviour
     
     private void Awake()
     {
+        endMenu = FindObjectOfType<LevelEndMenuBehavior>();
         levelStatusImage = levelStatus.GetComponent<Image>();
         reticleImage = reticle.GetComponent<Image>();
     }
@@ -56,18 +58,19 @@ public class UIManager : MonoBehaviour
                 levelStatus.SetActive(true);
                 break;
             case LevelManager.LevelStatus.Win:
-                statusSprite = missionSuccess;
+                // statusSprite = missionSuccess;
                 reticleImage.enabled = false;
                 
-                levelStatusImage.sprite = statusSprite;
-                levelStatus.SetActive(true);
+                // levelStatusImage.sprite = statusSprite;
+                // levelStatus.SetActive(true);
+                endMenu.Show();
                 break;
             case LevelManager.LevelStatus.Lose:
-                statusSprite = missionFailed;
+                // statusSprite = missionFailed;
                 reticleImage.enabled = false;
-                
-                levelStatusImage.sprite = statusSprite;
-                levelStatus.SetActive(true);
+                endMenu.Show();
+                // levelStatusImage.sprite = statusSprite;
+                // levelStatus.SetActive(true);
                 break;
             case LevelManager.LevelStatus.Paused:
                 reticleImage.enabled = false;

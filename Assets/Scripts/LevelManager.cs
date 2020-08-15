@@ -109,7 +109,7 @@ public class LevelManager : MonoBehaviour
         }
     }
     
-    private void LoadNextLevel()
+    public void LoadNextLevel()
     {
         SceneManager.LoadScene(LevelIndex + 1);
     }
