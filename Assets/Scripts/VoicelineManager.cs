@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -65,11 +66,15 @@ public class VoicelineManager : MonoBehaviour
     
     public static AudioClip[] voicelines;
 
+    public static string[] PersistentVoicelineNames { get; private set; }
+
     private ProceduralGeneration entityManager;
 
     private static AudioSource bemisAudioSource;
     
     private static VoicelinePlaybackHistory PlaybackHistory = new VoicelinePlaybackHistory();
+    
+    private const float ALIEN_KILL_VOICELINE_CHANCE = 0.15f;
 
     private interface IVoiceline
     {
@@ -86,8 +91,8 @@ public class VoicelineManager : MonoBehaviour
             {
                 bemisAudioSource.clip = voiceline;
                 bemisAudioSource.PlayDelayed(1f);
+                PlaybackHistory.AddRecord(voicelineIndex);
             }
-            PlaybackHistory.AddRecord(voicelineIndex);
         }
 
         public abstract void Play();
@@ -95,7 +100,7 @@ public class VoicelineManager : MonoBehaviour
 
     private class Voiceline : AVoiceline
     {
-        private int voicelineIndex;
+        public readonly int voicelineIndex;
         public Voiceline(int voicelineIndex)
         {
             this.voicelineIndex = voicelineIndex;
@@ -113,41 +118,42 @@ public class VoicelineManager : MonoBehaviour
         private int[] voicelineIndices;
         private bool withReplacement;
         private Func<int, bool> predicate;
-        private bool includeNothing;
-        public RandomVoicelineGroup(int[] voicelineIndices, Func<int, bool> predicate = null, bool withReplacement = false, bool includeNothing = true)
+        private float playChance;
+        public RandomVoicelineGroup(int[] voicelineIndices, Func<int, bool> predicate = null, bool withReplacement = false, float playChance = 1)
         {
             this.voicelineIndices = voicelineIndices;
             this.withReplacement = withReplacement;
             this.predicate = predicate ?? ((i) => PlaybackHistory.GlobalCount(i) == 0);
-            this.includeNothing = includeNothing;
+            this.playChance = playChance;
         }
         public override void Play()
         {
-            var voicelinesToPlay= (withReplacement) ? voicelineIndices.ToList() : voicelineIndices.Where(voicelineIndex => predicate(voicelineIndex)).ToList();
-            if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
-            var randInd = Random.Range(0, (includeNothing ? voicelinesToPlay.Count : voicelinesToPlay.Count - 1));
-            if (includeNothing && randInd == voicelinesToPlay.Count)
+            if (Random.Range(0f, 1f) > playChance)
             {
                 Debug.Log("PLAYED: NOTHING");
+                return;
             }
-            else
-            {
-                // Play the random voiceline
-                var voicelineIndex = voicelinesToPlay[randInd];
-                _Play(voicelineIndex);
-            }
+            var voicelinesToPlay = withReplacement ? voicelineIndices.ToList() : voicelineIndices.Where(index => predicate(index)).ToList();
+            if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
+            var randIndex = Random.Range(0, voicelinesToPlay.Count - 1);
+
+            // Play the random voiceline
+            var voicelineIndex = voicelinesToPlay[randIndex];
+            _Play(voicelineIndex);
         }
     }
 
     private void Awake()
     {
         voicelines = setVoicelines;
+        PersistentVoicelineNames = new[] {voicelines[44].name, voicelines[45].name, voicelines[46].name};
         PlaybackHistory.Initialize(voicelines.Length); // Doesn't always initialize without persistence
     }
 
     private void Start()
     {
         entityManager = FindObjectOfType<ProceduralGeneration>();
+        if (!LevelManager.DebugMode) PlayLevelIntroVoiceline();
     }
 
     private void OnEnable()
@@ -161,6 +167,31 @@ public class VoicelineManager : MonoBehaviour
         StatsCollector.OnStatUpdate -= PlayVoiceline;
     }
 
+    private void PlayLevelIntroVoiceline()
+    {
+        var levelIntroVoiceline = TraverseOnLevelStart();
+        if (levelIntroVoiceline != null && PlaybackHistory.GlobalCount(levelIntroVoiceline.voicelineIndex) == 0)
+        {
+            levelIntroVoiceline.Play();
+        }
+    }
+
+    [CanBeNull]
+    private Voiceline TraverseOnLevelStart()
+    {
+        switch (LevelManager.LevelIndex)
+        {
+            case 2:
+                return new Voiceline(44);
+            case 3:
+                return new Voiceline(45);
+            case 4:
+                return new Voiceline(46);
+            default:
+                return null;
+        }
+    }
+
     private IVoiceline TraverseOnAlienSlayed(StatChangeRecord statChangeRecord)
     {
         var aliensSlain = StatsCollector.GetGlobalStat(Stat.AliensSlain);
@@ -170,11 +201,11 @@ public class VoicelineManager : MonoBehaviour
         if (PlaybackHistory.GlobalCount(15) == 0 && !entityManager.disableBlackHole)
         {
             // Random Play: #15, #16, Nothing
-            return new RandomVoicelineGroup(new []{14, 15});
+            return new RandomVoicelineGroup(new []{14, 15}, playChance: ALIEN_KILL_VOICELINE_CHANCE);
         }
         
         // Random Play: #15 or Nothing
-        return new RandomVoicelineGroup(new []{14});
+        return new RandomVoicelineGroup(new []{14}, playChance: ALIEN_KILL_VOICELINE_CHANCE);
     }
     
     private IVoiceline TraverseOnAsteroidBumped(StatChangeRecord statChangeRecord)

@@ -51,9 +51,8 @@ public class LevelEndMenuBehavior : MonoBehaviour
 
     private IEnumerator EnableContinueWhenBemisFinishes()
     {
-        
         continueButton.interactable = false;
-        yield return new WaitWhile(() => bemis.isPlaying);
+        yield return new WaitWhile(() => bemis.isPlaying && !bemis.GetComponent<BemisCommsBehavior>().PersistentVoicelinePlaying());
         continueButton.interactable = true;
     }
 
