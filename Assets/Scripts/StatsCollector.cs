@@ -116,6 +116,7 @@ public class StatsCollector : MonoBehaviour
         ExitBehavior.WinEvent.OnTrigger += HandleEvent;
         SpaceSuitManager.DamageDeathEvent.OnTrigger += HandleEvent;
         EnemyAI.SlayAlienEvent.OnTrigger += HandleEvent;
+        ThrusterManager.EmptyThrusterEvent.OnTrigger += HandleEvent;
     }
 
     private void OnDisable()
@@ -126,6 +127,7 @@ public class StatsCollector : MonoBehaviour
         ExitBehavior.WinEvent.OnTrigger -= HandleEvent;
         SpaceSuitManager.DamageDeathEvent.OnTrigger -= HandleEvent;
         EnemyAI.SlayAlienEvent.OnTrigger -= HandleEvent;
+        ThrusterManager.EmptyThrusterEvent.OnTrigger -= HandleEvent;
     }
 
     private static Stat? ParseChangedStat(StatEventType eventType, object payload)
