@@ -117,6 +117,7 @@ public class LevelManager : MonoBehaviour
 
     public void ReloadCurrentLevel()
     {
+        bemis.GetComponent<BemisCommsBehavior>().SavePersistentVoiceline();
         SceneManager.LoadScene(LevelIndex);
     }
 }

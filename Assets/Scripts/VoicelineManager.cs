@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -65,6 +66,8 @@ public class VoicelineManager : MonoBehaviour
     
     public static AudioClip[] voicelines;
 
+    public static string[] PersistentVoicelineNames { get; private set; }
+
     private ProceduralGeneration entityManager;
 
     private static AudioSource bemisAudioSource;
@@ -88,8 +91,8 @@ public class VoicelineManager : MonoBehaviour
             {
                 bemisAudioSource.clip = voiceline;
                 bemisAudioSource.PlayDelayed(1f);
+                PlaybackHistory.AddRecord(voicelineIndex);
             }
-            PlaybackHistory.AddRecord(voicelineIndex);
         }
 
         public abstract void Play();
@@ -97,7 +100,7 @@ public class VoicelineManager : MonoBehaviour
 
     private class Voiceline : AVoiceline
     {
-        private int voicelineIndex;
+        public readonly int voicelineIndex;
         public Voiceline(int voicelineIndex)
         {
             this.voicelineIndex = voicelineIndex;
@@ -143,12 +146,18 @@ public class VoicelineManager : MonoBehaviour
     private void Awake()
     {
         voicelines = setVoicelines;
+        PersistentVoicelineNames = new[] {voicelines[44].name, voicelines[45].name, voicelines[46].name};
         PlaybackHistory.Initialize(voicelines.Length); // Doesn't always initialize without persistence
     }
 
     private void Start()
     {
         entityManager = FindObjectOfType<ProceduralGeneration>();
+        var levelIntroVoiceline = TraverseOnLevelStart();
+        if (levelIntroVoiceline != null && PlaybackHistory.GlobalCount(levelIntroVoiceline.voicelineIndex) == 0)
+        {
+            levelIntroVoiceline.Play();
+        }
     }
 
     private void OnEnable()
@@ -160,6 +169,22 @@ public class VoicelineManager : MonoBehaviour
     private void OnDisable()
     {
         StatsCollector.OnStatUpdate -= PlayVoiceline;
+    }
+
+    [CanBeNull]
+    private Voiceline TraverseOnLevelStart()
+    {
+        switch (LevelManager.LevelIndex)
+        {
+            case 2:
+                return new Voiceline(44);
+            case 3:
+                return new Voiceline(45);
+            case 4:
+                return new Voiceline(46);
+            default:
+                return null;
+        }
     }
 
     private IVoiceline TraverseOnAlienSlayed(StatChangeRecord statChangeRecord)
