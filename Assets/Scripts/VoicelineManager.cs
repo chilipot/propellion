@@ -153,11 +153,7 @@ public class VoicelineManager : MonoBehaviour
     private void Start()
     {
         entityManager = FindObjectOfType<ProceduralGeneration>();
-        var levelIntroVoiceline = TraverseOnLevelStart();
-        if (levelIntroVoiceline != null && PlaybackHistory.GlobalCount(levelIntroVoiceline.voicelineIndex) == 0)
-        {
-            levelIntroVoiceline.Play();
-        }
+        if (!LevelManager.DebugMode) PlayLevelIntroVoiceline();
     }
 
     private void OnEnable()
@@ -169,6 +165,15 @@ public class VoicelineManager : MonoBehaviour
     private void OnDisable()
     {
         StatsCollector.OnStatUpdate -= PlayVoiceline;
+    }
+
+    private void PlayLevelIntroVoiceline()
+    {
+        var levelIntroVoiceline = TraverseOnLevelStart();
+        if (levelIntroVoiceline != null && PlaybackHistory.GlobalCount(levelIntroVoiceline.voicelineIndex) == 0)
+        {
+            levelIntroVoiceline.Play();
+        }
     }
 
     [CanBeNull]
