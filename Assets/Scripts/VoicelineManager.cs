@@ -70,6 +70,8 @@ public class VoicelineManager : MonoBehaviour
     private static AudioSource bemisAudioSource;
     
     private static VoicelinePlaybackHistory PlaybackHistory = new VoicelinePlaybackHistory();
+    
+    private const float ALIEN_KILL_VOICELINE_CHANCE = 0.15f;
 
     private interface IVoiceline
     {
@@ -113,29 +115,28 @@ public class VoicelineManager : MonoBehaviour
         private int[] voicelineIndices;
         private bool withReplacement;
         private Func<int, bool> predicate;
-        private bool includeNothing;
-        public RandomVoicelineGroup(int[] voicelineIndices, Func<int, bool> predicate = null, bool withReplacement = false, bool includeNothing = true)
+        private float playChance;
+        public RandomVoicelineGroup(int[] voicelineIndices, Func<int, bool> predicate = null, bool withReplacement = false, float playChance = 1)
         {
             this.voicelineIndices = voicelineIndices;
             this.withReplacement = withReplacement;
             this.predicate = predicate ?? ((i) => PlaybackHistory.GlobalCount(i) == 0);
-            this.includeNothing = includeNothing;
+            this.playChance = playChance;
         }
         public override void Play()
         {
-            var voicelinesToPlay= (withReplacement) ? voicelineIndices.ToList() : voicelineIndices.Where(voicelineIndex => predicate(voicelineIndex)).ToList();
-            if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
-            var randInd = Random.Range(0, (includeNothing ? voicelinesToPlay.Count : voicelinesToPlay.Count - 1));
-            if (includeNothing && randInd == voicelinesToPlay.Count)
+            if (Random.Range(0f, 1f) > playChance)
             {
                 Debug.Log("PLAYED: NOTHING");
+                return;
             }
-            else
-            {
-                // Play the random voiceline
-                var voicelineIndex = voicelinesToPlay[randInd];
-                _Play(voicelineIndex);
-            }
+            var voicelinesToPlay = withReplacement ? voicelineIndices.ToList() : voicelineIndices.Where(index => predicate(index)).ToList();
+            if (voicelinesToPlay.Count == 0) voicelinesToPlay = voicelineIndices.ToList();
+            var randIndex = Random.Range(0, voicelinesToPlay.Count - 1);
+
+            // Play the random voiceline
+            var voicelineIndex = voicelinesToPlay[randIndex];
+            _Play(voicelineIndex);
         }
     }
 
@@ -170,11 +171,11 @@ public class VoicelineManager : MonoBehaviour
         if (PlaybackHistory.GlobalCount(15) == 0 && !entityManager.disableBlackHole)
         {
             // Random Play: #15, #16, Nothing
-            return new RandomVoicelineGroup(new []{14, 15});
+            return new RandomVoicelineGroup(new []{14, 15}, playChance: ALIEN_KILL_VOICELINE_CHANCE);
         }
         
         // Random Play: #15 or Nothing
-        return new RandomVoicelineGroup(new []{14});
+        return new RandomVoicelineGroup(new []{14}, playChance: ALIEN_KILL_VOICELINE_CHANCE);
     }
     
     private IVoiceline TraverseOnAsteroidBumped(StatChangeRecord statChangeRecord)
