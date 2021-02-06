@@ -224,6 +224,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedRange: {x: 2000, y: 8000}
+  superspeedChance: 0.12
+  superspeedMultiplier: 12
 --- !u!114 &-7601398947705805428
 MonoBehaviour:
   m_ObjectHideFlags: 0
